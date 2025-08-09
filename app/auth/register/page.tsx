@@ -1,4 +1,5 @@
 import { Input } from "@/components/input";
+import ThemeToggle from "@/components/theme-toggle";
 import { EyeOff } from "lucide-react";
 import { Metadata } from "next";
 
@@ -34,7 +35,7 @@ export default function LoginPage() {
                             <p className="dark:text-zinc-200/80">Primeiro nome</p>
                             <Input placeholder="Digite aqui" className="pl-4 pr-9 h-10.5 rounded-lg" />
                         </div>
-                         <div className="w-full space-y-2">
+                        <div className="w-full space-y-2">
                             <p className="dark:text-zinc-200/80">Segundo nome</p>
                             <Input placeholder="Digite aqui" className="pl-4 pr-9 h-10.5 rounded-lg" />
                         </div>
@@ -58,6 +59,10 @@ export default function LoginPage() {
                     <p className="w-full text-center text-sm dark:text-zinc-200/50 text-zinc-800/90">Ou crie com</p>
                     <button className="flex justify-center items-center gap-3 py-3 w-full mt-2 dark:bg-zinc-700/40 dark:hover:bg-zinc-700/20 bg-zinc-200 hover:bg-zinc-300 border dark:border-zinc-950/30 border-zinc-500/5 font-semibold rounded-lg duration-200 cursor-pointer"><img src="https://i.imgur.com/2Zsoe9M.png" alt="" className="w-5 h-5" />Google</button>
                     <p className="dark:text-zinc-400 text-zinc-800/90 mt-2 text-sm">Já possui uma conta? <a href="/auth/login" className="dark:text-zinc-200 text-black font-semibold underline">Entre por aqui!</a></p>
+                </div>
+
+                <div className="absolute bottom-0 right-0 p-10">
+                    <ThemeToggle />
                 </div>
             </div>
         </main>

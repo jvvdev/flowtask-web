@@ -18,6 +18,7 @@ import {
 } from "@/components/sidebar";
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function Page() {
   return (
@@ -40,11 +41,11 @@ export default function Page() {
             </Breadcrumb>
           </div>
           <div className="flex gap-3 ml-auto">
-            
+            <ThemeToggle />
             <UserDropdown />
           </div>
         </header>
-        
+
       </SidebarInset>
     </SidebarProvider>
   );

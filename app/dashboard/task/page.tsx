@@ -15,6 +15,7 @@ import UserDropdown from "@/components/user-dropdown";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/sidebar";
 import BigCalendar from "@/components/big-calendar";
 import { SiderBarDefault } from "@/components/sidebarDefault";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function Page() {
   return (
@@ -42,7 +43,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
           <div className="flex gap-3 ml-auto">
-            
+            <ThemeToggle />
             <UserDropdown />
           </div>
         </header>

@@ -21,6 +21,7 @@ import { SiderBarDefault } from "@/components/sidebarDefault";
 import { Button } from "@/components/button";
 import { InfoCardToProjects } from "@/components/integrar/infoCard";
 import { ProjectList } from "@/components/integrar/projectList";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function Page() {
   return (
@@ -47,7 +48,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
           <div className="flex gap-3 ml-auto">
-
+            <ThemeToggle />
             <UserDropdown />
           </div>
         </header>

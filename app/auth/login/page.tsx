@@ -1,4 +1,5 @@
 import { Input } from "@/components/input";
+import ThemeToggle from "@/components/theme-toggle";
 import { EyeOff } from "lucide-react";
 import { Metadata } from "next";
 
@@ -51,6 +52,10 @@ export default function LoginPage() {
                 </div>
 
             
+            </div>
+
+            <div className="absolute bottom-0 right-0 p-10">
+                <ThemeToggle />
             </div>
         </main>
     )

@@ -21,6 +21,7 @@ import UserDropdown from "@/components/user-dropdown";
 import ContactsTable from "@/components/contacts-table";
 import { StatsGrid } from "@/components/stats-grid";
 import { SiderBarDefault } from "@/components/sidebarDefault";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function Page() {
   return (
@@ -47,7 +48,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
           <div className="flex gap-3 ml-auto">
-            
+            <ThemeToggle />
             <UserDropdown />
           </div>
         </header>
