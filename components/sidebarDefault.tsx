@@ -1,6 +1,6 @@
 'use client'
 
-import * as React from "react";
+import { usePathname } from "next/navigation";
 
 import { SearchForm } from "@/components/search-form";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -28,10 +28,10 @@ import {
     RiChatAiLine,
     RiListCheck,
 } from "@remixicon/react";
-import { usePathname } from "next/navigation";
 
 export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    // This is sample data.
+    const pathname = usePathname(); // ✅ Hook chamado uma vez no topo
+
     const data = {
         teams: [
             {
@@ -44,59 +44,26 @@ export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sideba
                 title: "GERAL",
                 url: "#",
                 items: [
-                    {
-                        title: "Dashboard",
-                        url: "/dashboard",
-                        icon: RiScanLine,
-                    },
-                    {
-                        title: "Projetos",
-                        url: "/dashboard/project",
-                        icon: RiBriefcase3Line,
-                    },
-                    {
-                        title: "Equipe",
-                        url: "/dashboard/team",
-                        icon: RiUserFollowLine,
-                        isActive: true,
-                    },
-                    {
-                        title: "Chat IA",
-                        url: "#",
-                        icon: RiChatAiLine,
-                    },
+                    { title: "Dashboard", url: "/dashboard", icon: RiScanLine },
+                    { title: "Projetos", url: "/dashboard/project", icon: RiBriefcase3Line },
+                    { title: "Equipe", url: "/dashboard/team", icon: RiUserFollowLine },
+                    { title: "Chat IA", url: "/dashboard/chatai", icon: RiChatAiLine },
                 ],
             },
             {
                 title: "Ferramentas",
                 url: "#",
                 items: [
-                    {
-                        title: "Tarefas",
-                        url: "/dashboard/task",
-                        icon: RiListCheck,
-                    },
-                    {
-                        title: "Relatórios",
-                        url: "#",
-                        icon: RiClipboardLine,
-                    },
+                    { title: "Tarefas", url: "/dashboard/task", icon: RiListCheck },
+                    { title: "Relatórios", url: "/dashboard/note", icon: RiClipboardLine },
                 ],
             },
             {
                 title: "Other",
                 url: "#",
                 items: [
-                    {
-                        title: "Configurações",
-                        url: "#",
-                        icon: RiSettings3Line,
-                    },
-                    {
-                        title: "Ajuda",
-                        url: "#",
-                        icon: RiLeafLine,
-                    },
+                    { title: "Configurações", url: "/dashboard/setting", icon: RiSettings3Line },
+                    { title: "Ajuda", url: "/help", icon: RiLeafLine },
                 ],
             },
         ],
@@ -110,34 +77,37 @@ export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sideba
                 <SearchForm className="mt-3" />
             </SidebarHeader>
             <SidebarContent>
-                {/* We create a SidebarGroup for each parent. */}
-                {data.navMain.map((item) => (
-                    <SidebarGroup key={item.title}>
+                {data.navMain.map((group) => (
+                    <SidebarGroup key={group.title}>
                         <SidebarGroupLabel className="uppercase text-muted-foreground/60">
-                            {item.title}
+                            {group.title}
                         </SidebarGroupLabel>
                         <SidebarGroupContent className="px-2">
                             <SidebarMenu>
-                                {item.items.map((item) => (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            className="group/menu-button font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto"
-                                            isActive={item.url == usePathname() ? true : "/dashboard/" + item.url == usePathname() ? true : false}
-                                        >
-                                            <a href={item.url}>
-                                                {item.icon && (
-                                                    <item.icon
-                                                        className="text-muted-foreground/60 group-data-[active=true]/menu-button:text-primary"
-                                                        size={22}
-                                                        aria-hidden="true"
-                                                    />
-                                                )}
-                                                <span>{item.title}</span>
-                                            </a>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
+                                {group.items.map((item) => {
+                                    const isActive = pathname === item.url || pathname === `/dashboard/${item.url}`;
+
+                                    return (
+                                        <SidebarMenuItem key={item.title}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                className="group/menu-button font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto"
+                                                isActive={isActive}
+                                            >
+                                                <a href={item.url}>
+                                                    {item.icon && (
+                                                        <item.icon
+                                                            className="text-muted-foreground/60 group-data-[active=true]/menu-button:text-primary"
+                                                            size={22}
+                                                            aria-hidden="true"
+                                                        />
+                                                    )}
+                                                    <span>{item.title}</span>
+                                                </a>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
