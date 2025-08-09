@@ -1,5 +1,5 @@
 const nextConfig = {
-  assetPrefix: "/exp1-static",
+  assetPrefix: "/exp6-static",
   transpilePackages: ["@workspace/ui"],
   images: {
     remotePatterns: [

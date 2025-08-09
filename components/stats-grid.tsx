@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 interface StatsCardProps {
   title: string;
   value: string;
-  change: {
+  change?: {
     value: string;
     trend: "up" | "down";
   };
@@ -12,7 +12,7 @@ interface StatsCardProps {
 }
 
 export function StatsCard({ title, value, change, icon }: StatsCardProps) {
-  const isPositive = change.trend === "up";
+  const isPositive = change?.trend === "up";
   const trendColor = isPositive ? "text-emerald-500" : "text-red-500";
 
   return (
@@ -36,12 +36,12 @@ export function StatsCard({ title, value, change, icon }: StatsCardProps) {
             {title}
           </a>
           <div className="text-2xl font-semibold mb-2">{value}</div>
-          <div className="text-xs text-muted-foreground/60">
+          {change ? <div className="text-xs text-muted-foreground/60">
             <span className={cn("font-medium", trendColor)}>
-              {isPositive ? "↗" : "↘"} {change.value}
+              {isPositive ? "↗" : "↘"} {change?.value}
             </span>{" "}
             vs last week
-          </div>
+          </div> : ""}
         </div>
       </div>
     </div>

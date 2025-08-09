@@ -1,170 +1,125 @@
-import * as React from "react";
+"use client";
 
-import { SearchForm } from "@/components/search-form";
-import { TeamSwitcher } from "@/components/team-switcher";
+import * as React from "react";
+import Link from "next/link";
+import { RiCheckLine } from "@remixicon/react";
+import { useCalendarContext } from "@/components/calendar-context";
+import { etiquettes } from "@/components/big-calendar";
+
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarTrigger,
 } from "@/components/sidebar";
-import {
-  RiScanLine,
-  RiBardLine,
-  RiUserFollowLine,
-  RiCodeSSlashLine,
-  RiLoginCircleLine,
-  RiLayoutLeftLine,
-  RiSettings3Line,
-  RiLeafLine,
-  RiLogoutBoxLine,
-  RiIdCardFill,
-  RiClipboardLine,
-  RiProjector2Line,
-  RiAccessibilityLine,
-  RiAdminLine,
-  RiBriefcase3Line,
-  RiChatAiLine,
-  RiListCheck,
-} from "@remixicon/react";
+import SidebarCalendar from "@/components/sidebar-calendar";
+import { Checkbox } from "@/components/checkbox";
 
-// This is sample data.
 const data = {
-  teams: [
-    {
-      name: "FlowTask",
-      logo: "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/logo-01_kp2j8x.png",
-    }
-  ],
-  navMain: [
-    {
-      title: "GERAL",
-      url: "#",
-      items: [
-        {
-          title: "Dashboard",
-          url: "#",
-          icon: RiScanLine,
-        },
-        {
-          title: "Projetos",
-          url: "#",
-          icon: RiBriefcase3Line,
-        },
-        {
-          title: "Equipe",
-          url: "#",
-          icon: RiUserFollowLine,
-          isActive: true,
-        },
-        {
-          title: "Chat IA",
-          url: "#",
-          icon: RiChatAiLine,
-          isBeta: true
-        },
-      ],
-    },
-    {
-      title: "Ferramentas",
-      url: "#",
-      items: [
-        {
-          title: "Tarefas",
-          url: "#",
-          icon: RiListCheck,
-        },
-        {
-          title: "Relatórios",
-          url: "#",
-          icon: RiClipboardLine,
-        },
-      ],
-    },
-    {
-      title: "Other",
-      url: "#",
-      items: [
-        {
-          title: "Configurações",
-          url: "#",
-          icon: RiSettings3Line,
-        },
-        {
-          title: "Ajuda",
-          url: "#",
-          icon: RiLeafLine,
-        },
-      ],
-    },
-  ],
+  user: {
+    name: "Sofia Safier",
+    email: "sofia@safier.com",
+    avatar:
+      "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp6/user-01_l4if9t.png",
+  },
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { isColorVisible, toggleColorVisibility } = useCalendarContext();
   return (
-    <Sidebar {...props}>
+    <Sidebar
+      variant="inset"
+      {...props}
+      className="dark scheme-only-dark max-lg:p-3 lg:pe-1"
+    >
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-        <hr className="border-t border-border mx-2 -mt-px" />
-        <SearchForm className="mt-3" />
+        <div className="flex justify-between items-center gap-2">
+          <Link className="inline-flex" href="/">
+            <span className="sr-only">Logo</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+            >
+              <path
+                fill="#52525C"
+                d="m10.661.863-2.339 1.04 5.251 11.794L1.521 9.072l-.918 2.39 12.053 4.627-11.794 5.25 1.041 2.34 11.794-5.252L9.071 30.48l2.39.917 4.626-12.052 5.251 11.793 2.339-1.04-5.251-11.795 12.052 4.627.917-2.39-12.052-4.627 11.794-5.25-1.041-2.34-11.794 5.252L22.928 1.52l-2.39-.917-4.626 12.052L10.662.863Z"
+              />
+              <path
+                fill="#F4F4F5"
+                d="M17.28 0h-2.56v12.91L5.591 3.78l-1.81 1.81 9.129 9.129H0v2.56h12.91L3.78 26.409l1.81 1.81 9.129-9.129V32h2.56V19.09l9.128 9.129 1.81-1.81-9.128-9.129H32v-2.56H19.09l9.129-9.129-1.81-1.81-9.129 9.129V0Z"
+              />
+            </svg>
+          </Link>
+          <SidebarTrigger className="text-muted-foreground/80 hover:text-foreground/80 hover:bg-transparent!" />
+        </div>
       </SidebarHeader>
-      <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel className="uppercase text-muted-foreground/60">
-              {item.title}
-            </SidebarGroupLabel>
-            <SidebarGroupContent className="px-2">
-              <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className="group/menu-button font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto"
-                      isActive={item.isActive}
-                    >
-                      <a href={item.url}>
-                        {item.icon && (
-                          <item.icon
-                            className="text-muted-foreground/60 group-data-[active=true]/menu-button:text-primary"
-                            size={22}
-                            aria-hidden="true"
-                          />
-                        )}
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+      <SidebarContent className="gap-0 mt-3 pt-3 border-t">
+        <SidebarGroup className="px-1">
+          <SidebarCalendar />
+        </SidebarGroup>
+        <SidebarGroup className="px-1 mt-3 pt-4 border-t">
+          <SidebarGroupLabel className="uppercase text-muted-foreground/65">
+            Calendars
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {etiquettes.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    asChild
+                    className="relative rounded-md [&>svg]:size-auto justify-between has-focus-visible:border-ring has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]"
+                  >
+                    <span>
+                      <span className="font-medium flex items-center justify-between gap-3">
+                        <Checkbox
+                          id={item.id}
+                          className="sr-only peer"
+                          checked={isColorVisible(item.color)}
+                          onCheckedChange={() =>
+                            toggleColorVisibility(item.color)
+                          }
+                        />
+                        <RiCheckLine
+                          className="peer-not-data-[state=checked]:invisible"
+                          size={16}
+                          aria-hidden="true"
+                        />
+                        <label
+                          htmlFor={item.id}
+                          className="peer-not-data-[state=checked]:line-through peer-not-data-[state=checked]:text-muted-foreground/65 after:absolute after:inset-0"
+                        >
+                          {item.name}
+                        </label>
+                      </span>
+                      <span
+                        className="size-1.5 rounded-full bg-(--event-color)"
+                        style={
+                          {
+                            "--event-color": `var(--color-${item.color}-400)`,
+                          } as React.CSSProperties
+                        }
+                      ></span>
+                    </span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <hr className="border-t border-border mx-2 -mt-px" />
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton className="font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto">
-              <RiLogoutBoxLine
-                className="text-muted-foreground/60 group-data-[active=true]/menu-button:text-primary"
-                size={22}
-                aria-hidden="true"
-              />
-              <span>Sign Out</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <NavUser user={data.user} />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }
