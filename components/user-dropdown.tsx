@@ -24,17 +24,17 @@ export default function UserDropdown() {
               height={32}
               alt="Profile image"
             />
-            <AvatarFallback>KK</AvatarFallback>
+            <AvatarFallback>AL</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64" align="end">
         <DropdownMenuLabel className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-medium text-foreground">
-            Keith Kennedy
+            Adriel Lucas
           </span>
           <span className="truncate text-xs font-normal text-muted-foreground">
-            k.kennedy@originui.com
+            a.dev@gmail.com
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -45,11 +45,11 @@ export default function UserDropdown() {
               className="opacity-60"
               aria-hidden="true"
             />
-            <span>Account settings</span>
+            <span>Configurações da conta</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <RiTeamLine size={16} className="opacity-60" aria-hidden="true" />
-            <span>Affiliate area</span>
+            <span>Área de afiliados</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -59,7 +59,7 @@ export default function UserDropdown() {
             className="opacity-60"
             aria-hidden="true"
           />
-          <span>Sign out</span>
+          <span>Sair da conta</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

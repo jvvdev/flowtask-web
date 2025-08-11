@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "FlowTask - Tarefas",
+  title: "FlowTask  - Relatórios",
 };
 
 import {
@@ -11,18 +11,20 @@ import {
   BreadcrumbPage,
 } from "@/components/breadcrumb";
 import { Separator } from "@/components/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/sidebar";
 import UserDropdown from "@/components/user-dropdown";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/sidebar";
-import BigCalendar from "@/components/big-calendar";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
 
-export default function Page() {
+export default function Notes() {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="">
       <SiderBarDefault />
-      
-      <SidebarInset className="md:border-l border-zinc-200/10 md:rounded-l-2xl px-4">
+      <SidebarInset className="md:border-l border-zinc-200/10 overflow-hidden px-4 md:px-6 lg:px-8 md:rounded-l-2xl">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger className="-ms-4" />
@@ -37,7 +39,7 @@ export default function Page() {
                 </BreadcrumbItem>
                 <span className="text-zinc-400">/</span>
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Tarefas</BreadcrumbPage>
+                  <BreadcrumbPage>Relatórios</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -47,8 +49,12 @@ export default function Page() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-2 pt-0">
-          <BigCalendar />
+
+        <div className="w-full flex flex-col items-center py-12">
+            <div>
+                
+                <h1 className="text-2xl font-bold">Como posso te ajudar hoje?</h1>
+            </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

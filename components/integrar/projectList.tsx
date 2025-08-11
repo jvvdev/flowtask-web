@@ -18,6 +18,7 @@ import {
 import { Input } from "../input";
 import { RiFilter3Line, RiSearch2Line } from "@remixicon/react";
 import { ALargeSmall, CalendarCheck2, ChartPie, LoaderCircle, TriangleAlert, UserCog } from "lucide-react";
+import { CircularProgress } from "../circularProgress";
 
 const Projects = [
     { id: 1, Name: "Vila Roleplay", Status: "Não iniciado", Priority: "Alta", Progress: 20, Date: "22 Março, 2025", Owner: "Lucas" },
@@ -31,49 +32,6 @@ const Projects = [
     { id: 9, Name: "Sistema de Notificações", Status: "Finalizado", Priority: "Media", Progress: 100, Date: "12 Março, 2025", Owner: "Bruna" },
     { id: 10, Name: "Configuração Servidor", Status: "Em andamento", Priority: "Alta", Progress: 75, Date: "25 Abril, 2025", Owner: "Gustavo" },
 ];
-
-interface CircularProgressProps {
-  progress: number
-  size?: number
-  strokeWidth?: number
-}
-
-function CircularProgress({ progress, size = 20, strokeWidth = 2 }: CircularProgressProps) {
-    const radius = (size - strokeWidth) / 2
-    const circumference = radius * 2 * Math.PI
-    const strokeDasharray = circumference
-    const strokeDashoffset = circumference - (progress / 100) * circumference
-
-    return (
-        <div className="relative inline-flex items-center justify-center">
-            <svg width={size} height={size} className="transform -rotate-90">
-                {/* Background circle */}
-                <circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke="rgb(75 85 99)" // gray-600
-                    strokeWidth={strokeWidth}
-                    fill="transparent"
-                    className="opacity-30"
-                />
-                {/* Progress circle */}
-                <circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke="rgb(34 197 94)" // green-500
-                    strokeWidth={strokeWidth}
-                    fill="transparent"
-                    strokeDasharray={strokeDasharray}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeLinecap="round"
-                    className="transition-all duration-300 ease-in-out"
-                />
-            </svg>
-        </div>
-    )
-}
 
 export function ProjectList() {
     const [isLoading, setIsLoading] = useState(true);
