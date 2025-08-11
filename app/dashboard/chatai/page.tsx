@@ -60,9 +60,8 @@ export default function ChatAI() {
                     </div>
                 </header>
 
-                <div className="w-full flex flex-col items-center py-12 gap-7">
+                <div className="w-full h-full flex flex-col items-center py-50">
                     <IASection />
-                    <IAPastActivities />
                 </div>
             </SidebarInset>
         </SidebarProvider>

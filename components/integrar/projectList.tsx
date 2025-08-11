@@ -88,22 +88,22 @@ export function ProjectList() {
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">
                         <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2"><ALargeSmall size={18}/> Nome</p>
+                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18}/> Nome</p>
                         </TableHead>
                         <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2"><ChartPie size={18}/> Status</p>
+                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ChartPie size={18}/> Status</p>
                         </TableHead>
                         <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2"><TriangleAlert size={18}/> Prioridade</p>
+                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><TriangleAlert size={18}/> Prioridade</p>
                         </TableHead>
                         <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2"><LoaderCircle size={18}/> Progresso</p>
+                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><LoaderCircle size={18}/> Progresso</p>
                         </TableHead>
                         <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2"><CalendarCheck2 size={18}/> Data de entrega</p>
+                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><CalendarCheck2 size={18}/> Data de entrega</p>
                         </TableHead>
                         <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2"><UserCog size={18}/> Responsável</p>
+                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><UserCog size={18}/> Responsável</p>
                         </TableHead>
                     </TableRow>
                 </TableHeader>
@@ -184,7 +184,7 @@ export function ProjectList() {
                                 </TableCell>
                                 <TableCell key={item.id} className="flex items-center justify-start gap-2">
                                     <CircularProgress progress={item.Progress} />
-                                    <span className="text-sm">{item.Progress} %</span>
+                                    <span className="text-sm flex">{item.Progress} <p className="text-zinc-600 dark:text-zinc-400">%</p></span>
                                 </TableCell>
                                 <TableCell>{item.Date}</TableCell>
                                 <TableCell><strong>{item.Owner}</strong></TableCell>

@@ -19,6 +19,8 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
+import { Button } from "@/components/button";
+import { NotesComponent } from "@/components/integrar/notesComponent";
 
 export default function Notes() {
   return (
@@ -50,11 +52,19 @@ export default function Notes() {
           </div>
         </header>
 
-        <div className="w-full flex flex-col items-center py-12">
-            <div>
-                
-                <h1 className="text-2xl font-bold">Como posso te ajudar hoje?</h1>
+        <div className="flex flex-1 flex-col gap-4 lg:gap-6 pt-4 lg:pt-6">
+          {/* Page intro */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
+              <p className="text-sm text-muted-foreground">
+                Confira a visão geral dos seus relatórios e gerencie ou adicione novos com rapidez e facilidade!
+              </p>
             </div>
+            <Button className="px-3">Adicionar Relatório</Button>
+          </div>
+
+          <NotesComponent />
         </div>
       </SidebarInset>
     </SidebarProvider>

@@ -11,7 +11,7 @@ export function CircularProgress({ progress, size = 20, strokeWidth = 2 }: Circu
     const strokeDashoffset = circumference - (progress / 100) * circumference
 
     return (
-        <div className="relative inline-flex items-center justify-center">
+        <div className="relative group inline-flex items-center justify-center">
             <svg width={size} height={size} className="transform -rotate-90">
                 <circle
                     cx={size / 2}
@@ -35,6 +35,10 @@ export function CircularProgress({ progress, size = 20, strokeWidth = 2 }: Circu
                     className="transition-all duration-300 ease-in-out"
                 />
             </svg>
+
+            <span className="hidden absolute -top-8 group-hover:flex text-xs font-semibold p-1 dark:text-zinc-200 border bg-zinc-50 dark:bg-zinc-900 rounded-md">
+                {progress} <span className="text-zinc-600 dark:text-zinc-400">%</span>
+            </span>
         </div>
     )
 }
