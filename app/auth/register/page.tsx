@@ -1,4 +1,5 @@
 import { Input } from "@/components/input";
+import { RegisterForm } from "@/components/integrar/registerForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { EyeOff } from "lucide-react";
 import { Metadata } from "next";
@@ -29,31 +30,7 @@ export default function LoginPage() {
                     <p className="text-zinc-400 mt-2">Coloque suas informações abaixo para poder criar sua conta.</p>
                 </div>
 
-                <div className="space-y-4 w-[48%]">
-                    <div className="flex gap-5">
-                        <div className="w-full space-y-2">
-                            <p className="dark:text-zinc-200/80">Primeiro nome</p>
-                            <Input placeholder="Digite aqui" className="pl-4 pr-9 h-10.5 rounded-lg" />
-                        </div>
-                        <div className="w-full space-y-2">
-                            <p className="dark:text-zinc-200/80">Segundo nome</p>
-                            <Input placeholder="Digite aqui" className="pl-4 pr-9 h-10.5 rounded-lg" />
-                        </div>
-                    </div>
-                    <div className="w-full space-y-2">
-                        <p className="dark:text-zinc-200/80">Email</p>
-                        <Input placeholder="Digite aqui" className="pl-4 pr-9 h-10.5 rounded-lg" />
-                    </div>
-                    <div className="w-full space-y-2 mt-1">
-                        <p className="dark:text-zinc-200/80 flex justify-between items-center">Senha</p>
-                        <div className="relative">
-                            <Input placeholder="Digite aqui" className="pl-4 pr-9 h-10.5 rounded-lg" />
-                            <EyeOff className="absolute top-2.5 right-2.5 text-zinc-400 hover:text-zinc-200 duration-200 cursor-pointer" size={20} />
-                        </div>
-                    </div>
-
-                    <button className="py-3 w-full mt-2 bg-green-500 hover:bg-green-600 border-green-700/30 text-zinc-50 dark:bg-green-700 border dark:border-green-950 dark:hover:bg-green-800 duration-200 font-semibold rounded-lg cursor-pointer">Entrar</button>
-                </div>
+                <RegisterForm />
 
                 <div className="gap-2 flex flex-col justify-center items-center w-[48%]">
                     <p className="w-full text-center text-sm dark:text-zinc-200/50 text-zinc-800/90">Ou crie com</p>
