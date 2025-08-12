@@ -1,8 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "FlowTask - Projetos",
-};
+'use client'
 
 import {
   Breadcrumb,
@@ -19,12 +15,21 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import { Button } from "@/components/button";
-import { InfoCardToProjects } from "@/components/integrar/infoCard";
-import { ProjectList } from "@/components/integrar/projectList";
 import ThemeToggle from "@/components/theme-toggle";
 import { KanbanProject } from "@/components/integrar/kanbanProject";
+import { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 
 export default function Page() {
+  const params = useParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isNaN(Number(params.projectID))) {
+      router.push(`/dashboard/project/`);
+    }
+  }, []);
+
   return (
     <SidebarProvider className="">
       <SiderBarDefault />

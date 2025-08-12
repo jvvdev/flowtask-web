@@ -4,23 +4,23 @@ import { RiSearch2Line } from "@remixicon/react";
 import { Button } from "../button";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Input } from "../input";
-import { AlignCenter, Baseline, Bold, CaseSensitive, Italic, LogIn, NotebookPen, Trash2, Underline } from "lucide-react";
+import { AlignCenter, Bold, CaseSensitive, Italic, LogIn, NotebookPen, Trash2, Underline } from "lucide-react";
 import { useState } from "react";
 
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuPortal,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+} from "@/components/ui/context-menu"
 
 const NotesList = [
     {
@@ -193,25 +193,37 @@ export function NotesComponent() {
                         dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700">
                     {
                         NotesList.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => setCurrentNote(item.id)}
-                                className={`flex flex-col justify-start items-start p-2 ${currentNote === item.id ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
-                                <div className="flex items-center justify-between w-full">
-                                    <h3
-                                        className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote === item.id ? 'text-zinc-100' : ''}`}>
-                                        {item.title}
-                                    </h3>
-                                    <h3
-                                        className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
-                                        {item.creator}
-                                    </h3>
-                                </div>
-                                <p
-                                    className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100' : 'text-muted-foreground'}`}>
-                                    {item.content}
-                                </p>
-                            </button>
+                            <div key={item.id}>
+                                <ContextMenu>
+                                    <ContextMenuTrigger className="w-full" onClick={() => setCurrentNote(item.id)}>
+                                        <div
+                                            className={`flex flex-col justify-start items-start p-2 ${currentNote === item.id ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
+                                            <div className="flex items-center justify-between w-full">
+                                                <h3
+                                                    className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote === item.id ? 'text-zinc-100' : ''}`}>
+                                                    {item.title}
+                                                </h3>
+                                                <h3
+                                                    className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                                    {item.creator}
+                                                </h3>
+                                            </div>
+                                            <p
+                                                className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100' : 'text-muted-foreground'}`}>
+                                                {item.content}
+                                            </p>
+                                        </div>
+                                    </ContextMenuTrigger>
+                                    <ContextMenuContent className="p-0 border-0">
+                                        <ContextMenuItem
+                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
+                                    >
+                                        <Trash2 className="size-5 text-red-500"/>
+                                       <p className="text-red-500">Deletar</p>
+                                    </ContextMenuItem>
+                                    </ContextMenuContent>
+                                </ContextMenu>
+                            </div>
                         ))
                     }
                 </div>

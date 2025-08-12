@@ -19,6 +19,7 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
+import { Button } from "@/components/button";
 
 export default function Page() {
   return (
@@ -45,7 +46,18 @@ export default function Page() {
             <UserDropdown />
           </div>
         </header>
-
+        <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
+          {/* Page intro */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
+              <p className="text-sm text-muted-foreground">
+                Aqui está uma visão geral dos seus projetos. Gerencie-os ou adicione novos com facilidade!
+              </p>
+            </div>
+            <Button className="px-3">Adicionar Projeto</Button>
+          </div>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

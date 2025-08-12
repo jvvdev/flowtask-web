@@ -117,33 +117,32 @@ const kanbanList = [
 export function KanbanProject() {
     return (
         <div className="flex items-start gap-4">
-            <div className="w-full bg-zinc-200/50 rounded-xl p-4 space-y-4">
+            <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                 <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                     <div className="flex items-center w-full gap-1.5">
-                        <div className="h-3 w-3 bg-purple-700/80 rounded-full"></div>
+                        <div className="h-3 w-3 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
                         <h1>A fazer</h1>
-                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 text-zinc-800 rounded-full">{kanbanList.filter(task => task.status === "to do").length}</div>
+                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "to do").length}</div>
                     </div>
-                    <div className="w-full h-1 bg-purple-700/80 rounded-full"></div>
+                    <div className="w-full h-1 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
                 </div>
 
                 <div className="flex flex-col items-center gap-3">
                     {
                         kanbanList.filter(task => task.status === "to do").map(task => (
-                            <div key={task.id} className="w-full p-2 bg-zinc-50 rounded-lg">
+                            <div key={task.id} className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
                                 <div className="flex justify-between">
                                     <div className="flex flex-col items-start w-full">
-                                        <span className={`text-sm font-medium p-1 ${task.priority === "high" ? "text-red-500 border border-red-400/10 bg-red-200/40 rounded-sm" : task.priority === "medium" ? "text-yellow-500 border border-yellow-400/10 bg-yellow-200/20 rounded-sm" : "text-green-500 border border-green-400/10 bg-green-200/30 rounded-sm"}`}>
+                                        <span className={`text-sm font-medium p-1 ${task.priority === "high" ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : task.priority === "medium" ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
                                             {
                                                 task.priority == "high" ? "Alta" : task.priority == "medium" ? "Média" : "Baixa"
                                             }
                                         </span>
-                                        <h1 className="text-xl font-semibold">{task.title}</h1>
+                                        <h1 className="text-xl font-semibold mt-1">{task.title}</h1>
                                     </div>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger>
-                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 duration-200 cursor-pointer" size={30} />
-                                        </DropdownMenuTrigger>
+                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
                                         <DropdownMenuContent>
                                             <DropdownMenuLabel className="flex items-center justify-center gap-2">
 
@@ -155,12 +154,12 @@ export function KanbanProject() {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
-                                <p className="text-sm text-muted-foreground mt-1.5">{task.description}</p>
+                                <p className="text-sm text-muted-foreground">{task.description}</p>
                                 <div className="flex items-center justify-between mt-1.5">
                                     <div className="bg-muted flex items-center rounded-full p-0.5">
                                         <div className="flex -space-x-3">
-                                            <p className="ring-muted bg-zinc-200 py-1 px-1.5 rounded-full ring-2">AA</p>
-                                            <p className="ring-muted bg-zinc-200 py-1 px-1.5 rounded-full ring-2">AB</p>
+                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AA</p>
+                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AB</p>
                                         </div>
                                         <Button
                                             variant="secondary"
@@ -181,12 +180,12 @@ export function KanbanProject() {
                 </div>
             </div>
 
-            <div className="w-full bg-zinc-200/50 rounded-xl p-4 space-y-4">
+            <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                 <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                     <div className="flex items-center w-full gap-1.5">
                         <div className="h-3 w-3 bg-yellow-400/80 rounded-full"></div>
                         <h1>Em progresso</h1>
-                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 text-zinc-800 rounded-full">{kanbanList.filter(task => task.status === "in progress").length}</div>
+                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "in progress").length}</div>
                     </div>
                     <div className="w-full h-1 bg-yellow-400/80 rounded-full"></div>
                 </div>
@@ -194,20 +193,19 @@ export function KanbanProject() {
                 <div className="flex flex-col items-center gap-3">
                     {
                         kanbanList.filter(task => task.status === "in progress").map(task => (
-                            <div key={task.id} className="w-full p-2 bg-zinc-50 rounded-lg">
+                            <div key={task.id} className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
                                 <div className="flex justify-between">
                                     <div className="flex flex-col items-start w-full">
-                                        <span className={`text-sm font-medium p-1 ${task.priority === "high" ? "text-red-500 border border-red-400/10 bg-red-200/40 rounded-sm" : task.priority === "medium" ? "text-yellow-500 border border-yellow-400/10 bg-yellow-200/20 rounded-sm" : "text-green-500 border border-green-400/10 bg-green-200/30 rounded-sm"}`}>
+                                        <span className={`text-sm font-medium p-1 ${task.priority === "high" ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : task.priority === "medium" ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
                                             {
                                                 task.priority == "high" ? "Alta" : task.priority == "medium" ? "Média" : "Baixa"
                                             }
                                         </span>
-                                        <h1 className="text-xl font-semibold">{task.title}</h1>
+                                        <h1 className="text-xl font-semibold mt-1">{task.title}</h1>
                                     </div>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger>
-                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 duration-200 cursor-pointer" size={30} />
-                                        </DropdownMenuTrigger>
+                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
                                         <DropdownMenuContent>
                                             <DropdownMenuLabel className="flex items-center justify-center gap-2">
 
@@ -219,12 +217,12 @@ export function KanbanProject() {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
-                                <p className="text-sm text-muted-foreground mt-1.5">{task.description}</p>
+                                <p className="text-sm text-muted-foreground">{task.description}</p>
                                 <div className="flex items-center justify-between mt-1.5">
                                     <div className="bg-muted flex items-center rounded-full p-0.5">
                                         <div className="flex -space-x-3">
-                                            <p className="ring-muted bg-zinc-200 py-1 px-1.5 rounded-full ring-2">AA</p>
-                                            <p className="ring-muted bg-zinc-200 py-1 px-1.5 rounded-full ring-2">AB</p>
+                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AA</p>
+                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AB</p>
                                         </div>
                                         <Button
                                             variant="secondary"
@@ -245,12 +243,12 @@ export function KanbanProject() {
                 </div>
             </div>
 
-            <div className="w-full bg-zinc-200/50 rounded-xl p-4 space-y-4">
+            <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                 <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                     <div className="flex items-center w-full gap-1.5">
                         <div className="h-3 w-3 bg-green-600/80 rounded-full"></div>
                         <h1>Concluído</h1>
-                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 text-zinc-800 rounded-full">{kanbanList.filter(task => task.status === "done").length}</div>
+                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "done").length}</div>
                     </div>
                     <div className="w-full h-1 bg-green-600/80 rounded-full"></div>
                 </div>
@@ -258,18 +256,17 @@ export function KanbanProject() {
                 <div className="flex flex-col items-center gap-3">
                     {
                         kanbanList.filter(task => task.status === "done").map(task => (
-                            <div key={task.id} className="w-full p-2 bg-zinc-50 rounded-lg">
+                            <div key={task.id} className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
                                 <div className="flex justify-between">
                                     <div className="flex flex-col items-start w-full">
-                                        <span className={`text-sm font-medium p-1 text-green-500 border border-green-400/10 bg-green-200/30 rounded-sm`}>
-                                            Pronta
+                                        <span className={`text-sm font-medium p-1 text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm`}>
+                                            Concluído
                                         </span>
-                                        <h1 className="text-xl font-semibold">{task.title}</h1>
+                                        <h1 className="text-xl font-semibold mt-1">{task.title}</h1>
                                     </div>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger>
-                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 duration-200 cursor-pointer" size={30} />
-                                        </DropdownMenuTrigger>
+                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
                                         <DropdownMenuContent>
                                             <DropdownMenuLabel className="flex items-center justify-center gap-2">
 
@@ -281,12 +278,12 @@ export function KanbanProject() {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
-                                <p className="text-sm text-muted-foreground mt-1.5">{task.description}</p>
+                                <p className="text-sm text-muted-foreground">{task.description}</p>
                                 <div className="flex items-center justify-between mt-1.5">
                                     <div className="bg-muted flex items-center rounded-full p-0.5">
                                         <div className="flex -space-x-3">
-                                            <p className="ring-muted bg-zinc-200 py-1 px-1.5 rounded-full ring-2">AA</p>
-                                            <p className="ring-muted bg-zinc-200 py-1 px-1.5 rounded-full ring-2">AB</p>
+                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AA</p>
+                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AB</p>
                                         </div>
                                         <Button
                                             variant="secondary"
