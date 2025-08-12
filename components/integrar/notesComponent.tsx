@@ -4,7 +4,7 @@ import { RiSearch2Line } from "@remixicon/react";
 import { Button } from "../button";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Input } from "../input";
-import { AlignCenter, Baseline, Bold, CaseSensitive, Italic, NotebookPen, Trash2, Underline } from "lucide-react";
+import { AlignCenter, Baseline, Bold, CaseSensitive, Italic, LogIn, NotebookPen, Trash2, Underline } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -26,107 +26,129 @@ const NotesList = [
     {
         id: 1,
         title: "Nota 1",
-        content: "Conteúdo da nota 1"
+        content: "Conteúdo da nota 1",
+        creator: "João Vinícius"
     },
     {
         id: 2,
         title: "Nota 2",
-        content: "Conteúdo da nota 2"
+        content: "Conteúdo da nota 2",
+        creator: "Maria Silva"
     },
     {
         id: 3,
         title: "Nota 3",
-        content: "Conteúdo da nota 3"
+        content: "Conteúdo da nota 3",
+        creator: "Pedro Souza"
     },
     {
         id: 4,
         title: "Nota 4",
-        content: "Conteúdo da nota 4"
+        content: "Conteúdo da nota 4",
+        creator: "Ana Oliveira"
     },
     {
         id: 5,
         title: "Nota 5",
-        content: "Conteúdo da nota 5"
+        content: "Conteúdo da nota 5",
+        creator: "Carlos Pereira"
     },
     {
         id: 6,
         title: "Nota 6",
-        content: "Conteúdo da nota 6"
+        content: "Conteúdo da nota 6",
+        creator: "Maria Oliveira"
     },
     {
         id: 7,
         title: "Nota 7",
-        content: "Conteúdo da nota 7"
+        content: "Conteúdo da nota 7",
+        creator: "Pedro Santos"
     },
     {
         id: 8,
         title: "Nota 8",
-        content: "Conteúdo da nota 8"
+        content: "Conteúdo da nota 8",
+        creator: "Maria Souza"
     },
     {
         id: 9,
         title: "Nota 9",
-        content: "Conteúdo da nota 9"
+        content: "Conteúdo da nota 9",
+        creator: "João Silva"
     },
     {
         id: 10,
         title: "Nota 10",
-        content: "Conteúdo da nota 10"
+        content: "Conteúdo da nota 10",
+        creator: "Ana Silva"
     },
     {
         id: 11,
         title: "Nota 11",
-        content: "Conteúdo da nota 11"
+        content: "Conteúdo da nota 11",
+        creator: "Carlos Silva"
     },
     {
         id: 12,
         title: "Nota 12",
-        content: "Conteúdo da nota 12"
+        content: "Conteúdo da nota 12",
+        creator: "Maria Silva"
     },
     {
         id: 13,
         title: "Nota 13",
-        content: "Conteúdo da nota 13"
+        content: "Conteúdo da nota 13",
+        creator: "Pedro Oliveira"
     },
     {
         id: 14,
         title: "Nota 14",
-        content: "Conteúdo da nota 14"
+        content: "Conteúdo da nota 14",
+        creator: "Ana Oliveira"
     },
     {
         id: 15,
         title: "Nota 15",
-        content: "Conteúdo da nota 15"
+        content: "Conteúdo da nota 15",
+        creator: "Carlos Oliveira"
     },
     {
         id: 16,
         title: "Nota 16",
-        content: "Conteúdo da nota 16"
+        content: "Conteúdo da nota 16",
+        creator: "Maria Oliveira"
     },
     {
         id: 17,
         title: "Nota 17",
-        content: "Conteúdo da nota 17"
+        content: "Conteúdo da nota 17",
+        creator: "Carlos Oliveira"
     },
     {
         id: 18,
         title: "Nota 18",
-        content: "Conteúdo da nota 18"
+        content: "Conteúdo da nota 18",
+        creator: "Maria Oliveira"
     },
     {
         id: 19,
         title: "Nota 19",
-        content: "Conteúdo da nota 19"
+        content: "Conteúdo da nota 19",
+        creator: "João Oliveira"
     },
     {
         id: 20,
         title: "Nota 20",
-        content: "Conteúdo da nota 20"
+        content: "Conteúdo da nota 20",
+        creator: "Ana Oliveira"
     }
 ]
 
 export function NotesComponent() {
     const [currentNote, setCurrentNote] = useState(0)
+    const [fontWeight, setFontWeight] = useState("normal")
+    const [fontType, setFontType] = useState("normal")
 
     return (
         <div className="flex justify-between">
@@ -174,16 +196,19 @@ export function NotesComponent() {
                             <button
                                 key={item.id}
                                 onClick={() => setCurrentNote(item.id)}
-                                className={`flex flex-col justify-start items-start p-2 border ${currentNote === item.id ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md duration-200`}
-                            >
-                                <h3
-                                    className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote === item.id ? 'text-zinc-100' : ''}`}
-                                >
-                                    {item.title}
-                                </h3>
+                                className={`flex flex-col justify-start items-start p-2 ${currentNote === item.id ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
+                                <div className="flex items-center justify-between w-full">
+                                    <h3
+                                        className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote === item.id ? 'text-zinc-100' : ''}`}>
+                                        {item.title}
+                                    </h3>
+                                    <h3
+                                        className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                        {item.creator}
+                                    </h3>
+                                </div>
                                 <p
-                                    className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100' : 'text-muted-foreground'}`}
-                                >
+                                    className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100' : 'text-muted-foreground'}`}>
                                     {item.content}
                                 </p>
                             </button>
@@ -206,24 +231,45 @@ export function NotesComponent() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
                                         <DropdownMenuLabel className="flex items-center justify-center gap-2">
-                                            <Bold className="p-1 rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-zinc-50 duration-200 cursor-pointer" size={34} />
-                                            <Italic className="p-1 rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-zinc-50 duration-200 cursor-pointer" size={34} />
-                                            <Underline className="p-1 rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-zinc-50 duration-200 cursor-pointer" size={34} />
-                                            <p className="px-2 text-2xl rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-zinc-50 duration-200 cursor-pointer line-through">S</p>
+                                            <Bold className={`p-1 rounded-md ${fontWeight == "bold" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer`} size={34} onClick={() => setFontWeight("bold")} />
+                                            <Italic className={`p-1 rounded-md ${fontWeight == "italic" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer`} size={34} onClick={() => setFontWeight("italic")} />
+                                            <Underline className={`p-1 rounded-md ${fontWeight == "underline" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer`} size={34} onClick={() => setFontWeight("underline")} />
+                                            <button className={`px-2 text-2xl rounded-md ${fontWeight == "through" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer line-through`} onClick={() => setFontWeight("through")}>S</button>
                                         </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem>
-                                            <DropdownMenuShortcut>⌘+Shift+C</DropdownMenuShortcut>
-                                            Enable
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            <DropdownMenuShortcut>⌘+Shift+C</DropdownMenuShortcut>
-                                            Disable
-                                        </DropdownMenuItem>
+                                        <div className="flex flex-col space-y-1">
+                                            <button className={`p-1 text-left rounded-sm text-2xl font-semibold ${fontType == "title" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("title")}>
+                                                Título
+                                            </button>
+                                            <button className={`p-1 text-left rounded-sm text-xl font-semibold ${fontType == "header" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("header")}>
+                                                Cabeçalho
+                                            </button>
+                                            <button className={`p-1 text-left rounded-sm text-lg font-semibold ${fontType == "subheader" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("subheader")}>
+                                                Subtítulo
+                                            </button>
+                                            <button className={`p-1 text-left rounded-sm text-base font-semibold ${fontType == "normal" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("normal")}>
+                                                Normal
+                                            </button>
+                                            <button className={`p-1 text-left rounded-sm font-light ${fontType == "thin" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("thin")}>
+                                                Fino
+                                            </button>
+                                        </div>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                                 <div className="flex items-center gap-2">
-                                    <p className="px-2 font-semibold text-zinc-400 duration-200 cursor-pointer">Salvo</p>
+                                    <p className="px-2 font-semibold text-zinc-400 duration-200">Salvo</p>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger>
+                                            <LogIn className="rotate-90 p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuLabel className="flex items-center justify-center font-semibold gap-2">
+                                                Upload de arquivo
+                                            </DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                     <NotebookPen className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
                                 </div>
                             </div>
