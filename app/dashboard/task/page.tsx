@@ -19,10 +19,10 @@ import ThemeToggle from "@/components/theme-toggle";
 
 export default function Page() {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="p-2">
       <SiderBarDefault />
       
-      <SidebarInset className="md:border-l border-zinc-200/10 md:rounded-l-2xl px-4">
+      <SidebarInset className="md:border border-zinc-200/10 md:rounded-2xl px-4">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger className="-ms-4" />

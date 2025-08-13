@@ -1,6 +1,7 @@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { Ellipsis, MessageCircleMore } from "lucide-react";
 import { Button } from "../button";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const kanbanList = [
     {
@@ -115,6 +116,10 @@ const kanbanList = [
 ]
 
 export function KanbanProject() {
+    function DragStart(e:any) {
+        e.preventDefault();
+    }
+
     return (
         <div className="flex items-start gap-4">
             <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
@@ -156,21 +161,12 @@ export function KanbanProject() {
                                 </div>
                                 <p className="text-sm text-muted-foreground">{task.description}</p>
                                 <div className="flex items-center justify-between mt-1.5">
-                                    <div className="bg-muted flex items-center rounded-full p-0.5">
-                                        <div className="flex -space-x-3">
-                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AA</p>
-                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AB</p>
-                                        </div>
-                                        <Button
-                                            variant="secondary"
-                                            className="text-muted-foreground hover:text-foreground flex items-center justify-center rounded-full bg-transparent px-3 text-xs shadow-none hover:bg-transparent"
-                                        >
-                                            +3
-                                        </Button>
+                                    <div className="text-muted-foreground">
+                                        Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
                                     </div>
                                     <div className="flex items-center gap-1 text-muted-foreground">
                                         <MessageCircleMore size={18} />
-                                        <span className="text-sm">{task.comments.length} comentários</span>
+                                        <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{task.comments.length}</span> comentários</p>
                                     </div>
                                 </div>
                             </div>
@@ -219,26 +215,16 @@ export function KanbanProject() {
                                 </div>
                                 <p className="text-sm text-muted-foreground">{task.description}</p>
                                 <div className="flex items-center justify-between mt-1.5">
-                                    <div className="bg-muted flex items-center rounded-full p-0.5">
-                                        <div className="flex -space-x-3">
-                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AA</p>
-                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AB</p>
-                                        </div>
-                                        <Button
-                                            variant="secondary"
-                                            className="text-muted-foreground hover:text-foreground flex items-center justify-center rounded-full bg-transparent px-3 text-xs shadow-none hover:bg-transparent"
-                                        >
-                                            +3
-                                        </Button>
+                                    <div className="text-muted-foreground">
+                                        Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
                                     </div>
                                     <div className="flex items-center gap-1 text-muted-foreground">
                                         <MessageCircleMore size={18} />
-                                        <span className="text-sm">{task.comments.length} comentários</span>
+                                        <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{task.comments.length}</span> comentários</p>
                                     </div>
                                 </div>
                             </div>
                         ))
-
                     }
                 </div>
             </div>
@@ -280,26 +266,16 @@ export function KanbanProject() {
                                 </div>
                                 <p className="text-sm text-muted-foreground">{task.description}</p>
                                 <div className="flex items-center justify-between mt-1.5">
-                                    <div className="bg-muted flex items-center rounded-full p-0.5">
-                                        <div className="flex -space-x-3">
-                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AA</p>
-                                            <p className="ring-muted bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-200/60 py-1 px-1.5 rounded-full ring-2">AB</p>
-                                        </div>
-                                        <Button
-                                            variant="secondary"
-                                            className="text-muted-foreground hover:text-foreground flex items-center justify-center rounded-full bg-transparent px-3 text-xs shadow-none hover:bg-transparent"
-                                        >
-                                            +3
-                                        </Button>
+                                    <div className="text-muted-foreground">
+                                        Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
                                     </div>
                                     <div className="flex items-center gap-1 text-muted-foreground">
                                         <MessageCircleMore size={18} />
-                                        <span className="text-sm">{task.comments.length} comentários</span>
+                                        <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{task.comments.length}</span> comentários</p>
                                     </div>
                                 </div>
                             </div>
                         ))
-
                     }
                 </div>
             </div>
