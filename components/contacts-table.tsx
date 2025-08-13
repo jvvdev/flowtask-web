@@ -65,7 +65,6 @@ import {
   RiErrorWarningLine,
   RiCloseCircleLine,
   RiDeleteBinLine,
-  RiBardLine,
   RiFilter3Line,
   RiSearch2Line,
   RiVerifiedBadgeFill,

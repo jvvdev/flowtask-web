@@ -20,8 +20,7 @@ import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
 import React, {  } from "react";
-import { IAPastActivities, IASection } from "@/components/integrar/chatIA";
-import { Timer } from "lucide-react";
+import { IASection } from "@/components/integrar/chatIA";
 
 export default function ChatAI() {
     

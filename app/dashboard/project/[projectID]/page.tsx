@@ -19,6 +19,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import { KanbanProject } from "@/components/integrar/kanbanProject";
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Page() {
   const params = useParams();
@@ -28,7 +29,7 @@ export default function Page() {
     if (isNaN(Number(params.projectID))) {
       router.push(`/dashboard/project/`);
     }
-  }, []);
+  }, [params.projectID, router]);
 
   return (
     <SidebarProvider className="">
@@ -47,7 +48,7 @@ export default function Page() {
                   <a href="/dashboard" className="text-zinc-400">Dashboard</a>
                 </BreadcrumbItem>
                 <span className="text-zinc-400">/</span>
-                <a href="/dashboard/project" className="text-zinc-400">Projetos</a>
+                <Link href="/dashboard/project" className="text-zinc-400">Projetos</Link>
                 <span className="text-zinc-400">/</span>
                 <BreadcrumbItem>
                   <BreadcrumbPage>Manager System</BreadcrumbPage>

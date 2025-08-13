@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
-import { Ri24HoursFill, RiFullscreenExitLine, RiFullscreenLine, RiLayoutLeft2Line, RiLayoutLeftLine, RiSkipLeftLine } from "@remixicon/react";
+import { RiFullscreenExitLine, RiFullscreenLine } from "@remixicon/react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -24,7 +24,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/tooltip";
-import { Fullscreen } from "lucide-react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

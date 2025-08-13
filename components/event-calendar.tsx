@@ -31,9 +31,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/dropdown-menu";
-import { SidebarTrigger, useSidebar } from "@/components/sidebar";
-import ThemeToggle from "@/components/theme-toggle";
-import Participants from "@/components/participants";
+import { useSidebar } from "@/components/sidebar";
 import { AgendaView } from "./agenda-view";
 import { CalendarDndProvider } from "./calendar-dnd-context";
 import { AgendaDaysToShow, EventHeight, EventGap, WeekCellsHeight } from "./constants";

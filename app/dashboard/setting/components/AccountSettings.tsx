@@ -1,7 +1,6 @@
 'use client'
 
-import { Button } from "@/components/button";
-import { Handshake, Inbox, KeyRound, Pencil, Trash2, User } from "lucide-react";
+import { Inbox, KeyRound, Pencil, Trash2, User } from "lucide-react";
 import { useState } from "react";
 
 export function AccountSettings() {

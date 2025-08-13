@@ -3,7 +3,7 @@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@radix-ui/react-label";
 
-import { MoonIcon, Pencil, SunIcon, User } from "lucide-react";
+import { MoonIcon, SunIcon, User } from "lucide-react";
 import { useId, useState } from "react";
 
 export function Preferences() {

@@ -1,7 +1,5 @@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { Ellipsis, MessageCircleMore } from "lucide-react";
-import { Button } from "../button";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const kanbanList = [
     {
@@ -116,9 +114,6 @@ const kanbanList = [
 ]
 
 export function KanbanProject() {
-    function DragStart(e:any) {
-        e.preventDefault();
-    }
 
     return (
         <div className="flex items-start gap-4">

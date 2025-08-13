@@ -1,7 +1,5 @@
-import { Input } from "@/components/input";
 import { RegisterForm } from "@/components/integrar/registerForm";
 import ThemeToggle from "@/components/theme-toggle";
-import { EyeOff } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
