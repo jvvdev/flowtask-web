@@ -1,11 +1,12 @@
 'use client'
 
 import { RiSearch2Line } from "@remixicon/react";
-import { Button } from "../button";
-import { Popover, PopoverContent, PopoverTrigger } from "../popover";
-import { Input } from "../input";
-import { AlignCenter, Bold, CaseSensitive, Italic, LogIn, NotebookPen, Trash2, Underline, Undo2 } from "lucide-react";
-import { useState } from "react";
+import { Button } from "../../button";
+import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
+import { Input } from "../../input";
+import { AlignCenter, Bold, CaseSensitive, Check, Info, Italic, LogIn, NotebookPen, Pencil, Trash2, Underline, Undo2 } from "lucide-react";
+import React, { useState } from "react";
+import ReactMarkdown, { Components } from "react-markdown";
 
 import {
     DropdownMenu,
@@ -147,8 +148,60 @@ const NotesList = [
 
 export function NotesComponent() {
     const [currentNote, setCurrentNote] = useState(0)
-    const [fontWeight, setFontWeight] = useState("normal")
-    const [fontType, setFontType] = useState("normal")
+    const [isEditing, setIsEditing] = useState(false)
+    const [noteText, setNoteText] = useState("");
+
+    const markdownComponents: Components = {
+        h1: ({ children }) => <h1 className="text-4xl font-bold  my-4">{children}</h1>,
+        h2: ({ children }) => <h2 className="text-3xl font-semibold my-3">{children}</h2>,
+        h3: ({ children }) => <h3 className="text-2xl font-semibold my-2">{children}</h3>,
+        h4: ({ children }) => <h4 className="text-xl font-semibold my-2">{children}</h4>,
+        h5: ({ children }) => <h5 className="text-lg font-semibold my-1">{children}</h5>,
+        h6: ({ children }) => <h6 className="text-base font-semibold my-1">{children}</h6>,
+
+        p: ({ children }) => <p className="text-base my-2">{children}</p>,
+
+        strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+        em: ({ children }) => <em className="italic">{children}</em>,
+        del: ({ children }) => <del className="line-through">{children}</del>,
+
+        ul: ({ children }) => <ul className="list-disc pl-5 my-2">{children}</ul>,
+        ol: ({ children }) => <ol className="list-decimal pl-5 my-2">{children}</ol>,
+        li: ({ children }) => <li className="my-1">{children}</li>,
+
+        a: ({ href, children }) => (
+            <a
+                href={href}
+                className="text-blue-600 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {children}
+            </a>
+        ),
+
+        code: ({ className, children }) => (
+            <code className={`bg-gray-100 text-black px-1 py-0.5 rounded ${className || ""}`}>
+                {children}
+            </code>
+        ),
+        pre: ({ children }) => (
+            <pre className="bg-gray-200 text-black p-3 rounded overflow-x-auto my-2">{children}</pre>
+        ),
+
+        blockquote: ({ children }) => (
+            <blockquote className="border-l-4 border-gray-400 pl-4 italic text-gray-700 my-2">{children}</blockquote>
+        ),
+
+        img: ({ src, alt }) => <img src={src} alt={alt} className="rounded-md max-w-full my-2" />,
+
+        table: ({ children }) => <table className="table-auto border-collapse border border-gray-400 my-2">{children}</table>,
+        thead: ({ children }) => <thead className="bg-gray-200">{children}</thead>,
+        tbody: ({ children }) => <tbody>{children}</tbody>,
+        tr: ({ children }) => <tr className="border-b border-gray-300">{children}</tr>,
+        th: ({ children }) => <th className="px-2 py-1 text-left bg-gray-200">{children}</th>,
+        td: ({ children }) => <td className="px-2 py-1 text-gray-800">{children}</td>,
+    };
 
     return (
         <div className="flex justify-between">
@@ -195,7 +248,7 @@ export function NotesComponent() {
                         NotesList.map((item) => (
                             <div key={item.id}>
                                 <ContextMenu>
-                                    <ContextMenuTrigger className="w-full" onClick={() => setCurrentNote(item.id)}>
+                                    <ContextMenuTrigger className="w-full" onClick={() => {setCurrentNote(item.id), setNoteText("")}}>
                                         <div
                                             className={`flex flex-col justify-start items-start p-2 ${currentNote === item.id ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
                                             <div className="flex items-center justify-between w-full">
@@ -234,13 +287,13 @@ export function NotesComponent() {
                     currentNote == 0 ?
                         <div className="hidden md:flex w-full h-full justify-center py-60">
                             <h2 className="text-xl font-semibold">Selecione um relatório para visualizar</h2>
-                        </div> : <div className="md:pl-3 py-0.5">
+                        </div> : <div className="md:pl-3 py-0.5 h-full pb-10">
                             <div className="flex justify-between items-center w-full">
                                 <div className="flex">
-                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote(0)}/>
+                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote(0)} />
                                     <Trash2 className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
                                 </div>
-                                <DropdownMenu>
+                                {/* <DropdownMenu>
                                     <DropdownMenuTrigger>
                                         <CaseSensitive className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
                                     </DropdownMenuTrigger>
@@ -270,10 +323,10 @@ export function NotesComponent() {
                                             </button>
                                         </div>
                                     </DropdownMenuContent>
-                                </DropdownMenu>
+                                </DropdownMenu> */}
                                 <div className="flex items-center gap-2">
                                     <p className="px-2 font-semibold text-zinc-400 duration-200">Salvo</p>
-                                    <DropdownMenu>
+                                    {/* <DropdownMenu>
                                         <DropdownMenuTrigger>
                                             <LogIn className="rotate-90 p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
                                         </DropdownMenuTrigger>
@@ -284,9 +337,50 @@ export function NotesComponent() {
                                             <DropdownMenuSeparator />
 
                                         </DropdownMenuContent>
-                                    </DropdownMenu>
-                                    <NotebookPen className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
+                                    </DropdownMenu> */}
+                                    {
+                                        !isEditing ? <Pencil className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setIsEditing(true)} /> :
+                                            <div className="flex gap-2">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger>
+                                                        <Info className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent className="w-72 p-2">
+                                                        <DropdownMenuLabel className="flex items-center justify-center font-semibold gap-2">
+                                                            Ajuda
+                                                        </DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+
+                                                        <div className="text-sm space-y-2">
+                                                            <p className="flex flex-col"><strong># Cabeçalhos:</strong> <span className="text-2xl"><strong>#</strong> Título 1</span><span className="text-xl"><strong>##</strong> Título 2</span><span className="text-lg"><strong>###</strong> Título 3</span></p>
+                                                            <p className="flex flex-col"><strong>Ênfase:</strong> <span>*<span className="italic">itálico</span>*</span> <span>**<strong>negrito</strong>**</span> <span>~~<span className="line-through">tachado</span>~~</span></p>
+                                                            <p className="flex flex-col"><strong>Listas:</strong> - item <span>1. item</span></p>
+                                                            <p className="flex flex-col"><strong>Links:</strong> [texto] <span>(url)</span></p>
+                                                            <p className="flex flex-col"><strong>Código:</strong> `inline` ou ```bloco```</p>
+                                                            <p className="flex flex-col"><strong>Citações:</strong> &gt; texto</p>
+                                                            <p className="flex flex-col"><strong>Linhas:</strong> --- ou ***</p>
+                                                            <p className="flex flex-col"><strong>Checklists:</strong> - [ ] não feito, - [x] feito</p>
+                                                        </div>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setIsEditing(false)} />
+                                            </div>
+                                    }
                                 </div>
+                            </div>
+                            <div className="flex gap-4 h-full">
+                                {
+                                    isEditing ? <textarea
+                                        className="w-full h-full p-2 outline-none placeholder:text-2xl"
+                                        placeholder="Digite aqui..."
+                                        value={noteText}
+                                        onChange={(e) => setNoteText(e.target.value)}
+                                    /> : <div className="w-full h-full p-2 overflow-auto">
+                                        <ReactMarkdown components={markdownComponents} >
+                                            {noteText === "" ? "Nenhuma nota salva, clique no icone de lápis para editar." : noteText}
+                                        </ReactMarkdown>
+                                    </div>
+                                }
                             </div>
                         </div>
                 }

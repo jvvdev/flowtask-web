@@ -20,7 +20,7 @@ import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "@/components/button";
-import { NotesComponent } from "@/components/integrar/notesComponent";
+import { NotesComponent } from "@/components/integrar/notes/notesComponent";
 
 export default function Notes() {
   return (
