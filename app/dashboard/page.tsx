@@ -19,13 +19,18 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
-import { Button } from "@/components/button";
+import { InfoCardToTasks } from "@/app/dashboard/components/infoCardTask";
+import { ListProductivity } from "./components/listProductivity";
+import { ListLogs } from "./components/listLogs";
+import { ChartOverHeat } from "./components/chartOverHeat";
+import { ShortCutsWidget } from "./components/shortCuts";
+import { MemberOverHeat } from "./components/memberOverHeat";
 
 export default function Page() {
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />
-      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 lg:px-8 md:rounded-2xl">
+      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 md:rounded-2xl">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger className="-ms-4" />
@@ -46,16 +51,30 @@ export default function Page() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
+        <div className="flex flex-col gap-4 lg:gap-6 py-4 lg:py-6">
           {/* Page intro */}
           <div className="flex items-center justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
               <p className="text-sm text-muted-foreground">
-                Aqui está uma visão geral dos seus projetos. Gerencie-os ou adicione novos com facilidade!
+                Aqui está o panorama da sua empresa. Acompanhe indicadores, organize processos e mantenha tudo sob controle de forma simples e eficiente.
               </p>
             </div>
-            <Button className="px-3">Adicionar Projeto</Button>
+          </div>
+          <div className="w-full flex gap-4">
+            <div className="w-[70%] h-full">
+              <InfoCardToTasks />
+
+              <div className="flex flex-col gap-4 pt-4 w-full">
+                <div className="flex justify-between gap-4 h-[48%]">
+                  <ShortCutsWidget />
+                  <MemberOverHeat />
+                  <ChartOverHeat />
+                </div>
+                <ListLogs />
+              </div>
+            </div>
+            <ListProductivity />
           </div>
         </div>
       </SidebarInset>

@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { RiCheckLine } from "@remixicon/react";
 import { useCalendarContext } from "@/components/calendar-context";
-import { etiquettes } from "@/components/big-calendar";
+import { etiquettes } from "@/components/integrar/big-calendar";
 
 import { NavUser } from "@/components/nav-user";
 import {

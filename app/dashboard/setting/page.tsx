@@ -47,9 +47,6 @@ export default function Settings() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="flex gap-3 ml-auto">
-            <ThemeToggle />
-          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
 
@@ -63,7 +60,7 @@ export default function Settings() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 p-2 mt-5 bg-zinc-200/70 border rounded-lg">
+              <div className="flex items-center gap-3 p-2 mt-5 bg-zinc-200/70 dark:bg-zinc-800/70 dark:border-zinc-200/5 dark:text-zinc-50/90 border rounded-lg">
                 <Avatar className="size-14">
                   <AvatarImage
                     src="https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/user_sam4wh.png"
@@ -80,16 +77,16 @@ export default function Settings() {
                 </div>
               </div>
 
-              <button onClick={() => setCurrentTab(1)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-lg border border-b-0 ${currentTab === 1 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700'} cursor-pointer duration-200`}>
+              <button onClick={() => setCurrentTab(1)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-lg border border-b-0 ${currentTab === 1 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
                 <Handshake className="p-1.5 bg-green-600/70 text-zinc-50 rounded-md" size={32} />
                 <p className="text-md font-semibold">Assinaturas</p>
               </button>
 
-              <button onClick={() => setCurrentTab(2)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-t-lg border border-b-0 ${currentTab === 2 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700'} cursor-pointer duration-200`}>
+              <button onClick={() => setCurrentTab(2)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-t-lg border border-b-0 ${currentTab === 2 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
                 <UserCog className="p-1.5 bg-zinc-500/70 text-zinc-50 rounded-md" size={32} />
                 <p className="text-md font-semibold">Configurações da conta</p>
               </button>
-              <button onClick={() => setCurrentTab(3)} className={`w-full p-2 flex items-center gap-2 rounded-b-lg border ${currentTab === 3 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700'} cursor-pointer duration-200`}>
+              <button onClick={() => setCurrentTab(3)} className={`w-full p-2 flex items-center gap-2 rounded-b-lg border ${currentTab === 3 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
                 <ALargeSmall className="p-1.5 bg-zinc-500/70 text-zinc-50 rounded-md" size={32} />
                 <p className="text-md font-semibold">Preferências</p>
               </button>

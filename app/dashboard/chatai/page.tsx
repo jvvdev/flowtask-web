@@ -59,7 +59,7 @@ export default function ChatAI() {
                     </div>
                 </header>
 
-                <div className="w-full h-full flex flex-col items-center py-50">
+                <div className="w-full h-full">
                     <IASection />
                 </div>
             </SidebarInset>

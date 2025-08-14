@@ -3,8 +3,8 @@
 import { useState, useMemo } from "react";
 import { addDays, setHours, setMinutes, getDay } from "date-fns";
 import { useCalendarContext } from "@/components/calendar-context";
-import { EventCalendar } from "./event-calendar";
-import { EventColor, CalendarEvent } from "./types";
+import { EventCalendar } from "../event-calendar";
+import { EventColor, CalendarEvent } from "../types";
 
 // Etiquettes data for calendar filtering
 export const etiquettes = [

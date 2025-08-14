@@ -19,7 +19,7 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import { Button } from "@/components/button";
-import { InfoCardToProjects } from "@/components/integrar/infoCard";
+import { InfoCardToProjects } from "@/components/integrar/infoCardProject";
 import { ProjectList } from "@/components/integrar/projectList";
 import ThemeToggle from "@/components/theme-toggle";
 

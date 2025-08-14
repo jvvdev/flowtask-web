@@ -13,7 +13,7 @@ import {
 import { Separator } from "@/components/separator";
 import UserDropdown from "@/components/user-dropdown";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/sidebar";
-import BigCalendar from "@/components/big-calendar";
+import BigCalendar from "@/components/integrar/big-calendar";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
 
