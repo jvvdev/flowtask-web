@@ -8,7 +8,7 @@ export function RegisterForm() {
     const [hidePassword, setHidePassword] = useState(false)
 
     return (
-        <div className="space-y-4 w-[48%]">
+        <div className="space-y-4 w-full">
             <div className="flex gap-5">
                 <div className="w-full space-y-2">
                     <p className="dark:text-zinc-200/80">Primeiro nome</p>
