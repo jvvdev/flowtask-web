@@ -15,7 +15,7 @@ import {
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
-import { ALargeSmall, Handshake, UserCog } from "lucide-react";
+import { ALargeSmall, Handshake, Undo2, UserCog } from "lucide-react";
 import { useState } from "react";
 import Subscriptions from "./components/Subscriptions";
 import { AccountSettings } from "./components/AccountSettings";
@@ -52,7 +52,7 @@ export default function Settings() {
 
           <div className="flex justify-betweenh-full w-full gap-4">
 
-            <div className="w-[25%]">
+            <div className={`${currentTab === 0 ? "w-full" : "hidden md:block"} md:w-[40%] xl:w-[25%]`}>
               <div className="space-y-1">
                 <h1 className="text-3xl font-semibold">Configurações</h1>
                 <p className="text-sm text-muted-foreground">
@@ -92,11 +92,13 @@ export default function Settings() {
               </button>
             </div>
 
-            <div className="w-[75%] border-l pl-4">
+            <div className={`${currentTab === 0 ? "hidden" : "block"} w-full md:w-[60%] lg:w-[75%] md:border-l md:pl-4`}>
               {currentTab === 1 && <Subscriptions />}
               {currentTab === 2 && <AccountSettings />}
               {currentTab === 3 && <Preferences />}
             </div>
+
+            <Undo2 className={`${currentTab === 0 ? "hidden" : "block md:hidden"} absolute left-4 top-22`} onClick={() => setCurrentTab(0)}/>
           </div>
         </div>
       </SidebarInset>

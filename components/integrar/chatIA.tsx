@@ -58,7 +58,7 @@ export function IASection() {
                         Como posso te ajudar hoje?
                     </h1>
                 </div> :
-                    <div className="flex flex-col justify-end w-[50%] h-full relative">
+                    <div className="flex flex-col justify-end w-90 sm:w-120 lg:w-[50%] h-full relative">
                         <div className="absolute right-0 flex p-2 w-fit rounded-md border dark:bg-zinc-800/30 dark:border-zinc-200/5 dark:text-zinc-50/90">
                             <p>{message}</p>
                         </div>
@@ -66,7 +66,7 @@ export function IASection() {
             }
 
             <div className={`w-full flex flex-col justify-center items-center`}>
-                <div className={`${isChatting ? "w-[50%]" : "w-[40%]"} flex flex-col mt-6 p-2 bg-zinc-50 dark:bg-zinc-800/30 border ${onFocus ? "rounded-t-xl" : "rounded-xl"} duration-100`}>
+                <div className={`${isChatting ? "w-90 sm:w-120 lg:w-[50%]" : "w-100 lg:w-[40%]"} flex flex-col mt-6 p-2 bg-zinc-50 dark:bg-zinc-800/30 border ${onFocus ? "rounded-t-xl" : "rounded-xl"} duration-100`}>
                     <textarea
                         ref={textareaRef}
                         className="p-2 outline-none w-full resize-none overflow-auto"
@@ -123,7 +123,7 @@ export function IASection() {
                 </div>
                 {
                     onFocus ?
-                        <div className={`${isChatting ? "w-[50%]" : "w-[40%]"} p-2 bg-zinc-50 dark:bg-zinc-800/30 border border-t-0 rounded-b-xl`}>
+                        <div className={`${isChatting ? "w-90 sm:w-120 lg:w-[50%]" : "w-100 lg:w-[40%]"} p-2 bg-zinc-50 dark:bg-zinc-800/30 border border-t-0 rounded-b-xl`}>
                             <p className="text-zinc-400 text-sm">Aguardando você digitar uma mensagem...</p>
                         </div> : ""
                 }

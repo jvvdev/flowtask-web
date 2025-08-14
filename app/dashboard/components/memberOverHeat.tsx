@@ -22,11 +22,11 @@ const memberOverHeat = [
 
 export function MemberOverHeat() {
     return (
-        <div className="p-4 space-y-2 w-[32%] h-62 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
+        <div className="p-4 space-y-2 w-full h-62 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
             <div>
-                <h2 className="text-2xl font-semibold">Membros com sobrecarga</h2>
+                <h2 className="text-xl font-semibold">Membros com sobrecarga</h2>
             </div>
-            <div className="overflow-y-auto max-h-[320px] pr-1
+            <div className="overflow-auto min-w-[140px] max-h-[320px] pr-1 
             [&::-webkit-scrollbar]:w-1.5
                         [&::-webkit-scrollbar-track]:rounded-md
                         [&::-webkit-scrollbar-thumb]:rounded-md
@@ -35,14 +35,14 @@ export function MemberOverHeat() {
                         [&::-webkit-scrollbar-thumb]:bg-zinc-400
                         dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700"
             >
-                <div className="flex justify-between px-2 py-1 bg-sidebar border border-border rounded-lg mb-2">
+                <div className="w-full flex justify-between px-2 py-1 bg-sidebar border border-border rounded-lg mb-2">
                     <p className="w-full font-semibold flex items-center gap-1"><User size={16} />Nome</p>
                     <p className="w-[60%] font-semibold flex items-center gap-1"><Asterisk size={16} />Sobrecarga</p>
                 </div>
                 {
                     memberOverHeat.map(member => (
-                        <div key={member.id} className="flex justify-between py-1 px-2">
-                            <span className="w-full">{member.name}</span>
+                        <div key={member.id} className="min-w-[140px] w-full flex justify-between py-1 px-2 border-b hover:bg-muted">
+                            <span className="w-full font-bold">{member.name}</span>
                             <p className="w-[60%] font-semibold">{member.OverLoad} <span className="font-normal">Tarefas</span></p>
                         </div>
                     ))

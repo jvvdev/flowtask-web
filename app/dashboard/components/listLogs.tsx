@@ -40,7 +40,7 @@ export function ListLogs() {
         <div className="p-4 w-full space-y-2 h-82 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-2xl font-semibold">Atividades Recentes</h2>
+                    <h2 className="text-xl font-semibold">Atividades Recentes</h2>
                     <p className="text-muted-foreground text-md">Visualize aqui as atividades recentes.</p>
                 </div>
             </div>
@@ -51,7 +51,7 @@ export function ListLogs() {
                         <div className="flex justify-center items-center h-full">
                             <LoaderCircle className="animate-spin" />
                         </div>
-                        : <Table className="table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+                        : <Table className="table-fixed min-w-140 border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
                                     <TableHead className="relative h-9 w-[80%] select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">

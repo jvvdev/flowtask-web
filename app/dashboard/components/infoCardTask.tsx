@@ -1,5 +1,5 @@
 import { RiArrowRightUpLine } from "@remixicon/react";
-import { ClipboardClock, Container, File, FileCheck, FileJson, TimerReset } from "lucide-react";
+import { ClipboardClock, Container, File, FileCheck, FileJson, TimerReset, Users } from "lucide-react";
 
 const List = [
     {
@@ -14,14 +14,14 @@ const List = [
     },
     {
         id: 3,
-        Name: "Media de horário",
+        Name: "Membros",
         Number: 40
     },
 ]
 
 export function InfoCardToTasks() {
     return (
-        <div className="grid grid-cols-2 w-full* h-24 min-[1200px]:grid-cols-3 border border-border rounded-lg bg-gradient-to-br from-sidebar/60 to-sidebar">
+        <div className="grid w-full lg:grid-cols-2 2xl:grid-cols-3 border border-border rounded-lg bg-gradient-to-br from-sidebar/60 to-sidebar">
             {
                 List.map((item) => (
                     <div key={item.id} className="relative p-4 lg:p-5 group before:absolute before:inset-y-8 before:right-0 before:w-px before:bg-gradient-to-b before:from-input/30 before:via-input before:to-input/30 last:before:hidden">
@@ -38,8 +38,8 @@ export function InfoCardToTasks() {
                                     <Container /> :
                                     item.Name == "Tarefas pendentes" ? 
                                     <ClipboardClock /> : 
-                                    item.Name == "Media de horário" ?
-                                    <TimerReset /> : ""
+                                    item.Name == "Membros" ?
+                                    <Users /> : ""
                                 }
                             </div>
                             {/* Content */}
@@ -49,7 +49,7 @@ export function InfoCardToTasks() {
                                 >
                                     {item.Name}
                                 </h1>
-                                <div className="text-2xl font-semibold mb-2">{item.Number} {item.Name == "Media de horário" ? <span className="text-muted-foreground">horas</span> : ""}</div>
+                                <div className="text-2xl font-semibold mb-2">{item.Number}</div>
                             </div>
                         </div>
                     </div>

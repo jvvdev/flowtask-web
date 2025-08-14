@@ -43,14 +43,14 @@ export function ListProductivityClients() {
                         <LoaderCircle className="animate-spin" />
                     </div>
                     :
-                    <Table className="table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+                    <Table className="table-fixed border-separate min-w-60 border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
                                 <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                    <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
+                                    <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500 overflow-hidden whitespace-nowrap text-ellipsis"><ALargeSmall size={18} /> Nome</p>
                                 </TableHead>
                                 <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                    <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><Package size={18} /> Projetos concluídos</p>
+                                    <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500 overflow-hidden whitespace-nowrap text-ellipsis"><Package size={18} /> Projetos concluídos</p>
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -62,10 +62,10 @@ export function ListProductivityClients() {
                                         key={item.id}
                                         className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
                                     >
-                                        <TableCell className="font-semibold">
+                                        <TableCell className="font-semibold overflow-hidden whitespace-nowrap text-ellipsis">
                                             {item.name}
                                         </TableCell>
-                                        <TableCell className="font-semibold">
+                                        <TableCell className="font-semibold overflow-hidden whitespace-nowrap text-ellipsis">
                                             {item.projectCompleted} <span className="font-medium text-muted-foreground">/ {item.totalTasks}</span>
                                         </TableCell>
                                     </TableRow>

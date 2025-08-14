@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from "@/components/button";
-import { ListProductivityClients } from "@/components/integrar/productivityLists/clientList";
 import { ListProductivityMembers } from "@/components/integrar/productivityLists/memberList";
 import { ListProductivityProjects } from "@/components/integrar/productivityLists/projectList";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover";
@@ -12,11 +11,11 @@ export function ListProductivity() {
     const [filter, setFilter] = useState("Membro");
 
     return (
-        <div className="p-4 w-[30%] space-y-2 h-full border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
+        <div className="p-4 w-full sm:w-[30%] space-y-2 h-full border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-2xl font-semibold">Produtividade</h2>
-                    <p className="text-muted-foreground text-lg">Mostrando por: <span className="font-semibold">{filter}</span></p>
+                    <h2 className="text-xl font-semibold">Produtividade</h2>
+                    <p className="text-muted-foreground">Mostrando por: <span className="font-semibold">{filter}</span></p>
                 </div>
 
                 <Popover>
@@ -33,7 +32,6 @@ export function ListProductivity() {
                     <PopoverContent className="w-auto min-w-36 p-0" align="end">
                         <div className="flex flex-col">
                             <button className={`text-sm font-medium hover:bg-muted p-2 ${filter === "Membro" ? "bg-muted font-semibold" : "cursor-pointer"}`} onClick={() => setFilter("Membro")}>Membro</button>
-                            <button className={`text-sm font-medium hover:bg-muted p-2 ${filter === "Cliente" ? "bg-muted font-semibold" : "cursor-pointer"}`} onClick={() => setFilter("Cliente")}>Cliente</button>
                             <button className={`text-sm font-medium hover:bg-muted p-2 ${filter === "Projeto" ? "bg-muted font-semibold" : "cursor-pointer"}`} onClick={() => setFilter("Projeto")}>Projeto</button>
                         </div>
                     </PopoverContent>
@@ -42,8 +40,7 @@ export function ListProductivity() {
 
             {
                 filter === "Membro" ?
-                    <ListProductivityMembers /> : filter == "Cliente" ?
-                    <ListProductivityClients /> : filter == "Projeto" ?
+                    <ListProductivityMembers /> : filter == "Projeto" ?
                     <ListProductivityProjects /> : null
             }
         </div>

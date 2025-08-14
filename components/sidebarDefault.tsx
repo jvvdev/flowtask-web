@@ -59,7 +59,7 @@ export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sideba
                 ],
             },
             {
-                title: "Other",
+                title: "Outros",
                 url: "#",
                 items: [
                     { title: "Configurações", url: "/dashboard/setting", icon: RiSettings3Line },

@@ -4,7 +4,7 @@ import { RiSearch2Line } from "@remixicon/react";
 import { Button } from "../button";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Input } from "../input";
-import { AlignCenter, Bold, CaseSensitive, Italic, LogIn, NotebookPen, Trash2, Underline } from "lucide-react";
+import { AlignCenter, Bold, CaseSensitive, Italic, LogIn, NotebookPen, Trash2, Underline, Undo2 } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -152,12 +152,12 @@ export function NotesComponent() {
 
     return (
         <div className="flex justify-between">
-            <div className="w-[20%]">
+            <div className={`w-full md:max-w-80 ${currentNote === 0 ? 'block' : 'hidden md:block'}`}>
                 <div className="flex justify-between items-center gap-2">
                     <div className="relative w-full">
                         <Input
                             placeholder="Pesquisar pelo nome"
-                            className="peer min-w-60 ps-9 dark:bg-background dark:bg-gradient-to-br dark:from-accent/60 dark:to-accent"
+                            className="peer min-w-40 ps-9 dark:bg-background dark:bg-gradient-to-br dark:from-accent/60 dark:to-accent"
                         />
                         <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
                             <RiSearch2Line size={20} aria-hidden="true" />
@@ -216,11 +216,11 @@ export function NotesComponent() {
                                     </ContextMenuTrigger>
                                     <ContextMenuContent className="p-0 border-0">
                                         <ContextMenuItem
-                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
-                                    >
-                                        <Trash2 className="size-5 text-red-500"/>
-                                       <p className="text-red-500">Deletar</p>
-                                    </ContextMenuItem>
+                                            className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
+                                        >
+                                            <Trash2 className="size-5 text-red-500" />
+                                            <p className="text-red-500">Deletar</p>
+                                        </ContextMenuItem>
                                     </ContextMenuContent>
                                 </ContextMenu>
                             </div>
@@ -229,14 +229,17 @@ export function NotesComponent() {
                 </div>
             </div>
 
-            <div className="w-[80%]">
+            <div className={`md:w-[80%] ${currentNote !== 0 ? 'w-full' : ''} h-full`}>
                 {
                     currentNote == 0 ?
-                        <div className="flex w-full h-full justify-center py-60">
+                        <div className="hidden md:flex w-full h-full justify-center py-60">
                             <h2 className="text-xl font-semibold">Selecione um relatório para visualizar</h2>
-                        </div> : <div className="pl-3 py-0.5">
+                        </div> : <div className="md:pl-3 py-0.5">
                             <div className="flex justify-between items-center w-full">
-                                <Trash2 className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
+                                <div className="flex">
+                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote(0)}/>
+                                    <Trash2 className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
+                                </div>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger>
                                         <CaseSensitive className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />

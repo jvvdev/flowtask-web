@@ -69,13 +69,13 @@ export function ProjectList() {
     };
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-4">
+        <div className="w-full">
+            <div className="flex justify-between items-center mb-4 gap-2">
                 <div className="relative">
                     <Input
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Pesquisar pelo nome"
-                        className="peer min-w-60 ps-9 bg-background bg-gradient-to-br from-accent/60 to-accent"
+                        className="peer min-w-40 ps-9 bg-background bg-gradient-to-br from-accent/60 to-accent"
                     />
                     <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
                         <RiSearch2Line size={20} aria-hidden="true" />
@@ -91,9 +91,9 @@ export function ProjectList() {
                                         className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
                                     >
                                         <ArchiveRestore className="size-5" />
-                                        Abrir projeto
+                                        <span className="hidden sm:block">Abrir projeto</span>
                                     </AlertDialogTrigger>
-                                    <AlertDialogContent className="w-[20%]">
+                                    <AlertDialogContent>
                                         <AlertDialogHeader>
                                             <AlertDialogTitle>Confirmar</AlertDialogTitle>
                                             <AlertDialogDescription>
@@ -113,7 +113,7 @@ export function ProjectList() {
                                     }}
                                 >
                                     <Trash2 className="size-5" />
-                                    Deletar
+                                    <span className="hidden sm:block">Deletar</span>
                                 </Button>
                             </div>
                         )
@@ -127,7 +127,7 @@ export function ProjectList() {
                                     size={20}
                                     aria-hidden="true"
                                 />
-                                Filtrar
+                                <span className="hidden sm:block">Filtrar</span>
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto min-w-36 p-3" align="end">
@@ -144,116 +144,118 @@ export function ProjectList() {
                 </div>
             </div>
 
-            <Table className="table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
-                <TableHeader>
-                    <TableRow className="hover:bg-transparent">
-                        <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
-                        </TableHead>
-                        <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ChartPie size={18} /> Status</p>
-                        </TableHead>
-                        <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><TriangleAlert size={18} /> Prioridade</p>
-                        </TableHead>
-                        <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><LoaderCircle size={18} /> Progresso</p>
-                        </TableHead>
-                        <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><CalendarCheck2 size={18} /> Data de entrega</p>
-                        </TableHead>
-                        <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><UserCog size={18} /> Responsável</p>
-                        </TableHead>
-                    </TableRow>
-                </TableHeader>
+            <div className="overflow-x-auto">
+                <Table className="min-w-[1400px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+                    <TableHeader>
+                        <TableRow className="hover:bg-transparent">
+                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
+                            </TableHead>
+                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ChartPie size={18} /> Status</p>
+                            </TableHead>
+                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><TriangleAlert size={18} /> Prioridade</p>
+                            </TableHead>
+                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><LoaderCircle size={18} /> Progresso</p>
+                            </TableHead>
+                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><CalendarCheck2 size={18} /> Data de entrega</p>
+                            </TableHead>
+                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><UserCog size={18} /> Responsável</p>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
 
-                <TableBody>
-                    {isLoading ? "" : data.length > 0 ? (
-                        data.filter((item) => item.Name.toLowerCase().includes(searchQuery.toLowerCase())).map((item) => (
-                            <TableRow
-                                key={item.id}
-                                className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
-                            >
-                                <TableCell className="flex gap-2">
-                                    <button className={`border rounded-sm ${selectedProject === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5"}`} onClick={() => { if (selectedProject === item.id) setSelectedProject(0); else setSelectedProject(item.id); }}><Check className={`${selectedProject === item.id ? "block" : "hidden"}`} size={12} /></button>
-                                    <p className="font-semibold">{item.Name}</p>
-                                </TableCell>
-                                <TableCell>
-                                    {item.Status === "Não iniciado" ? (
-                                        <div className="flex items-center gap-2 relative">
-                                            <div className="relative flex h-2 w-2">
-                                                <div className="absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75 animate-ping"></div>
-                                                <div className="relative inline-flex rounded-full h-2 w-2 bg-gray-400"></div>
+                    <TableBody>
+                        {isLoading ? "" : data.length > 0 ? (
+                            data.filter((item) => item.Name.toLowerCase().includes(searchQuery.toLowerCase())).map((item) => (
+                                <TableRow
+                                    key={item.id}
+                                    className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
+                                >
+                                    <TableCell className="flex gap-2">
+                                        <button className={`border rounded-sm ${selectedProject === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5"}`} onClick={() => { if (selectedProject === item.id) setSelectedProject(0); else setSelectedProject(item.id); }}><Check className={`${selectedProject === item.id ? "block" : "hidden"}`} size={12} /></button>
+                                        <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.Name}</p>
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.Status === "Não iniciado" ? (
+                                            <div className="flex items-center gap-2 relative">
+                                                <div className="relative flex h-2 w-2">
+                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75 animate-ping"></div>
+                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-gray-400"></div>
+                                                </div>
+                                                <span className="opacity-80 overflow-hidden whitespace-nowrap text-ellipsis">Não iniciado</span>
                                             </div>
-                                            <span className="opacity-80">Não iniciado</span>
-                                        </div>
-                                    ) : item.Status === "Em andamento" ? (
-                                        <div className="flex items-center gap-2 relative">
-                                            <div className="relative flex h-2 w-2">
-                                                <div className="absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75 animate-ping"></div>
-                                                <div className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></div>
+                                        ) : item.Status === "Em andamento" ? (
+                                            <div className="flex items-center gap-2 relative">
+                                                <div className="relative flex h-2 w-2">
+                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75 animate-ping"></div>
+                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></div>
+                                                </div>
+                                                <span className="text-purple-400 overflow-hidden whitespace-nowrap text-ellipsis">Em progresso</span>
                                             </div>
-                                            <span className="text-purple-400">Em progresso</span>
-                                        </div>
-                                    ) : item.Status === "Finalizado" ? (
-                                        <div className="flex items-center gap-2 relative">
-                                            <div className="relative flex h-2 w-2">
-                                                <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
-                                                <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                                        ) : item.Status === "Finalizado" ? (
+                                            <div className="flex items-center gap-2 relative">
+                                                <div className="relative flex h-2 w-2">
+                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
+                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                                                </div>
+                                                <span className="text-green-400 overflow-hidden whitespace-nowrap text-ellipsis">Finalizado</span>
                                             </div>
-                                            <span className="text-green-400">Finalizado</span>
-                                        </div>
-                                    ) : (
-                                        <span>{item.Status}</span>
-                                    )}
-                                </TableCell>
-                                <TableCell>
-                                    {item.Priority === "Alta" ? (
-                                        <div className="flex items-center gap-2 relative">
-                                            <div className="relative flex h-2 w-2">
-                                                <div className="absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75 animate-ping"></div>
-                                                <div className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></div>
+                                        ) : (
+                                            <span className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Status}</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.Priority === "Alta" ? (
+                                            <div className="flex items-center gap-2 relative">
+                                                <div className="relative flex h-2 w-2">
+                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75 animate-ping"></div>
+                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></div>
+                                                </div>
+                                                <span className="text-red-500 overflow-hidden whitespace-nowrap text-ellipsis">Alta</span>
                                             </div>
-                                            <span className="text-red-500">Alta</span>
-                                        </div>
-                                    ) : item.Priority === "Media" ? (
-                                        <div className="flex items-center gap-2 relative">
-                                            <div className="relative flex h-2 w-2">
-                                                <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
-                                                <div className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></div>
+                                        ) : item.Priority === "Media" ? (
+                                            <div className="flex items-center gap-2 relative">
+                                                <div className="relative flex h-2 w-2">
+                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
+                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></div>
+                                                </div>
+                                                <span className="text-yellow-500 overflow-hidden whitespace-nowrap text-ellipsis">Média</span>
                                             </div>
-                                            <span className="text-yellow-500">Média</span>
-                                        </div>
-                                    ) : item.Priority === "Baixa" ? (
-                                        <div className="flex items-center gap-2 relative">
-                                            <div className="relative flex h-2 w-2">
-                                                <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
-                                                <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                                        ) : item.Priority === "Baixa" ? (
+                                            <div className="flex items-center gap-2 relative">
+                                                <div className="relative flex h-2 w-2">
+                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
+                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                                                </div>
+                                                <span className="text-green-500 overflow-hidden whitespace-nowrap text-ellipsis">Baixa</span>
                                             </div>
-                                            <span className="text-green-500">Baixa</span>
-                                        </div>
-                                    ) : (
-                                        <span>{item.Priority}</span> // Caso não seja nenhum dos 3, só mostra o texto
-                                    )}
-                                </TableCell>
-                                <TableCell key={item.id} className="flex items-center justify-start gap-2">
-                                    <CircularProgress progress={item.Progress} />
-                                    <span className="text-sm flex">{item.Progress} <p className="text-zinc-600 dark:text-zinc-400">%</p></span>
-                                </TableCell>
-                                <TableCell>{item.Date}</TableCell>
-                                <TableCell><strong>{item.Owner}</strong></TableCell>
-                            </TableRow>
-                        ))
-                    ) : ""}
-                </TableBody>
-            </Table>
+                                        ) : (
+                                            <span>{item.Priority}</span> // Caso não seja nenhum dos 3, só mostra o texto
+                                        )}
+                                    </TableCell>
+                                    <TableCell key={item.id} className="flex items-center justify-start gap-2">
+                                        <CircularProgress progress={item.Progress} />
+                                        <span className="text-sm flex overflow-hidden whitespace-nowrap text-ellipsis">{item.Progress} <p className="text-zinc-600 dark:text-zinc-400">%</p></span>
+                                    </TableCell>
+                                    <TableCell className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Date}</TableCell>
+                                    <TableCell><strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Owner}</strong></TableCell>
+                                </TableRow>
+                            ))
+                        ) : ""}
+                    </TableBody>
+                </Table>
+            </div>
 
             {
                 isLoading ? <div className="w-full flex justify-center items-center mt-5">
                     <p className="text-center text-zinc-500 font-semibold dark:text-zinc-400">Carregando...</p>
                 </div> : data.length > 0 ?
-                    <div className="flex items-center justify-between gap-3 mt-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
                         <p
                             className="flex-1 whitespace-nowrap text-sm text-muted-foreground"
                             aria-live="polite"

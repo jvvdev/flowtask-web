@@ -30,7 +30,7 @@ export default function Page() {
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />
-      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 md:rounded-2xl">
+      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 md:pr-10 md:rounded-2xl">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger className="-ms-4" />
@@ -61,18 +61,24 @@ export default function Page() {
               </p>
             </div>
           </div>
-          <div className="w-full flex gap-4">
-            <div className="w-[70%] h-full">
+          <div className="w-full flex flex-col sm:flex-row gap-4">
+            <div className="w-full sm:w-[70%] h-full space-y-4">
               <InfoCardToTasks />
 
-              <div className="flex flex-col gap-4 pt-4 w-full">
-                <div className="flex justify-between gap-4 h-[48%]">
-                  <ShortCutsWidget />
-                  <MemberOverHeat />
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col 2xl:flex-row justify-between gap-4 h-[48%]">
+                  <div className="flex flex-col xl:flex-row w-full justify-between gap-4">
+                    {/* shortCuts */}
+                    <ShortCutsWidget />
+                    {/* list overheat members */}
+                    <MemberOverHeat />
+                  </div>
+                  {/* graph tasks */}
                   <ChartOverHeat />
                 </div>
-                <ListLogs />
               </div>
+              {/* logs screen */}
+              <ListLogs />
             </div>
             <ListProductivity />
           </div>
