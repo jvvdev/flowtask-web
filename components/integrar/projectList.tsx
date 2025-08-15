@@ -145,7 +145,7 @@ export function ProjectList() {
             </div>
 
             <div className="overflow-x-auto">
-                <Table className="min-w-[1400px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+                <Table className="min-w-[1565px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
                             <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
@@ -168,7 +168,6 @@ export function ProjectList() {
                             </TableHead>
                         </TableRow>
                     </TableHeader>
-
                     <TableBody>
                         {isLoading ? "" : data.length > 0 ? (
                             data.filter((item) => item.Name.toLowerCase().includes(searchQuery.toLowerCase())).map((item) => (
@@ -177,7 +176,7 @@ export function ProjectList() {
                                     className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
                                 >
                                     <TableCell className="flex gap-2">
-                                        <button className={`border rounded-sm ${selectedProject === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5"}`} onClick={() => { if (selectedProject === item.id) setSelectedProject(0); else setSelectedProject(item.id); }}><Check className={`${selectedProject === item.id ? "block" : "hidden"}`} size={12} /></button>
+                                        <button className={`border rounded-sm ${selectedProject === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`} onClick={() => { if (selectedProject === item.id) setSelectedProject(0); else setSelectedProject(item.id); }}><Check className={`${selectedProject === item.id ? "block" : "hidden"}`} size={12} /></button>
                                         <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.Name}</p>
                                     </TableCell>
                                     <TableCell>

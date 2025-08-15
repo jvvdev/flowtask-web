@@ -32,9 +32,9 @@ export default function Page() {
   }, [params.projectID, router]);
 
   return (
-    <SidebarProvider className="">
+    <SidebarProvider className="p-2">
       <SiderBarDefault />
-      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 lg:px-8 md:rounded-2xl">
+      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 lg:px-8 rounded-2xl">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger className="-ms-4" />
@@ -64,8 +64,8 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:px-8 lg:py-6">
           {/* Page intro */}
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-4xl font-semibold">Manager System</h1>
-            <Button>Adicionar tarefa</Button>
+            <h1 className="text-2xl md:text-4xl font-semibold">Manager System</h1>
+            <Button className="px-3 md:px-5">Adicionar tarefa</Button>
           </div>
 
           <KanbanProject />

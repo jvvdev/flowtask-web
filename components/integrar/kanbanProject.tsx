@@ -116,7 +116,7 @@ const kanbanList = [
 export function KanbanProject() {
 
     return (
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col md:flex-row items-start gap-4">
             <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                 <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                     <div className="flex items-center w-full gap-1.5">

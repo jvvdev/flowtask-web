@@ -30,7 +30,7 @@ export default function Page() {
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />
-      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 md:pr-10 md:rounded-2xl">
+      <SidebarInset className="border border-zinc-200/10 overflow-hidden px-4 md:px-6 md:pr-10 rounded-2xl">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger className="-ms-4" />
