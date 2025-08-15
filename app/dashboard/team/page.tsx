@@ -18,7 +18,7 @@ import {
 } from "@/components/sidebar";
 import { Button } from "@/components/button";
 import UserDropdown from "@/components/user-dropdown";
-import ContactsTable from "@/components/contacts-table";
+import { ContactsTables } from "@/components/integrar/contacts-table";
 import { StatsGrid } from "@/components/stats-grid";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
@@ -142,7 +142,7 @@ export default function Page() {
           />
           {/* Table */}
           <div className="min-h-[100vh] flex-1 md:min-h-min">
-            <ContactsTable />
+            <ContactsTables />
           </div>
         </div>
       </SidebarInset>

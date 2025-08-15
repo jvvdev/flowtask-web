@@ -5,7 +5,7 @@ import { Input } from "../input";
 import { LostPassword } from "../lostPassword";
 import { useState } from "react";
 import { useForm } from "react-hook-form"
-import { service } from "@/api/auth-service";
+import { authService } from "@/api/auth-service";
 
 export function LoginForm() {
     const [hidePassword, setHidePassword] = useState(false)
@@ -18,7 +18,7 @@ export function LoginForm() {
     })
 
     return (
-        <form className="space-y-4 w-full" onSubmit={handleSubmit(service.login)}>
+        <form className="space-y-4 w-full" onSubmit={handleSubmit(authService.login)}>
             <div className="w-full space-y-2">
                 <p className="dark:text-zinc-200/80">Seu email</p>
                 <Input placeholder="Digite aqui" className="pl-4 pr-9 h-10.5 rounded-lg" {...register("email")}/>

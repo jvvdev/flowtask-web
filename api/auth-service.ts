@@ -1,5 +1,6 @@
 import axios from "axios"
 import { routes } from "./routes"
+import { redirect } from "next/navigation"
 
 class AuthService {
     // register account
@@ -18,7 +19,7 @@ class AuthService {
             console.error(error)
         }
     }
-    
+
     // login in account
     async login(data: any) {
         const userData = {
@@ -33,6 +34,15 @@ class AuthService {
             console.error(error)
         }
     }
+
+    async loginWithGoogle() {
+        redirect(routes.authGoogle);
+        // await axios.get(routes.authGoogle).then((response) => {
+        //     redirect(routes.authGoogle);
+        // }).catch((err) => {
+        //     console.error(err)
+        // })
+    }
 }
 
-export const service = new AuthService()
+export const authService = new AuthService()

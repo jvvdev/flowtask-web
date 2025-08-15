@@ -1,10 +1,9 @@
+'use client'
+
+import { authService } from "@/api/auth-service";
 import { LoginForm } from "@/components/integrar/loginForm";
 import ThemeToggle from "@/components/theme-toggle";
 import { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: "FlowTask",
-};
 
 export default function LoginPage() {
     return (
@@ -33,7 +32,7 @@ export default function LoginPage() {
 
                 <div className="gap-2 flex flex-col justify-center items-center w-full">
                     <p className="w-full text-center text-sm dark:text-zinc-200/50 text-zinc-800/90">Ou entre com</p>
-                    <button className="flex justify-center items-center gap-3 py-3 w-full mt-2 dark:bg-zinc-700/40 dark:hover:bg-zinc-700/20 bg-zinc-200 hover:bg-zinc-300 border dark:border-zinc-950/30 border-zinc-500/5 font-semibold rounded-lg duration-200 cursor-pointer"><img src="https://i.imgur.com/2Zsoe9M.png" alt="" className="w-5 h-5" />Google</button>
+                    <button onClick={() => {authService.loginWithGoogle()}} className="flex justify-center items-center gap-3 py-3 w-full mt-2 dark:bg-zinc-700/40 dark:hover:bg-zinc-700/20 bg-zinc-200 hover:bg-zinc-300 border dark:border-zinc-950/30 border-zinc-500/5 font-semibold rounded-lg duration-200 cursor-pointer"><img src="https://i.imgur.com/2Zsoe9M.png" alt="" className="w-5 h-5" />Google</button>
                     <p className="dark:text-zinc-400 text-zinc-800/90 mt-2 text-sm">Não tem uma conta? <a href="/auth/register" className="dark:text-zinc-200 text-black font-semibold underline">Crie uma conta agora!</a></p>
                 </div>
 

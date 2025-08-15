@@ -4,7 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Input } from "../input";
 import { useState } from "react";
 import {useForm} from "react-hook-form";
-import { service } from "@/api/auth-service";
+import { authService } from "@/api/auth-service";
 
 export function RegisterForm() {
     const [hidePassword, setHidePassword] = useState(false)
@@ -20,7 +20,7 @@ export function RegisterForm() {
     })
 
     return (
-        <form className="space-y-4 w-full" onSubmit={handleSubmit(service.register)}>
+        <form className="space-y-4 w-full" onSubmit={handleSubmit(authService.register)}>
             <div className="flex gap-5">
                 <div className="w-full space-y-2">
                     <p className="dark:text-zinc-200/80">Primeiro nome</p>
