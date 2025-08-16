@@ -32,7 +32,7 @@ export function InfoCardToTasks() {
                                 aria-hidden="true"
                             />
                             {/* Icon */}
-                            <div className="max-[480px]:hidden size-10 shrink-0 rounded-full bg-emerald-600/25 border border-emerald-600/50 flex items-center justify-center text-emerald-500">
+                            <div className="size-10 shrink-0 rounded-full bg-emerald-600/25 border border-emerald-600/50 flex items-center justify-center text-emerald-500">
                                 {
                                     item.Name == "Projetos em andamento" ?
                                     <Container /> :

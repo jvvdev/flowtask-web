@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getCookie, getCookies, setCookie } from 'cookies-next/server';
+import { cookies } from 'next/headers';
 
 export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
+    const cookieService = await cookies()
 
-    if (await getCookie('session_id', { req, res })) {
+    if (await getCookie('token', { req, res })) {
         console.log(await getCookies({ req, res }))
         console.log("caiu no maua")
 
@@ -18,8 +20,7 @@ export async function middleware(req: NextRequest) {
         if (req.url.includes('?session_id=')) {
             const session_id = req.url.split('/dashboard?session_id=')[1];
 
-            await setCookie('token', session_id, { res, req })
-            console.log(await getCookies({ req, res }))
+            cookieService.set('token', session_id, { httpOnly: true, secure: true })
             return NextResponse.rewrite(new URL('/dashboard', req.url))
         }
 
@@ -27,6 +28,13 @@ export async function middleware(req: NextRequest) {
         console.log("nao tem cookie")
         return NextResponse.rewrite(new URL('/auth/login', req.url))
     }
+
+    // if (req.url.includes('?session_id=')) {
+    //     const session_id = req.url.split('/dashboard?session_id=')[1];
+
+    //     cookieService.set('token', session_id)
+    //     return NextResponse.rewrite(new URL('/dashboard', req.url))
+    // }
 
     return res;
 }
