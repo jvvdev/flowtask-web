@@ -43,16 +43,27 @@ const Projects = [
     { id: 8, Name: "Integração API", Status: "Não iniciado", Priority: "Baixa", Progress: 10, Date: "30 Março, 2025", Owner: "Rafael" },
     { id: 9, Name: "Sistema de Notificações", Status: "Finalizado", Priority: "Media", Progress: 100, Date: "12 Março, 2025", Owner: "Bruna" },
     { id: 10, Name: "Configuração Servidor", Status: "Em andamento", Priority: "Alta", Progress: 75, Date: "25 Abril, 2025", Owner: "Gustavo" },
+    { id: 11, Name: "Sistema de RH", Status: "Em andamento", Priority: "Media", Progress: 35, Date: "10 Julho, 2025", Owner: "Marina" },
+    { id: 12, Name: "Portal do Cliente", Status: "Não iniciado", Priority: "Baixa", Progress: 0, Date: "20 Agosto, 2025", Owner: "Thiago" },
+    { id: 13, Name: "Ferramenta de Relatórios", Status: "Finalizado", Priority: "Alta", Progress: 100, Date: "02 Maio, 2025", Owner: "Amanda" },
+    { id: 14, Name: "Sistema de Backup", Status: "Em andamento", Priority: "Media", Progress: 50, Date: "15 Junho, 2025", Owner: "Eduardo" },
+    { id: 15, Name: "Plataforma EAD", Status: "Não iniciado", Priority: "Alta", Progress: 0, Date: "05 Setembro, 2025", Owner: "Patrícia" },
+    { id: 16, Name: "Gestão de Estoque", Status: "Finalizado", Priority: "Media", Progress: 100, Date: "30 Abril, 2025", Owner: "Rodrigo" },
+    { id: 17, Name: "Sistema de Vendas", Status: "Em andamento", Priority: "Baixa", Progress: 60, Date: "12 Julho, 2025", Owner: "Camila" },
+    { id: 18, Name: "Monitoramento IoT", Status: "Não iniciado", Priority: "Alta", Progress: 0, Date: "22 Outubro, 2025", Owner: "Felipe" },
+    { id: 19, Name: "Gestão de Contratos", Status: "Finalizado", Priority: "Baixa", Progress: 100, Date: "18 Maio, 2025", Owner: "Larissa" },
+    { id: 20, Name: "Sistema de Marketing", Status: "Em andamento", Priority: "Alta", Progress: 80, Date: "28 Julho, 2025", Owner: "Bruno" },
 ];
+
+const ITEMS_PER_PAGE = 10;
 
 export function ProjectList() {
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState<typeof Projects>([]);
     const [selectedProject, setSelectedProject] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    const currentPage = 1;
-    const totalPages = 1;
-    
+    const [currentPage, setCurrentPage] = useState(1);
+
     const router = useRouter();
 
     useEffect(() => {
@@ -61,6 +72,11 @@ export function ProjectList() {
             setIsLoading(false);
         }, 0);
     }, []);
+
+    // Filtra e pagina os dados
+    const filteredData = data.filter((item) => item.Name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+    const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     const handleOpenProject = (projectId: number) => {
         if (projectId) {
@@ -169,8 +185,8 @@ export function ProjectList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {isLoading ? "" : data.length > 0 ? (
-                            data.filter((item) => item.Name.toLowerCase().includes(searchQuery.toLowerCase())).map((item) => (
+                        {isLoading ? null : paginatedData.length > 0 ? (
+                            paginatedData.map((item) => (
                                 <TableRow
                                     key={item.id}
                                     className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
@@ -245,7 +261,7 @@ export function ProjectList() {
                                     <TableCell><strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Owner}</strong></TableCell>
                                 </TableRow>
                             ))
-                        ) : ""}
+                        ) : null}
                     </TableBody>
                 </Table>
             </div>
@@ -253,7 +269,7 @@ export function ProjectList() {
             {
                 isLoading ? <div className="w-full flex justify-center items-center mt-5">
                     <p className="text-center text-zinc-500 font-semibold dark:text-zinc-400">Carregando...</p>
-                </div> : data.length > 0 ?
+                </div> : filteredData.length > 0 ?
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
                         <p
                             className="flex-1 whitespace-nowrap text-sm text-muted-foreground"
@@ -268,9 +284,7 @@ export function ProjectList() {
                                 variant="outline"
                                 disabled={currentPage === 1}
                                 aria-label="Página anterior"
-                                onClick={() => {
-
-                                }}
+                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                                 className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
                             >
                                 Anterior
@@ -279,9 +293,7 @@ export function ProjectList() {
                                 variant="outline"
                                 disabled={currentPage === totalPages}
                                 aria-label="Próxima página"
-                                onClick={() => {
-
-                                }}
+                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                                 className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
                             >
                                 Próxima

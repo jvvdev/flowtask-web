@@ -45,15 +45,26 @@ const Projects = [
   { id: 8, Name: "Rafael Almeida", Email: "rafael.almeida@empresa.com", PendingTasks: 9, TotalTasks: 26 },
   { id: 9, Name: "Camila Santos", Email: "camila.santos@empresa.com", PendingTasks: 0, TotalTasks: 19 },
   { id: 10, Name: "Lucas Martins", Email: "lucas.martins@empresa.com", PendingTasks: 3, TotalTasks: 24 },
+  { id: 11, Name: "Amanda Ribeiro", Email: "amanda.ribeiro@empresa.com", PendingTasks: 2, TotalTasks: 15 },
+  { id: 12, Name: "Eduardo Silva", Email: "eduardo.silva@empresa.com", PendingTasks: 6, TotalTasks: 21 },
+  { id: 13, Name: "Beatriz Souza", Email: "beatriz.souza@empresa.com", PendingTasks: 1, TotalTasks: 17 },
+  { id: 14, Name: "Rodrigo Mendes", Email: "rodrigo.mendes@empresa.com", PendingTasks: 8, TotalTasks: 29 },
+  { id: 15, Name: "Larissa Costa", Email: "larissa.costa@empresa.com", PendingTasks: 0, TotalTasks: 20 },
+  { id: 16, Name: "Felipe Rocha", Email: "felipe.rocha@empresa.com", PendingTasks: 5, TotalTasks: 23 },
+  { id: 17, Name: "Camila Oliveira", Email: "camila.oliveira@empresa.com", PendingTasks: 3, TotalTasks: 18 },
+  { id: 18, Name: "Bruno Souza", Email: "bruno.souza@empresa.com", PendingTasks: 7, TotalTasks: 27 },
+  { id: 19, Name: "Patrícia Mendes", Email: "patricia.mendes@empresa.com", PendingTasks: 0, TotalTasks: 16 },
+  { id: 20, Name: "Gustavo Lima", Email: "gustavo.lima@empresa.com", PendingTasks: 4, TotalTasks: 22 },
 ];
+
+const ITEMS_PER_PAGE = 10;
 
 export function ContactsTables() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<typeof Projects>([]);
   const [selectedMember, setSelectedMember] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const currentPage = 1;
-  const totalPages = 1;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { register, handleSubmit } = useForm();
 
@@ -63,6 +74,11 @@ export function ContactsTables() {
       setIsLoading(false);
     }, 0);
   }, []);
+
+  // Filtra e pagina os dados
+  const filteredData = data.filter(item => item.Name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <div className="w-full">
@@ -204,48 +220,46 @@ export function ContactsTables() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading ? "" : data.length > 0 ? (
-              data
-                .filter(item => item.Name.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map(item => {
-                  // completed task calc
-                  const completed = item.TotalTasks - item.PendingTasks;
-                  const taskProgress = item.TotalTasks > 0 ? Math.round((completed / item.TotalTasks) * 100) : 0;
-                  return (
-                    <TableRow
-                      key={item.id}
-                      className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
-                    >
-                      <TableCell className="flex gap-2">
-                        <button
-                          className={`border rounded-sm ${selectedMember === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
-                          onClick={() => {
-                            if (selectedMember === item.id) setSelectedMember(0);
-                            else setSelectedMember(item.id);
-                          }}
-                        >
-                          <Check className={`${selectedMember === item.id ? "block" : "hidden"}`} size={12} />
-                        </button>
-                        <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.Name}</p>
-                      </TableCell>
-                      <TableCell>
-                        <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Email}</p>
-                      </TableCell>
-                      <TableCell>
-                        <p className="font-semibold">{item.PendingTasks}</p>
-                      </TableCell>
-                      <TableCell>
-                        <p className="font-semibold">{completed}</p>
-                      </TableCell>
-                      <TableCell className="flex items-center gap-2">
-                        {/* Porcentagem de tarefas concluídas */}
-                        <CircularProgress progress={taskProgress} />
-                        <span className="text-sm flex">{taskProgress}<span className="text-zinc-600 dark:text-zinc-400 ms-0.5">%</span></span>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-            ) : ""}
+            {isLoading ? null : paginatedData.length > 0 ? (
+              paginatedData.map(item => {
+                // completed task calc
+                const completed = item.TotalTasks - item.PendingTasks;
+                const taskProgress = item.TotalTasks > 0 ? Math.round((completed / item.TotalTasks) * 100) : 0;
+                return (
+                  <TableRow
+                    key={item.id}
+                    className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
+                  >
+                    <TableCell className="flex gap-2">
+                      <button
+                        className={`border rounded-sm ${selectedMember === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
+                        onClick={() => {
+                          if (selectedMember === item.id) setSelectedMember(0);
+                          else setSelectedMember(item.id);
+                        }}
+                      >
+                        <Check className={`${selectedMember === item.id ? "block" : "hidden"}`} size={12} />
+                      </button>
+                      <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.Name}</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Email}</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="font-semibold">{item.PendingTasks}</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="font-semibold">{completed}</p>
+                    </TableCell>
+                    <TableCell className="flex items-center gap-2">
+                      {/* Porcentagem de tarefas concluídas */}
+                      <CircularProgress progress={taskProgress} />
+                      <span className="text-sm flex">{taskProgress}<span className="text-zinc-600 dark:text-zinc-400 ms-0.5">%</span></span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            ) : null}
           </TableBody>
         </Table>
       </div>
@@ -253,7 +267,7 @@ export function ContactsTables() {
       {
         isLoading ? <div className="w-full flex justify-center items-center mt-5">
           <p className="text-center text-zinc-500 font-semibold dark:text-zinc-400">Carregando...</p>
-        </div> : data.length > 0 ?
+        </div> : filteredData.length > 0 ?
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
             <p
               className="flex-1 whitespace-nowrap text-sm text-muted-foreground"
@@ -268,9 +282,7 @@ export function ContactsTables() {
                 variant="outline"
                 disabled={currentPage === 1}
                 aria-label="Página anterior"
-                onClick={() => {
-
-                }}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
               >
                 Anterior
@@ -279,9 +291,7 @@ export function ContactsTables() {
                 variant="outline"
                 disabled={currentPage === totalPages}
                 aria-label="Próxima página"
-                onClick={() => {
-
-                }}
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
               >
                 Próxima
