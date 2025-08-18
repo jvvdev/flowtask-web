@@ -61,7 +61,7 @@ export default function Page() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:px-8 lg:py-6">
+        <div className="flex flex-1 flex-col gap-3 lg:gap-3 py-4 lg:px-8 lg:py-6">
           {/* Page intro */}
           <div className="flex items-center justify-between gap-4">
             <h1 className="text-2xl md:text-4xl font-semibold">Manager System</h1>

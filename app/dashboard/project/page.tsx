@@ -85,16 +85,22 @@ export default function Page() {
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
                       <Input
-                        placeholder="Nome"
+                        placeholder="Digite aqui"
                         className="mb-2"
                       />
                     </div>
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80"><ChartPie size={20} />Status</p>
-                      <Input
-                        placeholder="Email"
-                        className="mb-2"
-                      />
+                      <select
+                        className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
+                        defaultValue=""
+                        name="status"
+                      >
+                        <option value="" disabled>Selecione o status</option>
+                        <option value="Baixa">Não iniciado</option>
+                        <option value="Media">Em progresso</option>
+                        <option value="Alta">Concluído</option>
+                      </select>
                     </div>
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80"><TriangleAlert size={20} />Prioridade</p>
@@ -112,21 +118,21 @@ export default function Page() {
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80"><LoaderCircle size={20} />Progresso</p>
                       <Input
-                        placeholder="Nome"
+                        placeholder="Digite aqui"
                         className="mb-2"
                       />
                     </div>
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80"><CalendarCheck2 size={20} />Data de entrega</p>
                       <Input
-                        placeholder="Nome"
+                        placeholder="Digite aqui"
                         className="mb-2"
                       />
                     </div>
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80"><UserCog size={20} />Responsável</p>
                       <Input
-                        placeholder="Nome"
+                        placeholder="Digite aqui"
                         className="mb-2"
                       />
                     </div>
