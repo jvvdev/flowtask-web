@@ -22,6 +22,9 @@ import { ContactsTables } from "@/components/integrar/contacts-table";
 import { StatsGrid } from "@/components/stats-grid";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
+import { ALargeSmall, ClipboardCheck, ClipboardClock, MailSearch, Pencil, Plus } from "lucide-react";
+import { Input } from "@/components/input";
 
 export default function Page() {
   return (
@@ -61,7 +64,65 @@ export default function Page() {
                 Aqui está uma visão geral dos seus membros. Gerencie-os ou adicione novos com facilidade!
               </p>
             </div>
-            <Button className="px-3">Adicionar Membro</Button>
+            <AlertDialog>
+              <AlertDialogTrigger
+                className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+              >
+                <Plus className="size-5" />
+                <span className="hidden sm:block">Adicionar membro</span>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Adicionar membro</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Aqui você pode adicionar novos membros a sua equipe.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <form>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
+                      <Input
+                        placeholder="Nome"
+                        className="mb-2"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><MailSearch size={20} />Email</p>
+                      <Input
+                        placeholder="Email"
+                        className="mb-2"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ClipboardClock size={20} />Tarefas pendentes</p>
+                      <Input
+                        placeholder="Nome"
+                        className="mb-2"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ClipboardCheck size={20} />Tarefas concluídas</p>
+                      <Input
+                        placeholder="Nome"
+                        className="mb-2"
+                      />
+                    </div>
+                  </div>
+
+                  <AlertDialogFooter className="mt-6">
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      type="submit"
+                      className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                    >
+                      Confirmar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </form>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
           {/* Numbers */}
           <StatsGrid
@@ -92,7 +153,7 @@ export default function Page() {
                   trend: "up",
                 },
                 icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M16 14v2.2l1.6 1" /><path d="M16 4h2a2 2 0 0 1 2 2v.832" /><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h2" /><circle cx="16" cy="16" r="6" /><rect x="8" y="2" width="8" height="4" rx="1" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M16 14v2.2l1.6 1" /><path d="M16 4h2a2 2 0 0 1 2 2v.832" /><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h2" /><circle cx="16" cy="16" r="6" /><rect x="8" y="2" width="8" height="4" rx="1" /></svg>
                 ),
               },
               {
@@ -103,7 +164,7 @@ export default function Page() {
                   trend: "up",
                 },
                 icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" /></svg>
                 ),
               },
             ]}

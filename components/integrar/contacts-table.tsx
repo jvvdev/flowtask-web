@@ -66,7 +66,7 @@ export function ContactsTables() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     setTimeout(() => {
@@ -74,6 +74,22 @@ export function ContactsTables() {
       setIsLoading(false);
     }, 0);
   }, []);
+
+  // Atualiza os valores do formulário ao trocar o membro selecionado
+  useEffect(() => {
+    if (selectedMember > 0) {
+      const member = data.find(item => item.id === selectedMember);
+      if (member) {
+        reset({
+          id: member.id,
+          name: member.Name,
+          email: member.Email,
+          pendingTasks: member.PendingTasks,
+          totalTasks: member.TotalTasks,
+        });
+      }
+    }
+  }, [selectedMember, data, reset]);
 
   // Filtra e pagina os dados
   const filteredData = data.filter(item => item.Name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -115,6 +131,12 @@ export function ContactsTables() {
 
                     <form onSubmit={handleSubmit(memberService.ModifyMember)}>
                       <div className="space-y-4">
+                        <Input
+                            placeholder="Nome"
+                            className="hidden"
+                            defaultValue={data.find(item => item.id === selectedMember)?.id || ""}
+                            {...register("id")}
+                          />
                         <div className="space-y-2">
                           <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
                           <Input
@@ -155,7 +177,12 @@ export function ContactsTables() {
 
                       <AlertDialogFooter className="mt-6">
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction className="font-semibold bg-yellow-500/15 dark:bg-yellow-500/20 hover:bg-yellow-500/20 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-yellow-500 cursor-pointer">Confirmar</AlertDialogAction>
+                        <AlertDialogAction
+                          type="submit"
+                          className="font-semibold bg-yellow-500/15 dark:bg-yellow-500/20 hover:bg-yellow-500/20 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-yellow-500 cursor-pointer"
+                        >
+                          Confirmar
+                        </AlertDialogAction>
                       </AlertDialogFooter>
                     </form>
                   </AlertDialogContent>

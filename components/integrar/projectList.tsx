@@ -63,6 +63,7 @@ export function ProjectList() {
     const [selectedProject, setSelectedProject] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [filter, setFilter] = useState("");
 
     const router = useRouter();
 
@@ -73,8 +74,8 @@ export function ProjectList() {
         }, 0);
     }, []);
 
-    // Filtra e pagina os dados
-    const filteredData = data.filter((item) => item.Name.toLowerCase().includes(searchQuery.toLowerCase()));
+    let filteredData = data.filter((item) => item.Name.toLowerCase().includes(searchQuery.toLowerCase()));
+    filteredData = data.filter((item) => item.Status.toLowerCase().includes(filter.toLowerCase()));
     const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
     const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
@@ -137,23 +138,21 @@ export function ProjectList() {
 
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="outline" className="cursor-pointer">
                                 <RiFilter3Line
                                     className="size-5 -ms-1.5 text-muted-foreground/60"
                                     size={20}
                                     aria-hidden="true"
                                 />
-                                <span className="hidden sm:block">Filtrar</span>
+                                Filtrar
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto min-w-36 p-3" align="end">
-                            <div className="space-y-3">
-                                <div className="text-xs font-medium uppercase text-muted-foreground/60">
-                                    Status
-                                </div>
-                                <div className="space-y-3">
-
-                                </div>
+                        <PopoverContent className="w-auto min-w-36 p-0" align="end">
+                            <p className="p-1 border-b font-semibold flex justify-center items-center">Status</p>
+                            <div className="flex flex-col">
+                                <button className={`text-sm font-medium hover:bg-muted p-2 ${filter === "Não iniciado" ? "bg-muted font-semibold" : "cursor-pointer"}`} onClick={() => {filter != "Não iniciado" ? setFilter("Não iniciado") : setFilter("")}}>Não iniciado</button>
+                                <button className={`text-sm font-medium hover:bg-muted p-2 ${filter === "Em andamento" ? "bg-muted font-semibold" : "cursor-pointer"}`} onClick={() => {filter != "Em andamento" ? setFilter("Em andamento") : setFilter("")}}>Em andamento</button>
+                                <button className={`text-sm font-medium hover:bg-muted p-2 ${filter === "Finalizado" ? "bg-muted font-semibold" : "cursor-pointer"}`} onClick={() => {filter != "Finalizado" ? setFilter("Finalizado") : setFilter("")}}>Finalizado</button>
                             </div>
                         </PopoverContent>
                     </Popover>
