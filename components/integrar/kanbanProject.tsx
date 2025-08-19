@@ -634,11 +634,16 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask }: ListTaskRowProp
         setNodeRef,
         transform,
         transition,
+        isDragging
     } = useSortable({ id: item.id });
 
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
+        opacity: isDragging ? 0.9 : 1,
+        boxShadow: isDragging
+            ? "0px 12px 25px rgba(0,0,0,0.25)"
+            : "none",
     };
 
     return (
