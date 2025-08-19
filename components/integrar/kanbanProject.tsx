@@ -171,10 +171,11 @@ export function KanbanProject() {
     };
 
     const dragEndList = (event: DragEndEvent) => {
+        if (!event.over) return;
         if (event.active.id == event.over.id) return;
 
-        const lastID = event.active.id
-        const newID = event.over.id
+        const lastID = event.active.id;
+        const newID = event.over.id;
 
         setKanbanList((items) => {
             const lastIndex = items.findIndex((i) => i.id === lastID);
@@ -525,9 +526,9 @@ export function KanbanProject() {
 type KanbanTask = {
     id: number;
     title: string;
-    priority: "high" | "medium" | "low";
+    priority: string;
     description: string;
-    status: "to do" | "in progress" | "done";
+    status: string;
     comments: Array<{ id: number; content: string; createdAt: Date }>;
     createdAt: Date;
 };
