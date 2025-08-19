@@ -194,6 +194,8 @@ export function KanbanProject() {
         const lastID = event.active.id;
         const newID = event.over.id;
 
+        setSelectedTask(0);
+
         setKanbanList((items) => {
             const lastIndex = items.findIndex((i) => i.id === lastID);
             const newIndex = items.findIndex((i) => i.id === newID);
@@ -214,6 +216,8 @@ export function KanbanProject() {
 
             const lastIndex = items.findIndex((i) => i.id === lastID);
             const newIndex = items.findIndex((i) => i.id === newID);
+
+            setSelectedTask(0);
 
             const updateEmptyItems = items.map((item) => {
                 if (newID == 1050) {
@@ -343,7 +347,7 @@ export function KanbanProject() {
                                     items={kanbanList.map(task => task.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    <div className="w-full min-h-60 bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
+                                    <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                                         <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                                             <div className="flex items-center w-full gap-1.5">
                                                 <div className="h-3 w-3 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
@@ -546,7 +550,9 @@ function ListTaskRow({ item, selectedTask, setSelectedTask }: ListTaskRowProps) 
             <TableCell className="flex gap-2 py-[17px]">
                 <button
                     className={`z-20 border rounded-sm ${selectedTask === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
-                    onPointerDown={e => e.stopPropagation()}
+                    tabIndex={0}
+                    role="button"
+                    onMouseDown={e => e.stopPropagation()}
                     onClick={() => {
                         if (selectedTask === item.id) setSelectedTask(0);
                         else setSelectedTask(item.id);
@@ -653,7 +659,7 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask }: ListTaskRowProp
             style={style}
             {...attributes}
             {...listeners}
-            className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
+            className="select-none w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
             <div className="flex justify-between">
                 <div className="flex flex-col items-start w-full">
                     <span className={`text-sm font-medium p-1 ${item.status === "done" ? "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm" : item.priority === "high" ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : item.priority === "medium" ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
@@ -668,7 +674,17 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask }: ListTaskRowProp
                         <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
                     <DropdownMenuContent className="bg-zinc-200 dark:bg-zinc-800 border rounded-lg p-1">
                         <DropdownMenuLabel className="flex items-center justify-center gap-2">
-                            <button className="hover:bg-zinc-900/40 py-1 px-2 font-semibold dark:font-normal duration-200 rounded-md" onClick={() => setSelectedTask(item.id)}>Selecionar tarefa</button>
+                            <button
+                                className="z-20 hover:bg-zinc-900/40 py-2 px-4 font-semibold dark:font-normal duration-200 rounded-md w-full"
+                                tabIndex={0}
+                                role="button"
+                                onMouseDown={e => e.stopPropagation()}
+                                onClick={() => {
+                                    selectedTask == item.id ? setSelectedTask(0) : setSelectedTask(item.id);
+                                }}
+                            >
+                                Selecionar tarefa
+                            </button>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <div className="flex flex-col space-y-1">
