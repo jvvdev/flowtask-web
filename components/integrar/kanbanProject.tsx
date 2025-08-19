@@ -199,8 +199,6 @@ export function KanbanProject() {
             const newIndex = items.findIndex((i) => i.id === newID);
             return arrayMove(items, lastIndex, newIndex);
         });
-
-        // fazer uma logica que, pega o id do active e do over, e quando mover troca do id do active pelo do over e o do over pelo active
     };
 
     function dragEndKanban(event: DragEndEvent) {
@@ -213,6 +211,9 @@ export function KanbanProject() {
         setKanbanList((items) => {
             const lastTask = items.find((i) => i.id === lastID);
             const newTask = items.find((i) => i.id === newID);
+
+            const lastIndex = items.findIndex((i) => i.id === lastID);
+            const newIndex = items.findIndex((i) => i.id === newID);
 
             const updateEmptyItems = items.map((item) => {
                 if (newID == 1050) {
@@ -232,12 +233,12 @@ export function KanbanProject() {
             });
 
             if (newID == 1050 || newID == 1150 || newID == 1250) {
-                return arrayMove(updateEmptyItems);
+                if (lastIndex === -1 || newIndex === -1) return updateEmptyItems;
+                return arrayMove(updateEmptyItems, lastIndex, newIndex);
             }
 
             if (!lastTask || !newTask) return items;
 
-            // Trocar os status
             const updatedItems = items.map((item) => {
                 if (item.id === lastID) {
                     return { ...item, status: newTask.status };
@@ -245,10 +246,9 @@ export function KanbanProject() {
                 return item;
             });
 
-            return arrayMove(updatedItems);
+            if (lastIndex === -1 || newIndex === -1) return updatedItems;
+            return arrayMove(updatedItems, lastIndex, newIndex);
         });
-
-        // a logica é, quando o item é arrastado, ele pega o id do item que ele jogou emcima, dai com o id desse item, ele pega o status
     }
 
     return (
