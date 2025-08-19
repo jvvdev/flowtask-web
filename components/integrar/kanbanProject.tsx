@@ -528,7 +528,7 @@ type KanbanTask = {
     priority: "high" | "medium" | "low";
     description: string;
     status: "to do" | "in progress" | "done";
-    comments: any[];
+    comments: Array<{ id: number; content: string; createdAt: Date }>;
     createdAt: Date;
 };
 
