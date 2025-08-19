@@ -29,11 +29,28 @@ import {
     useSortable,
     arrayMove,
     verticalListSortingStrategy,
+    horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { set } from "date-fns";
 
 const ITEMS_PER_PAGE = 10;
+
+
+interface KanbanTask {
+    id: number;
+    title: string;
+    priority: string;
+    description: string;
+    status: string;
+    comments: Array<{ id: number; content: string; createdAt: Date }>;
+    createdAt: Date;
+};
+
+interface ListTaskRowProps {
+    item: KanbanTask;
+    selectedTask: number;
+    setSelectedTask: (id: number) => void;
+}
 
 export function KanbanProject() {
     const [filter, setFilter] = useState("kanban");
@@ -50,7 +67,7 @@ export function KanbanProject() {
             description: "Definir objetivos e tarefas para a próxima sprint.",
             status: "to do",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 2,
@@ -59,7 +76,7 @@ export function KanbanProject() {
             description: "Agendar e realizar reunião de alinhamento de requisitos.",
             status: "in progress",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 3,
@@ -68,7 +85,7 @@ export function KanbanProject() {
             description: "Publicar nova versão do sistema no ambiente de produção.",
             status: "done",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 4,
@@ -77,7 +94,7 @@ export function KanbanProject() {
             description: "Analisar e aprovar PRs pendentes no repositório.",
             status: "to do",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 5,
@@ -86,7 +103,7 @@ export function KanbanProject() {
             description: "Adicionar login e registro de usuários usando OAuth.",
             status: "in progress",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 6,
@@ -95,7 +112,7 @@ export function KanbanProject() {
             description: "Atualizar documentação da API REST no Swagger.",
             status: "done",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 7,
@@ -104,7 +121,7 @@ export function KanbanProject() {
             description: "Criar testes unitários para os principais módulos.",
             status: "to do",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 8,
@@ -113,7 +130,7 @@ export function KanbanProject() {
             description: "Corrigir responsividade das telas no mobile.",
             status: "in progress",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 9,
@@ -122,7 +139,7 @@ export function KanbanProject() {
             description: "Resolver erro que impede usuários de acessar o sistema.",
             status: "done",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 10,
@@ -131,7 +148,7 @@ export function KanbanProject() {
             description: "Automatizar deploy com pipeline no GitHub Actions.",
             status: "to do",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 11,
@@ -140,7 +157,7 @@ export function KanbanProject() {
             description: "Verificar e atualizar pacotes npm desatualizados.",
             status: "in progress",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
         {
             id: 13,
@@ -149,7 +166,7 @@ export function KanbanProject() {
             description: "Automatizar deploy com pipeline no GitHub Actions.",
             status: "to do",
             comments: [],
-            createdAt: new Date()
+            createdAt: new Date(8.64e15)
         },
 
     ])
@@ -164,13 +181,13 @@ export function KanbanProject() {
 
     const router = useRouter();
 
-    const handleOpenTask = (taskID: number) => {
+    function handleOpenTask(taskID: number) {
         if (taskID) {
             router.push(`/dashboard/project/1/${taskID}`);
         }
     };
 
-    const dragEndList = (event: DragEndEvent) => {
+    function dragEndList(event: DragEndEvent) {
         if (!event.over) return;
         if (event.active.id == event.over.id) return;
 
@@ -185,6 +202,54 @@ export function KanbanProject() {
 
         // fazer uma logica que, pega o id do active e do over, e quando mover troca do id do active pelo do over e o do over pelo active
     };
+
+    function dragEndKanban(event: DragEndEvent) {
+        if (!event.over) return;
+        if (event.active.id == event.over.id) return;
+
+        const lastID = event.active.id;
+        const newID = event.over.id;
+
+        setKanbanList((items) => {
+            const lastTask = items.find((i) => i.id === lastID);
+            const newTask = items.find((i) => i.id === newID);
+
+            const updateEmptyItems = items.map((item) => {
+                if (newID == 1050) {
+                    if (item.id === lastID) {
+                        return { ...item, status: "to do" };
+                    }
+                } else if (newID == 1150) {
+                    if (item.id === lastID) {
+                        return { ...item, status: "in progress" };
+                    }
+                } else if (newID == 1250) {
+                    if (item.id === lastID) {
+                        return { ...item, status: "done" };
+                    }
+                }
+                return item;
+            });
+
+            if (newID == 1050 || newID == 1150 || newID == 1250) {
+                return arrayMove(updateEmptyItems);
+            }
+
+            if (!lastTask || !newTask) return items;
+
+            // Trocar os status
+            const updatedItems = items.map((item) => {
+                if (item.id === lastID) {
+                    return { ...item, status: newTask.status };
+                }
+                return item;
+            });
+
+            return arrayMove(updatedItems);
+        });
+
+        // a logica é, quando o item é arrastado, ele pega o id do item que ele jogou emcima, dai com o id desse item, ele pega o status
+    }
 
     return (
         <div className="relative">
@@ -270,163 +335,95 @@ export function KanbanProject() {
                     </div>
                     : filter == "kanban" ?
                         <div className="flex flex-col md:flex-row items-start gap-4 mt-4">
-                            <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
-                                <div className="flex flex-col items-center gap-2 text-lg font-semibold">
-                                    <div className="flex items-center w-full gap-1.5">
-                                        <div className="h-3 w-3 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
-                                        <h1>A fazer</h1>
-                                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "to do").length}</div>
-                                    </div>
-                                    <div className="w-full h-1 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
-                                </div>
-
-                                <div className="flex flex-col items-center gap-3">
-                                    {
-                                        kanbanList.filter(task => task.status === "to do").map(task => (
-                                            <div key={task.id} className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
-                                                <div className="flex justify-between">
-                                                    <div className="flex flex-col items-start w-full">
-                                                        <span className={`text-sm font-medium p-1 ${task.priority === "high" ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : task.priority === "medium" ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
-                                                            {
-                                                                task.priority == "high" ? "Alta" : task.priority == "medium" ? "Média" : "Baixa"
-                                                            }
-                                                        </span>
-                                                        <h1 className="text-xl font-semibold mt-1">{task.title}</h1>
-                                                    </div>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger>
-                                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent className="bg-zinc-200 dark:bg-zinc-800 border rounded-lg p-1">
-                                                            <DropdownMenuLabel className="flex items-center justify-center gap-2">
-                                                                <button className="hover:bg-zinc-900/40 py-1 px-2 font-semibold dark:font-normal duration-200 rounded-md" onClick={() => setSelectedTask(task.id)}>Selecionar tarefa</button>
-                                                            </DropdownMenuLabel>
-                                                            <DropdownMenuSeparator />
-                                                            <div className="flex flex-col space-y-1">
-
-                                                            </div>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                                <p className="text-sm text-muted-foreground">{task.description}</p>
-                                                <div className="flex items-center justify-between mt-1.5">
-                                                    <div className="text-muted-foreground">
-                                                        Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1 text-muted-foreground">
-                                                        <MessageCircleMore size={18} />
-                                                        <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{task.comments.length}</span> comentários</p>
-                                                    </div>
-                                                </div>
+                            <DndContext
+                                onDragEnd={dragEndKanban}
+                                sensors={sensors}
+                            >
+                                <SortableContext
+                                    items={kanbanList.map(task => task.id)}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    <div className="w-full min-h-60 bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
+                                        <div className="flex flex-col items-center gap-2 text-lg font-semibold">
+                                            <div className="flex items-center w-full gap-1.5">
+                                                <div className="h-3 w-3 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
+                                                <h1>A fazer</h1>
+                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "to do").length}</div>
                                             </div>
-                                        ))
+                                            <div className="w-full h-1 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
+                                        </div>
 
-                                    }
-                                </div>
-                            </div>
-
-                            <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
-                                <div className="flex flex-col items-center gap-2 text-lg font-semibold">
-                                    <div className="flex items-center w-full gap-1.5">
-                                        <div className="h-3 w-3 bg-yellow-400/80 rounded-full"></div>
-                                        <h1>Em progresso</h1>
-                                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "in progress").length}</div>
+                                        <div className="flex flex-col items-center gap-3">
+                                            {
+                                                kanbanList.filter(task => task.status === "to do").length === 0 ?
+                                                    <KanbanEmptyState taskID={1050} />
+                                                    :
+                                                    kanbanList.filter(task => task.status === "to do").map(task => (
+                                                        <KanbanTaskView
+                                                            key={task.id}
+                                                            item={task}
+                                                            selectedTask={selectedTask}
+                                                            setSelectedTask={setSelectedTask}
+                                                        />
+                                                    ))
+                                            }
+                                        </div>
                                     </div>
-                                    <div className="w-full h-1 bg-yellow-400/80 rounded-full"></div>
-                                </div>
 
-                                <div className="flex flex-col items-center gap-3">
-                                    {
-                                        kanbanList.filter(task => task.status === "in progress").map(task => (
-                                            <div key={task.id} className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
-                                                <div className="flex justify-between">
-                                                    <div className="flex flex-col items-start w-full">
-                                                        <span className={`text-sm font-medium p-1 ${task.priority === "high" ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : task.priority === "medium" ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
-                                                            {
-                                                                task.priority == "high" ? "Alta" : task.priority == "medium" ? "Média" : "Baixa"
-                                                            }
-                                                        </span>
-                                                        <h1 className="text-xl font-semibold mt-1">{task.title}</h1>
-                                                    </div>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger>
-                                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent className="bg-zinc-200 dark:bg-zinc-800 border rounded-lg p-1">
-                                                            <DropdownMenuLabel className="flex items-center justify-center gap-2">
-                                                                <button className="hover:bg-zinc-900/40 py-1 px-2 font-semibold dark:font-normal duration-200 rounded-md" onClick={() => setSelectedTask(task.id)}>Selecionar tarefa</button>
-                                                            </DropdownMenuLabel>
-                                                            <DropdownMenuSeparator />
-                                                            <div className="flex flex-col space-y-1">
-
-                                                            </div>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                                <p className="text-sm text-muted-foreground">{task.description}</p>
-                                                <div className="flex items-center justify-between mt-1.5">
-                                                    <div className="text-muted-foreground">
-                                                        Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1 text-muted-foreground">
-                                                        <MessageCircleMore size={18} />
-                                                        <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{task.comments.length}</span> comentários</p>
-                                                    </div>
-                                                </div>
+                                    <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
+                                        <div className="flex flex-col items-center gap-2 text-lg font-semibold">
+                                            <div className="flex items-center w-full gap-1.5">
+                                                <div className="h-3 w-3 bg-yellow-400/80 rounded-full"></div>
+                                                <h1>Em progresso</h1>
+                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "in progress").length}</div>
                                             </div>
-                                        ))
-                                    }
-                                </div>
-                            </div>
+                                            <div className="w-full h-1 bg-yellow-400/80 rounded-full"></div>
+                                        </div>
 
-                            <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
-                                <div className="flex flex-col items-center gap-2 text-lg font-semibold">
-                                    <div className="flex items-center w-full gap-1.5">
-                                        <div className="h-3 w-3 bg-green-600/80 rounded-full"></div>
-                                        <h1>Concluído</h1>
-                                        <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "done").length}</div>
+                                        <div className="flex flex-col items-center gap-3">
+                                            {
+                                                kanbanList.filter(task => task.status === "in progress").length === 0 ?
+                                                    <KanbanEmptyState taskID={1150} />
+                                                    :
+                                                    kanbanList.filter(task => task.status === "in progress").map(task => (
+                                                        <KanbanTaskView
+                                                            key={task.id}
+                                                            item={task}
+                                                            selectedTask={selectedTask}
+                                                            setSelectedTask={setSelectedTask}
+                                                        />
+                                                    ))
+                                            }
+                                        </div>
                                     </div>
-                                    <div className="w-full h-1 bg-green-600/80 rounded-full"></div>
-                                </div>
 
-                                <div className="flex flex-col items-center gap-3">
-                                    {
-                                        kanbanList.filter(task => task.status === "done").map(task => (
-                                            <div key={task.id} className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
-                                                <div className="flex justify-between">
-                                                    <div className="flex flex-col items-start w-full">
-                                                        <span className={`text-sm font-medium p-1 text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm`}>
-                                                            Concluído
-                                                        </span>
-                                                        <h1 className="text-xl font-semibold mt-1">{task.title}</h1>
-                                                    </div>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger>
-                                                            <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent>
-                                                            <DropdownMenuLabel className="flex items-center justify-center gap-2">
-                                                                <button>Abrir tarefa</button>
-                                                            </DropdownMenuLabel>
-                                                            <DropdownMenuSeparator />
-                                                            <div className="flex flex-col space-y-1">
-
-                                                            </div>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                                <p className="text-sm text-muted-foreground">{task.description}</p>
-                                                <div className="flex items-center justify-between mt-1.5">
-                                                    <div className="text-muted-foreground">
-                                                        Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1 text-muted-foreground">
-                                                        <MessageCircleMore size={18} />
-                                                        <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{task.comments.length}</span> comentários</p>
-                                                    </div>
-                                                </div>
+                                    <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
+                                        <div className="flex flex-col items-center gap-2 text-lg font-semibold">
+                                            <div className="flex items-center w-full gap-1.5">
+                                                <div className="h-3 w-3 bg-green-600/80 rounded-full"></div>
+                                                <h1>Concluído</h1>
+                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "done").length}</div>
                                             </div>
-                                        ))
-                                    }
-                                </div>
-                            </div>
+                                            <div className="w-full h-1 bg-green-600/80 rounded-full"></div>
+                                        </div>
+                                        <div className="flex flex-col items-center gap-3">
+                                            {
+                                                kanbanList.filter(task => task.status === "done").length === 0 ?
+                                                    <KanbanEmptyState taskID={1250} />
+                                                    :
+                                                    kanbanList.filter(task => task.status === "done").map(task => (
+                                                        <KanbanTaskView
+                                                            key={task.id}
+                                                            item={task}
+                                                            selectedTask={selectedTask}
+                                                            setSelectedTask={setSelectedTask}
+                                                        />
+                                                    ))
+                                            }
+                                        </div>
+                                    </div>
+                                </SortableContext>
+                            </DndContext>
                         </div> :
                         filter == "list" ?
                             <div className="mt-4">
@@ -465,7 +462,7 @@ export function KanbanProject() {
                                                 <TableBody>
                                                     {loading ? null : paginatedData.length > 0 ? (
                                                         paginatedData.map(item => (
-                                                            <KanbanTaskRow
+                                                            <ListTaskRow
                                                                 key={item.id}
                                                                 item={item}
                                                                 selectedTask={selectedTask}
@@ -519,27 +516,11 @@ export function KanbanProject() {
                             </div> :
                             ""
             }
-        </div>
+        </div >
     );
 }
 
-type KanbanTask = {
-    id: number;
-    title: string;
-    priority: string;
-    description: string;
-    status: string;
-    comments: Array<{ id: number; content: string; createdAt: Date }>;
-    createdAt: Date;
-};
-
-interface KanbanTaskRowProps {
-    item: KanbanTask;
-    selectedTask: number;
-    setSelectedTask: (id: number) => void;
-}
-
-function KanbanTaskRow({ item, selectedTask, setSelectedTask }: KanbanTaskRowProps) {
+function ListTaskRow({ item, selectedTask, setSelectedTask }: ListTaskRowProps) {
     const {
         attributes,
         listeners,
@@ -643,5 +624,91 @@ function KanbanTaskRow({ item, selectedTask, setSelectedTask }: KanbanTaskRowPro
                 <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.createdAt.toLocaleString()}</p>
             </TableCell>
         </TableRow>
+    );
+}
+
+function KanbanTaskView({ item, selectedTask, setSelectedTask }: ListTaskRowProps) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: item.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
+    return (
+        <div
+            key={item.id}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className="w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
+            <div className="flex justify-between">
+                <div className="flex flex-col items-start w-full">
+                    <span className={`text-sm font-medium p-1 ${item.status === "done" ? "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm" : item.priority === "high" ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : item.priority === "medium" ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
+                        {
+                            item.status === "done" ? "Concluído" : item.priority == "high" ? "Alta" : item.priority == "medium" ? "Média" : "Baixa"
+                        }
+                    </span>
+                    <h1 className="text-xl font-semibold mt-1">{item.title}</h1>
+                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <Ellipsis className="p-1 rounded-md hover:bg-zinc-200/50 dark:hover:bg-zinc-800 duration-200 cursor-pointer" size={30} />                                        </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-zinc-200 dark:bg-zinc-800 border rounded-lg p-1">
+                        <DropdownMenuLabel className="flex items-center justify-center gap-2">
+                            <button className="hover:bg-zinc-900/40 py-1 px-2 font-semibold dark:font-normal duration-200 rounded-md" onClick={() => setSelectedTask(item.id)}>Selecionar tarefa</button>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <div className="flex flex-col space-y-1">
+
+                        </div>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+            <p className="text-sm text-muted-foreground">{item.description}</p>
+            <div className="flex items-center justify-between mt-1.5">
+                <div className="text-muted-foreground">
+                    Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
+                </div>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                    <MessageCircleMore size={18} />
+                    <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{item.comments.length}</span> comentários</p>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function KanbanEmptyState({ taskID }: { taskID: number }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: taskID });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className="w-full h-20 flex items-center justify-center"
+        >
+
+        </div>
     );
 }
