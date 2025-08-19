@@ -23,125 +23,15 @@ import { Input } from "../input";
 import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../alert-dialog";
 import { useRouter } from "next/navigation";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import {
     SortableContext,
     useSortable,
     arrayMove,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-
-const kanbanList = [
-    {
-        id: 1,
-        title: "Planejar Sprint",
-        priority: "high",
-        description: "Definir objetivos e tarefas para a próxima sprint.",
-        status: "to do",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 2,
-        title: "Reunião com cliente",
-        priority: "medium",
-        description: "Agendar e realizar reunião de alinhamento de requisitos.",
-        status: "in progress",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 3,
-        title: "Deploy em produção",
-        priority: "low",
-        description: "Publicar nova versão do sistema no ambiente de produção.",
-        status: "done",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 4,
-        title: "Revisar Pull Requests",
-        priority: "medium",
-        description: "Analisar e aprovar PRs pendentes no repositório.",
-        status: "to do",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 5,
-        title: "Implementar autenticação",
-        priority: "high",
-        description: "Adicionar login e registro de usuários usando OAuth.",
-        status: "in progress",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 6,
-        title: "Documentar API",
-        priority: "medium",
-        description: "Atualizar documentação da API REST no Swagger.",
-        status: "done",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 7,
-        title: "Testes automatizados",
-        priority: "low",
-        description: "Criar testes unitários para os principais módulos.",
-        status: "to do",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 8,
-        title: "Ajustar layout mobile",
-        priority: "low",
-        description: "Corrigir responsividade das telas no mobile.",
-        status: "in progress",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 9,
-        title: "Corrigir bug de login",
-        priority: "high",
-        description: "Resolver erro que impede usuários de acessar o sistema.",
-        status: "done",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 10,
-        title: "Configurar CI/CD",
-        priority: "high",
-        description: "Automatizar deploy com pipeline no GitHub Actions.",
-        status: "to do",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 11,
-        title: "Atualizar dependências",
-        priority: "medium",
-        description: "Verificar e atualizar pacotes npm desatualizados.",
-        status: "in progress",
-        comments: [],
-        createdAt: new Date()
-    },
-    {
-        id: 13,
-        title: "Configurar CI/CD",
-        priority: "high",
-        description: "Automatizar deploy com pipeline no GitHub Actions.",
-        status: "to do",
-        comments: [],
-        createdAt: new Date()
-    },
-
-]
+import { CSS } from "@dnd-kit/utilities";
+import { set } from "date-fns";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -152,6 +42,122 @@ export function KanbanProject() {
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedTask, setSelectedTask] = useState(0);
+    const [kanbanList, setKanbanList] = useState([
+        {
+            id: 1,
+            title: "Planejar Sprint",
+            priority: "high",
+            description: "Definir objetivos e tarefas para a próxima sprint.",
+            status: "to do",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 2,
+            title: "Reunião com cliente",
+            priority: "medium",
+            description: "Agendar e realizar reunião de alinhamento de requisitos.",
+            status: "in progress",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 3,
+            title: "Deploy em produção",
+            priority: "low",
+            description: "Publicar nova versão do sistema no ambiente de produção.",
+            status: "done",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 4,
+            title: "Revisar Pull Requests",
+            priority: "medium",
+            description: "Analisar e aprovar PRs pendentes no repositório.",
+            status: "to do",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 5,
+            title: "Implementar autenticação",
+            priority: "high",
+            description: "Adicionar login e registro de usuários usando OAuth.",
+            status: "in progress",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 6,
+            title: "Documentar API",
+            priority: "medium",
+            description: "Atualizar documentação da API REST no Swagger.",
+            status: "done",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 7,
+            title: "Testes automatizados",
+            priority: "low",
+            description: "Criar testes unitários para os principais módulos.",
+            status: "to do",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 8,
+            title: "Ajustar layout mobile",
+            priority: "low",
+            description: "Corrigir responsividade das telas no mobile.",
+            status: "in progress",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 9,
+            title: "Corrigir bug de login",
+            priority: "high",
+            description: "Resolver erro que impede usuários de acessar o sistema.",
+            status: "done",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 10,
+            title: "Configurar CI/CD",
+            priority: "high",
+            description: "Automatizar deploy com pipeline no GitHub Actions.",
+            status: "to do",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 11,
+            title: "Atualizar dependências",
+            priority: "medium",
+            description: "Verificar e atualizar pacotes npm desatualizados.",
+            status: "in progress",
+            comments: [],
+            createdAt: new Date()
+        },
+        {
+            id: 13,
+            title: "Configurar CI/CD",
+            priority: "high",
+            description: "Automatizar deploy com pipeline no GitHub Actions.",
+            status: "to do",
+            comments: [],
+            createdAt: new Date()
+        },
+
+    ])
+
+    const sensors = useSensors(
+        useSensor(MouseSensor),
+        useSensor(TouchSensor)
+    );
 
     const totalPages = Math.ceil(kanbanList.length / ITEMS_PER_PAGE);
     const paginatedData = kanbanList.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -165,7 +171,18 @@ export function KanbanProject() {
     };
 
     const dragEndList = (event: any) => {
-        
+        if (event.active.id == event.over.id) return;
+
+        const lastID = event.active.id
+        const newID = event.over.id
+
+        setKanbanList((items) => {
+            const lastIndex = items.findIndex((i) => i.id === lastID);
+            const newIndex = items.findIndex((i) => i.id === newID);
+            return arrayMove(items, lastIndex, newIndex);
+        });
+
+        // fazer uma logica que, pega o id do active e do over, e quando mover troca do id do active pelo do over e o do over pelo active
     };
 
     return (
@@ -413,9 +430,13 @@ export function KanbanProject() {
                         filter == "list" ?
                             <div className="mt-4">
                                 <DndContext
-                                    onDragEnd={ dragEndList }
+                                    onDragEnd={dragEndList}
+                                    sensors={sensors}
                                 >
-                                    <SortableContext items={kanbanList.map(task => task.id)} strategy={verticalListSortingStrategy}>
+                                    <SortableContext
+                                        items={kanbanList.map(task => task.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
                                         <div className="overflow-x-auto">
                                             <Table className="min-w-[1510px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                                                 <TableHeader>
@@ -442,94 +463,14 @@ export function KanbanProject() {
                                                 </TableHeader>
                                                 <TableBody>
                                                     {loading ? null : paginatedData.length > 0 ? (
-                                                        paginatedData.map(item => {
-                                                            return (
-                                                                <TableRow
-                                                                    key={item.id}
-                                                                    className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
-                                                                >
-                                                                    <TableCell className="flex gap-2 py-[17px]">
-                                                                        <button
-                                                                            className={`border rounded-sm ${selectedTask === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
-                                                                            onClick={() => {
-                                                                                if (selectedTask === item.id) setSelectedTask(0);
-                                                                                else setSelectedTask(item.id);
-                                                                            }}
-                                                                        >
-                                                                            <Check className={`${selectedTask === item.id ? "block" : "hidden"}`} size={12} />
-                                                                        </button>
-                                                                        <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.title}</p>
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.description}</p>
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        {item.priority === "high" ? (
-                                                                            <div className="flex items-center gap-2 relative">
-                                                                                <div className="relative flex h-2 w-2">
-                                                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75 animate-ping"></div>
-                                                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></div>
-                                                                                </div>
-                                                                                <span className="text-red-500 overflow-hidden whitespace-nowrap text-ellipsis">Alta</span>
-                                                                            </div>
-                                                                        ) : item.priority === "medium" ? (
-                                                                            <div className="flex items-center gap-2 relative">
-                                                                                <div className="relative flex h-2 w-2">
-                                                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
-                                                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></div>
-                                                                                </div>
-                                                                                <span className="text-yellow-500 overflow-hidden whitespace-nowrap text-ellipsis">Média</span>
-                                                                            </div>
-                                                                        ) : item.priority === "low" ? (
-                                                                            <div className="flex items-center gap-2 relative">
-                                                                                <div className="relative flex h-2 w-2">
-                                                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
-                                                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
-                                                                                </div>
-                                                                                <span className="text-green-500 overflow-hidden whitespace-nowrap text-ellipsis">Baixa</span>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <span>{item.priority}</span> // Caso não seja nenhum dos 3, só mostra o texto
-                                                                        )}
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        {item.status === "to do" ? (
-                                                                            <div className="flex items-center gap-2 relative">
-                                                                                <div className="relative flex h-2 w-2">
-                                                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75 animate-ping"></div>
-                                                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-purple-400"></div>
-                                                                                </div>
-                                                                                <span className="text-purple-400 overflow-hidden whitespace-nowrap text-ellipsis">A fazer</span>
-                                                                            </div>
-                                                                        ) : item.status === "in progress" ? (
-                                                                            <div className="flex items-center gap-2 relative">
-                                                                                <div className="relative flex h-2 w-2">
-                                                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
-                                                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></div>
-                                                                                </div>
-                                                                                <span className="text-yellow-400 overflow-hidden whitespace-nowrap text-ellipsis">Em progresso</span>
-                                                                            </div>
-                                                                        ) : item.status === "done" ? (
-                                                                            <div className="flex items-center gap-2 relative">
-                                                                                <div className="relative flex h-2 w-2">
-                                                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
-                                                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
-                                                                                </div>
-                                                                                <span className="text-green-500 overflow-hidden whitespace-nowrap text-ellipsis">Concluído</span>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <span className="overflow-hidden whitespace-nowrap text-ellipsis">{item.status}</span>
-                                                                        )}
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        <p>{item.comments.length == 0 ? "Sem comentários" : item.comments + " Comentários"}</p>
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.createdAt.toLocaleString()}</p>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            );
-                                                        })
+                                                        paginatedData.map(item => (
+                                                            <KanbanTaskRow
+                                                                key={item.id}
+                                                                item={item}
+                                                                selectedTask={selectedTask}
+                                                                setSelectedTask={setSelectedTask}
+                                                            />
+                                                        ))
                                                     ) : null}
                                                 </TableBody>
                                             </Table>
@@ -578,5 +519,112 @@ export function KanbanProject() {
                             ""
             }
         </div>
+    );
+}
+
+function KanbanTaskRow({ item, selectedTask, setSelectedTask }: any) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: item.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
+    return (
+        <TableRow
+            key={item.id}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
+        >
+            <TableCell className="flex gap-2 py-[17px]">
+                <button
+                    className={`z-20 border rounded-sm ${selectedTask === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
+                    onPointerDown={e => e.stopPropagation()}
+                    onClick={() => {
+                        if (selectedTask === item.id) setSelectedTask(0);
+                        else setSelectedTask(item.id);
+                    }}
+                >
+                    <Check className={`${selectedTask === item.id ? "block" : "hidden"}`} size={12} />
+                </button>
+                <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.title}</p>
+            </TableCell>
+            <TableCell>
+                <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.description}</p>
+            </TableCell>
+            <TableCell>
+                {item.priority === "high" ? (
+                    <div className="flex items-center gap-2 relative">
+                        <div className="relative flex h-2 w-2">
+                            <div className="absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75 animate-ping"></div>
+                            <div className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></div>
+                        </div>
+                        <span className="text-red-500 overflow-hidden whitespace-nowrap text-ellipsis">Alta</span>
+                    </div>
+                ) : item.priority === "medium" ? (
+                    <div className="flex items-center gap-2 relative">
+                        <div className="relative flex h-2 w-2">
+                            <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
+                            <div className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></div>
+                        </div>
+                        <span className="text-yellow-500 overflow-hidden whitespace-nowrap text-ellipsis">Média</span>
+                    </div>
+                ) : item.priority === "low" ? (
+                    <div className="flex items-center gap-2 relative">
+                        <div className="relative flex h-2 w-2">
+                            <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
+                            <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                        </div>
+                        <span className="text-green-500 overflow-hidden whitespace-nowrap text-ellipsis">Baixa</span>
+                    </div>
+                ) : (
+                    <span>{item.priority}</span> // Caso não seja nenhum dos 3, só mostra o texto
+                )}
+            </TableCell>
+            <TableCell>
+                {item.status === "to do" ? (
+                    <div className="flex items-center gap-2 relative">
+                        <div className="relative flex h-2 w-2">
+                            <div className="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75 animate-ping"></div>
+                            <div className="relative inline-flex rounded-full h-2 w-2 bg-purple-400"></div>
+                        </div>
+                        <span className="text-purple-400 overflow-hidden whitespace-nowrap text-ellipsis">A fazer</span>
+                    </div>
+                ) : item.status === "in progress" ? (
+                    <div className="flex items-center gap-2 relative">
+                        <div className="relative flex h-2 w-2">
+                            <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
+                            <div className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></div>
+                        </div>
+                        <span className="text-yellow-400 overflow-hidden whitespace-nowrap text-ellipsis">Em progresso</span>
+                    </div>
+                ) : item.status === "done" ? (
+                    <div className="flex items-center gap-2 relative">
+                        <div className="relative flex h-2 w-2">
+                            <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
+                            <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                        </div>
+                        <span className="text-green-500 overflow-hidden whitespace-nowrap text-ellipsis">Concluído</span>
+                    </div>
+                ) : (
+                    <span className="overflow-hidden whitespace-nowrap text-ellipsis">{item.status}</span>
+                )}
+            </TableCell>
+            <TableCell>
+                <p>{item.comments.length == 0 ? "Sem comentários" : item.comments + " Comentários"}</p>
+            </TableCell>
+            <TableCell>
+                <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.createdAt.toLocaleString()}</p>
+            </TableCell>
+        </TableRow>
     );
 }
