@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from "@/components/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/table";
 import { ALargeSmall, ClipboardCheck, LoaderCircle } from "lucide-react";
 import { useState } from "react";

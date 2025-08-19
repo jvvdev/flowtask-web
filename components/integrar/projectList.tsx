@@ -254,7 +254,10 @@ export function ProjectList() {
                                     </TableCell>
                                     <TableCell key={item.id} className="flex items-center justify-start gap-2">
                                         <CircularProgress progress={item.Progress} />
-                                        <span className="text-sm flex overflow-hidden whitespace-nowrap text-ellipsis">{item.Progress} <p className="text-zinc-600 dark:text-zinc-400">%</p></span>
+                                        <span className="text-sm flex overflow-hidden whitespace-nowrap text-ellipsis">
+                                            {item.Progress}
+                                            <span className="text-zinc-600 dark:text-zinc-400 ms-1">%</span>
+                                        </span>
                                     </TableCell>
                                     <TableCell className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Date}</TableCell>
                                     <TableCell><strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Owner}</strong></TableCell>

@@ -23,7 +23,7 @@ import { Input } from "../input";
 import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../alert-dialog";
 import { useRouter } from "next/navigation";
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import {
     SortableContext,
     useSortable,
@@ -170,7 +170,7 @@ export function KanbanProject() {
         }
     };
 
-    const dragEndList = (event: any) => {
+    const dragEndList = (event: DragEndEvent) => {
         if (event.active.id == event.over.id) return;
 
         const lastID = event.active.id
@@ -522,7 +522,23 @@ export function KanbanProject() {
     );
 }
 
-function KanbanTaskRow({ item, selectedTask, setSelectedTask }: any) {
+type KanbanTask = {
+    id: number;
+    title: string;
+    priority: "high" | "medium" | "low";
+    description: string;
+    status: "to do" | "in progress" | "done";
+    comments: any[];
+    createdAt: Date;
+};
+
+interface KanbanTaskRowProps {
+    item: KanbanTask;
+    selectedTask: number;
+    setSelectedTask: (id: number) => void;
+}
+
+function KanbanTaskRow({ item, selectedTask, setSelectedTask }: KanbanTaskRowProps) {
     const {
         attributes,
         listeners,
