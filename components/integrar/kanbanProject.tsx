@@ -393,6 +393,7 @@ export function KanbanProject() {
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
+                                                            listHeader={listHeader}
                                                         />
                                                     ))
                                             }
@@ -425,6 +426,7 @@ export function KanbanProject() {
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
+                                                            listHeader={listHeader}
                                                         />
                                                     ))
                                             }
@@ -456,6 +458,7 @@ export function KanbanProject() {
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
+                                                            listHeader={listHeader}
                                                         />
                                                     ))
                                             }
@@ -750,7 +753,7 @@ function ListHeader({ taskID, name }: { taskID: number; name: string }) {
     );
 }
 
-function KanbanTaskView({ item, selectedTask, setSelectedTask }: ListTaskRowProps) {
+function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: ListTaskRowProps) {
     const {
         attributes,
         listeners,
