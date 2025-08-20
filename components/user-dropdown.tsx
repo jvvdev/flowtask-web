@@ -1,3 +1,6 @@
+'use client'
+
+import { authService } from "@/api/auth-service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
 import { Button } from "@/components/button";
 import {
@@ -11,8 +14,15 @@ import {
 } from "@/components/dropdown-menu";
 
 import { RiSettingsLine, RiTeamLine, RiLogoutBoxLine } from "@remixicon/react";
+import { useEffect, useState } from "react";
 
 export default function UserDropdown() {
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    authService.getUser(data, setData);
+  }, [data]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
