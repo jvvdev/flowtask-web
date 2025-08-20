@@ -2,7 +2,7 @@
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { ALargeSmall, ArchiveRestore, CalendarPlus, ChartPie, Check, ClipboardCheck, ClipboardClock, ClipboardList, Ellipsis, Loader2, LoaderCircle, MailSearch, MessageCircleMore, Trash2, TriangleAlert } from "lucide-react";
-import { useState } from "react";
+import { use, useState } from "react";
 import {
     Popover,
     PopoverContent,
@@ -32,6 +32,7 @@ import {
     horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { set } from "date-fns";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -50,6 +51,7 @@ interface ListTaskRowProps {
     item: KanbanTask;
     selectedTask: number;
     setSelectedTask: (id: number) => void;
+    listHeader: Array<{ id: number; name: string }>;
 }
 
 export function KanbanProject() {
@@ -168,8 +170,15 @@ export function KanbanProject() {
             comments: [],
             createdAt: new Date(8.64e15)
         },
-
     ])
+    const [listHeader, setListHeader] = useState([
+        { id: 1, name: "Título" },
+        { id: 2, name: "Descrição" },
+        { id: 3, name: "Prioridade" },
+        { id: 4, name: "Status" },
+        { id: 5, name: "Comentários" },
+        { id: 6, name: "Criado em" }
+    ]);
 
     const sensors = useSensors(
         useSensor(MouseSensor),
@@ -202,6 +211,22 @@ export function KanbanProject() {
             return arrayMove(items, lastIndex, newIndex);
         });
     };
+
+    function dragEndListHeader(event: DragEndEvent) {
+        if (!event.over) return;
+        if (event.active.id == event.over.id) return;
+
+        const lastID = event.active.id;
+        const newID = event.over.id;
+
+        setListHeader((items) => {
+            const lastIndex = items.findIndex((i) => i.id === lastID);
+            const newIndex = items.findIndex((i) => i.id === newID);
+            return arrayMove(items, lastIndex, newIndex);
+        });
+
+        // fazer com que quando arrastar o titulo, mude o id dele, assim ira mudar o de baixo também
+    }
 
     function dragEndKanban(event: DragEndEvent) {
         if (!event.over) return;
@@ -373,7 +398,12 @@ export function KanbanProject() {
                                             }
                                         </div>
                                     </div>
+                                </SortableContext>
 
+                                <SortableContext
+                                    items={kanbanList.map(task => task.id)}
+                                    strategy={verticalListSortingStrategy}
+                                >
                                     <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                                         <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                                             <div className="flex items-center w-full gap-1.5">
@@ -400,7 +430,12 @@ export function KanbanProject() {
                                             }
                                         </div>
                                     </div>
+                                </SortableContext>
 
+                                <SortableContext
+                                    items={kanbanList.map(task => task.id)}
+                                    strategy={verticalListSortingStrategy}
+                                >
                                     <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                                         <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                                             <div className="flex items-center w-full gap-1.5">
@@ -428,7 +463,7 @@ export function KanbanProject() {
                                     </div>
                                 </SortableContext>
                             </DndContext>
-                        </div> :
+                        </div > :
                         filter == "list" ?
                             <div className="mt-4">
                                 <DndContext
@@ -442,26 +477,25 @@ export function KanbanProject() {
                                         <div className="overflow-x-auto">
                                             <Table className="min-w-[1510px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                                                 <TableHeader>
-                                                    <TableRow className="hover:bg-transparent">
-                                                        <TableHead className="relative h-9 w-55 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Título</p>
-                                                        </TableHead>
-                                                        <TableHead className="relative h-9 w-100 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ClipboardList size={18} /> Descrição</p>
-                                                        </TableHead>
-                                                        <TableHead className="relative h-9 w-25 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><TriangleAlert size={18} /> Prioridade</p>
-                                                        </TableHead>
-                                                        <TableHead className="relative h-9 w-40 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ChartPie size={18} /> Status</p>
-                                                        </TableHead>
-                                                        <TableHead className="relative h-9 w-35 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><MessageCircleMore size={18} /> Comentários</p>
-                                                        </TableHead>
-                                                        <TableHead className="relative h-9 w-50 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                                                            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><CalendarPlus size={18} /> Criado em</p>
-                                                        </TableHead>
-                                                    </TableRow>
+                                                    <DndContext
+                                                        onDragEnd={dragEndListHeader}
+                                                        sensors={sensors}
+                                                    >
+                                                        <TableRow className="hover:bg-transparent">
+                                                            <SortableContext
+                                                                items={listHeader.map(task => task.id)}
+                                                                strategy={verticalListSortingStrategy}
+                                                            >
+                                                                {listHeader.map(item => (
+                                                                    <ListHeader
+                                                                        key={item.id}
+                                                                        taskID={item.id}
+                                                                        name={item.name}
+                                                                    />
+                                                                ))}
+                                                            </SortableContext>
+                                                        </TableRow>
+                                                    </DndContext>
                                                 </TableHeader>
                                                 <TableBody>
                                                     {loading ? null : paginatedData.length > 0 ? (
@@ -471,6 +505,7 @@ export function KanbanProject() {
                                                                 item={item}
                                                                 selectedTask={selectedTask}
                                                                 setSelectedTask={setSelectedTask}
+                                                                listHeader={listHeader}
                                                             />
                                                         ))
                                                     ) : null}
@@ -524,7 +559,9 @@ export function KanbanProject() {
     );
 }
 
-function ListTaskRow({ item, selectedTask, setSelectedTask }: ListTaskRowProps) {
+// fazer com que, as colunas da lista seja renderizada por ids, e dai quando mudar o header ele mudar o id, assim fazendo a coluna ficar no mesmo ngc do header
+
+function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTaskRowProps) {
     const {
         attributes,
         listeners,
@@ -538,15 +575,8 @@ function ListTaskRow({ item, selectedTask, setSelectedTask }: ListTaskRowProps) 
         transition,
     };
 
-    return (
-        <TableRow
-            key={item.id}
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-            className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
-        >
+    function TitleCollumn() {
+        return (
             <TableCell className="flex gap-2 py-[17px]">
                 <button
                     className={`z-20 border rounded-sm ${selectedTask === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
@@ -562,9 +592,19 @@ function ListTaskRow({ item, selectedTask, setSelectedTask }: ListTaskRowProps) 
                 </button>
                 <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.title}</p>
             </TableCell>
+        )
+    }
+
+    function DescriptionCollumn() {
+        return (
             <TableCell>
                 <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.description}</p>
             </TableCell>
+        )
+    }
+
+    function PriorityCollumn() {
+        return (
             <TableCell>
                 {item.priority === "high" ? (
                     <div className="flex items-center gap-2 relative">
@@ -594,6 +634,11 @@ function ListTaskRow({ item, selectedTask, setSelectedTask }: ListTaskRowProps) 
                     <span>{item.priority}</span> // Caso não seja nenhum dos 3, só mostra o texto
                 )}
             </TableCell>
+        )
+    }
+
+    function StatusCollumn() {
+        return (
             <TableCell>
                 {item.status === "to do" ? (
                     <div className="flex items-center gap-2 relative">
@@ -623,13 +668,85 @@ function ListTaskRow({ item, selectedTask, setSelectedTask }: ListTaskRowProps) 
                     <span className="overflow-hidden whitespace-nowrap text-ellipsis">{item.status}</span>
                 )}
             </TableCell>
+        )
+    }
+
+    function CommentsCollumn() {
+        return (
             <TableCell>
                 <p>{item.comments.length == 0 ? "Sem comentários" : item.comments + " Comentários"}</p>
             </TableCell>
+        )
+    }
+
+    function CreatedCollumn() {
+        return (
             <TableCell>
                 <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.createdAt.toLocaleString()}</p>
             </TableCell>
+        )
+    }
+
+    return (
+        <TableRow
+            key={item.id}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
+        >
+            {
+                listHeader.map(header => {
+                    switch (header.name) {
+                        case "Título":
+                            return <TitleCollumn />
+                        case "Descrição":
+                            return <DescriptionCollumn />
+                        case "Prioridade":
+                            return <PriorityCollumn />
+                        case "Status":
+                            return <StatusCollumn />
+                        case "Comentários":
+                            return <CommentsCollumn />
+                        case "Criado em":
+                            return <CreatedCollumn />
+                    }
+                })
+            }
         </TableRow>
+    );
+}
+
+function ListHeader({ taskID, name }: { taskID: number; name: string }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: taskID });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
+    return (
+        <TableHead
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className={`relative h-9 ${name == "Descrição" ? "w-105" : name == "Status" ? "w-25" : name == "Prioridade" ? "w-25" : name == "Comentários" ? "w-28" : name == "Criado em" ? "w-35" : "w-40"} select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg`}
+        >
+            <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500">
+                {
+                    name == "Título" ? <ALargeSmall size={18} /> : name == "Descrição" ? <ClipboardList size={18} /> : name == "Prioridade" ? <TriangleAlert size={18} /> : name == "Status" ? <ChartPie size={18} /> : name == "Comentários" ? <MessageCircleMore size={18} /> : name == "Criado em" ? <CalendarPlus size={18} /> : null
+                }
+                {name}
+            </p>
+        </TableHead>
     );
 }
 
