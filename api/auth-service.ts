@@ -52,26 +52,14 @@ class AuthService {
         }
     }
 
+    // login with google
     async loginWithGoogle() {
         redirect(routes.authGoogle);
-        // await axios.get(routes.authGoogle).then((response) => {
-        //     redirect(routes.authGoogle);
-        // }).catch((err) => {
-        //     console.error(err)
-        // })
     }
 
-    // get user 
-    async getUser(data: any, setData: any) {
-        const token = getCookie('token');
-
-        const api = await axios.get(routes.getUser + token, {
-            headers: { "ngrok-skip-browser-warning": "69420" }
-        }).then((response) => {
-            console.log(response);
-        }).catch((err) => {
-            console.log(err);
-        })
+    // get token 
+    async getToken() {
+        return getCookie('token');
     }
 }
 

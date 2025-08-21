@@ -1,4 +1,4 @@
-export const apiRoute = "https://75cae8ee7110.ngrok-free.app"
+export const apiRoute = "http://26.13.17.173:3001"
 
 export const routes = {
     // Auth Routes

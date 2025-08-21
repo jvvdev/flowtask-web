@@ -1,6 +1,7 @@
 'use client'
 
 import { authService } from "@/api/auth-service";
+import { routes } from "@/api/routes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
 import { Button } from "@/components/button";
 import {
@@ -14,14 +15,34 @@ import {
 } from "@/components/dropdown-menu";
 
 import { RiSettingsLine, RiTeamLine, RiLogoutBoxLine } from "@remixicon/react";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
+interface UserData {
+  name: string;
+  email: string;
+  picture: string;
+}
+
 export default function UserDropdown() {
-  const [data, setData] = useState();
+  const [data, setData] = useState<UserData>({ name: "", email: "", picture: "" });
 
   useEffect(() => {
-    authService.getUser(data, setData);
-  }, [data]);
+    async function getData() {
+      const token = await authService.getToken();
+
+      const api = await axios.get(routes.getUser + token).then((response) => {
+        setData({
+          name: response.data.name,
+          email: response.data.email,
+          picture: response.data.picture,
+        });
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+    getData();
+  }, []);
 
   return (
     <DropdownMenu>
@@ -29,22 +50,22 @@ export default function UserDropdown() {
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
           <Avatar className="size-8">
             <AvatarImage
-              src="https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/user_sam4wh.png"
+              src={data.picture}
               width={32}
               height={32}
               alt="Profile image"
             />
-            <AvatarFallback>AL</AvatarFallback>
+            <AvatarFallback>-</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64" align="end">
         <DropdownMenuLabel className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-medium text-foreground">
-            Adriel Lucas
+            {data.name ? data.name : "Nome não disponível"}
           </span>
           <span className="truncate text-xs font-normal text-muted-foreground">
-            a.dev@gmail.com
+            {data.email ? data.email : "Email não disponível"}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -55,7 +76,7 @@ export default function UserDropdown() {
               className="opacity-60"
               aria-hidden="true"
             />
-            <span>Configurações da conta</span>
+            <a href="/dashboard/setting">Configurações da conta</a>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <RiTeamLine size={16} className="opacity-60" aria-hidden="true" />

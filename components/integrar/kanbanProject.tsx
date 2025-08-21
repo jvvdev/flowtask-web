@@ -23,7 +23,7 @@ import { Input } from "../input";
 import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../alert-dialog";
 import { useRouter } from "next/navigation";
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, DragEndEvent, closestCenter } from "@dnd-kit/core";
 import {
     SortableContext,
     useSortable,
@@ -185,8 +185,13 @@ export function KanbanProject() {
         useSensor(TouchSensor)
     );
 
-    const totalPages = Math.ceil(kanbanList.length / ITEMS_PER_PAGE);
-    const paginatedData = kanbanList.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+    // Filtra as tarefas pelo título usando searchQuery
+    const filteredKanbanList = kanbanList.filter(task =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredKanbanList.length / ITEMS_PER_PAGE);
+    const paginatedData = filteredKanbanList.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     const router = useRouter();
 
@@ -287,7 +292,11 @@ export function KanbanProject() {
                     filter == "list" ?
                         <div className="relative">
                             <Input
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setCurrentPage(1); // volta para página 1 ao pesquisar
+                                }}
+                                value={searchQuery}
                                 placeholder="Pesquisar pelo nome"
                                 className="peer min-w-40 ps-9 bg-background bg-gradient-to-br from-accent/60 to-accent"
                             />
@@ -367,12 +376,13 @@ export function KanbanProject() {
                             <DndContext
                                 onDragEnd={dragEndKanban}
                                 sensors={sensors}
+                                collisionDetection={closestCenter}
                             >
                                 <SortableContext
                                     items={kanbanList.map(task => task.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
+                                    <div className="duration-200 w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                                         <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                                             <div className="flex items-center w-full gap-1.5">
                                                 <div className="h-3 w-3 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
@@ -405,7 +415,7 @@ export function KanbanProject() {
                                     items={kanbanList.map(task => task.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
+                                    <div className="duration-200 w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                                         <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                                             <div className="flex items-center w-full gap-1.5">
                                                 <div className="h-3 w-3 bg-yellow-400/80 rounded-full"></div>
@@ -414,7 +424,7 @@ export function KanbanProject() {
                                             </div>
                                             <div className="w-full h-1 bg-yellow-400/80 rounded-full"></div>
                                         </div>
-
+                                        
                                         <div className="flex flex-col items-center gap-3">
                                             {
                                                 kanbanList.filter(task => task.status === "in progress").length === 0 ?
@@ -438,7 +448,7 @@ export function KanbanProject() {
                                     items={kanbanList.map(task => task.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    <div className="w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
+                                    <div className="duration-200 w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
                                         <div className="flex flex-col items-center gap-2 text-lg font-semibold">
                                             <div className="flex items-center w-full gap-1.5">
                                                 <div className="h-3 w-3 bg-green-600/80 rounded-full"></div>
@@ -474,7 +484,7 @@ export function KanbanProject() {
                                     sensors={sensors}
                                 >
                                     <SortableContext
-                                        items={kanbanList.map(task => task.id)}
+                                        items={paginatedData.map(task => task.id)}
                                         strategy={verticalListSortingStrategy}
                                     >
                                         <div className="overflow-x-auto">
@@ -511,7 +521,13 @@ export function KanbanProject() {
                                                                 listHeader={listHeader}
                                                             />
                                                         ))
-                                                    ) : null}
+                                                    ) : (
+                                                        <TableRow>
+                                                            <TableCell colSpan={listHeader.length}>
+                                                                <p className="text-center font-semibold">Nenhum projeto encontrado</p>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
                                                 </TableBody>
                                             </Table>
                                         </div>
@@ -561,8 +577,6 @@ export function KanbanProject() {
         </div >
     );
 }
-
-// fazer com que, as colunas da lista seja renderizada por ids, e dai quando mudar o header ele mudar o id, assim fazendo a coluna ficar no mesmo ngc do header
 
 function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTaskRowProps) {
     const {
@@ -703,17 +717,19 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                 listHeader.map(header => {
                     switch (header.name) {
                         case "Título":
-                            return <TitleCollumn />
+                            return <TitleCollumn key={header.id} />
                         case "Descrição":
-                            return <DescriptionCollumn />
+                            return <DescriptionCollumn key={header.id} />
                         case "Prioridade":
-                            return <PriorityCollumn />
+                            return <PriorityCollumn key={header.id} />
                         case "Status":
-                            return <StatusCollumn />
+                            return <StatusCollumn key={header.id} />
                         case "Comentários":
-                            return <CommentsCollumn />
+                            return <CommentsCollumn key={header.id} />
                         case "Criado em":
-                            return <CreatedCollumn />
+                            return <CreatedCollumn key={header.id} />
+                        default:
+                            return null;
                     }
                 })
             }

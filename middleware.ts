@@ -8,9 +8,6 @@ export async function middleware(req: NextRequest) {
     const cookieService = await cookies()
 
     if (await getCookie('token', { req, res })) {
-        console.log(await getCookies({ req, res }))
-        console.log("caiu no maua")
-
         // se for no auth redireciona para a dashboard
         if (req.url.includes('/auth')) {
             return NextResponse.rewrite(new URL('/dashboard', req.url))
@@ -24,8 +21,6 @@ export async function middleware(req: NextRequest) {
             return NextResponse.rewrite(new URL('/dashboard', req.url))
         }
 
-        console.log(await getCookies({ req, res }))
-        console.log("nao tem cookie")
         return NextResponse.rewrite(new URL('/auth/login', req.url))
     }
 

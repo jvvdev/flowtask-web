@@ -13,16 +13,42 @@ import {
   SidebarTrigger,
 } from "@/components/sidebar";
 import { SiderBarDefault } from "@/components/sidebarDefault";
-import ThemeToggle from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
 import { ALargeSmall, Handshake, Undo2, UserCog } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Subscriptions from "./components/Subscriptions";
 import { AccountSettings } from "./components/AccountSettings";
 import { Preferences } from "./components/Preferences";
+import { authService } from "@/api/auth-service";
+import { routes } from "@/api/routes";
+import axios from "axios";
+
+interface UserData {
+  name: string;
+  email: string;
+  picture: string;
+}
 
 export default function Settings() {
   const [currentTab, setCurrentTab] = useState(0)
+  const [data, setData] = useState<UserData>({ name: "", email: "", picture: "" });
+
+  useEffect(() => {
+    async function getData() {
+      const token = await authService.getToken();
+
+      const api = await axios.get(routes.getUser + token).then((response) => {
+        setData({
+          name: response.data.name,
+          email: response.data.email,
+          picture: response.data.picture,
+        });
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+    getData();
+  }, []);
 
   return (
     <SidebarProvider className="p-2">
@@ -63,17 +89,17 @@ export default function Settings() {
               <div className="flex items-center gap-3 p-2 mt-5 bg-zinc-200/70 dark:bg-zinc-800/70 dark:border-zinc-200/5 dark:text-zinc-50/90 border rounded-lg">
                 <Avatar className="size-14">
                   <AvatarImage
-                    src="https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/user_sam4wh.png"
+                    src={data.picture}
                     width={32}
                     height={32}
                     alt="Profile image"
                   />
-                  <AvatarFallback>AL</AvatarFallback>
+                  <AvatarFallback>-</AvatarFallback>
                 </Avatar>
 
                 <div className="flex flex-col">
-                  <p className="text-lg font-semibold">Adriel Lucas</p>
-                  <span className="text-sm text-muted-foreground">a.dev@gmail.com</span>
+                  <p className="text-lg font-semibold">{data.name ? data.name : "Nome não disponível"}</p>
+                  <span className="text-sm text-muted-foreground">{data.email ? data.email : "Email não disponível"}</span>
                 </div>
               </div>
 
