@@ -28,6 +28,10 @@ import { Plus, ALargeSmall, MailSearch, ClipboardClock, ClipboardCheck, ChartPie
 
 
 export default function Page() {
+  function handleCreateTask() {
+    console.log(window.location.href)
+  }
+
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />

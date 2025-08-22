@@ -1,3 +1,5 @@
+import { get } from "http"
+
 export const apiRoute = "http://26.13.17.173:3001"
 
 export const routes = {
@@ -5,5 +7,13 @@ export const routes = {
     createAccount: apiRoute + "/create-account",
     authAccount: apiRoute + "/auth-account",
     authGoogle: apiRoute + "/auth/google",
-    getUser: apiRoute + "/auth/get-account?session_id="
+    getUser: apiRoute + "/auth/get-account?session_id=",
+
+    // Team Routes
+    createTeam: apiRoute + "/create-group",
+    updateTeam: apiRoute + "/update-group",
+    deleteTeam: apiRoute + "/delete-group",
+    getTeam: apiRoute + "/get-group",
+    getTeams: apiRoute + "/get-groups",
+    getTeamByUser: apiRoute + "/get-groups-by-user",
 }

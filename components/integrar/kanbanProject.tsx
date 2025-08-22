@@ -32,10 +32,8 @@ import {
     horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { set } from "date-fns";
 
 const ITEMS_PER_PAGE = 10;
-
 
 interface KanbanTask {
     id: number;
@@ -57,7 +55,6 @@ interface ListTaskRowProps {
 export function KanbanProject() {
     const [filter, setFilter] = useState("kanban");
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState<typeof kanbanList>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedTask, setSelectedTask] = useState(0);
@@ -185,6 +182,10 @@ export function KanbanProject() {
         useSensor(TouchSensor)
     );
 
+    function handleCreateTask() {
+        console.log("taskID: " + window.location.href.split('/dashboard/project/')[1])
+    }
+
     // Filtra as tarefas pelo título usando searchQuery
     const filteredKanbanList = kanbanList.filter(task =>
         task.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -197,7 +198,8 @@ export function KanbanProject() {
 
     function handleOpenTask(taskID: number) {
         if (taskID) {
-            router.push(`/dashboard/project/1/${taskID}`);
+            const projectID = window.location.href.split('/dashboard/project/')[1]
+            router.push(`/dashboard/project/${projectID}/${taskID}`);
         }
     };
 
@@ -320,7 +322,7 @@ export function KanbanProject() {
                                         <AlertDialogHeader>
                                             <AlertDialogTitle>Confirmar</AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                Você tem certeza de que deseja abrir este projeto?
+                                                Você tem certeza de que deseja abrir essa tarefa?
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
@@ -330,14 +332,26 @@ export function KanbanProject() {
                                     </AlertDialogContent>
                                 </AlertDialog>
 
-                                <Button className="bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
-                                    onClick={() => {
-                                        // Handle delete project
-                                    }}
-                                >
-                                    <Trash2 className="size-5" />
-                                    <span className="hidden sm:block">Deletar</span>
-                                </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger
+                                        className="px-2 h-9 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
+                                    >
+                                        <Trash2 className="size-5" />
+                                        <span className="hidden sm:block">Deletar</span>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Confirmar</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Você tem certeza de que deseja deletar essa tarefa?
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction className="bg-red-800 hover:bg-red-700">Deletar tarefa</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
                         )
                     }
@@ -424,7 +438,7 @@ export function KanbanProject() {
                                             </div>
                                             <div className="w-full h-1 bg-yellow-400/80 rounded-full"></div>
                                         </div>
-                                        
+
                                         <div className="flex flex-col items-center gap-3">
                                             {
                                                 kanbanList.filter(task => task.status === "in progress").length === 0 ?

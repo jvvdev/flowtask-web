@@ -2,16 +2,16 @@ import axios from "axios"
 import { routes } from "./routes"
 import { redirect } from "next/navigation"
 import {
-  getCookie,
-  getCookies,
-  setCookie,
-  deleteCookie,
-  hasCookie,
-  useGetCookies,
-  useSetCookie,
-  useHasCookie,
-  useDeleteCookie,
-  useGetCookie,
+    getCookie,
+    getCookies,
+    setCookie,
+    deleteCookie,
+    hasCookie,
+    useGetCookies,
+    useSetCookie,
+    useHasCookie,
+    useDeleteCookie,
+    useGetCookie,
 } from 'cookies-next/client';
 
 
@@ -59,7 +59,7 @@ class AuthService {
 
     // get token 
     async getToken() {
-        return getCookie('token');
+        return getCookie('sessionId');
     }
 }
 

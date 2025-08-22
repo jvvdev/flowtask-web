@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
     const cookieService = await cookies()
 
-    if (await getCookie('token', { req, res })) {
+    if (await getCookie('sessionId', { req, res })) {
         // se for no auth redireciona para a dashboard
         if (req.url.includes('/auth')) {
             return NextResponse.rewrite(new URL('/dashboard', req.url))
@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
         if (req.url.includes('?session_id=')) {
             const session_id = req.url.split('/dashboard?session_id=')[1];
 
-            cookieService.set('token', session_id, { secure: true, maxAge: 604800 })
+            cookieService.set('sessionId', session_id, { secure: true, maxAge: 604800 })
             return NextResponse.rewrite(new URL('/dashboard', req.url))
         }
 
