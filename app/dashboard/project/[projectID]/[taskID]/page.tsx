@@ -172,7 +172,7 @@ export default function Page() {
                 <span className="text-zinc-400">/</span>
                 <Link href="/dashboard/project" className="text-zinc-400">Projetos</Link>
                 <span className="text-zinc-400">/</span>
-                <a href="/dashboard/project/window.location.href.split('/dashboard/project/')[1]" className="text-zinc-400">Manager System</a>
+                <a href="/dashboard/project/1" className="text-zinc-400">Manager System</a>
                 <span className="text-zinc-400">/</span>
                 <BreadcrumbItem>
                   <BreadcrumbPage>Tarefa 01</BreadcrumbPage>
@@ -190,7 +190,7 @@ export default function Page() {
           {/* Page intro */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
             <div>
-              <h1 className="text-xl sm:text-2xl md:text-4xl font-semibold">Manager System</h1>
+              <h1 className="text-xl sm:text-3xl font-semibold">Manager System</h1>
               <p className="text-muted-foreground text-sm sm:text-base">Aqui você pode ver com detalhes os comentários da tarefa selecionada.</p>
             </div>
             <div className="flex gap-2">
@@ -199,7 +199,7 @@ export default function Page() {
                   className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-500/15 dark:bg-yellow-500/20 hover:bg-yellow-500/20 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-yellow-500 cursor-pointer"
                 >
                   <Pencil className="size-5" />
-                  <span className="hidden sm:block">Modificar tarefa</span>
+                  <span className="hidden lg:block">Modificar tarefa</span>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -250,66 +250,96 @@ export default function Page() {
                 }}
               >
                 <Trash2 className="size-5" />
-                <span className="hidden sm:block">Deletar tarefa</span>
+                <span className="hidden lg:block">Deletar tarefa</span>
               </Button>
             </div>
           </div>
 
-          <div
-            className="p-2 sm:p-4 relative flex flex-col border bg-zinc-200/10 dark:bg-zinc-800/30 rounded-2xl max-h-[calc(100vh-220px)] overflow-y-auto
+          <div className="flex flex-col md:flex-row">
+            <div
+              className="w-full md:w-[70%] p-2 sm:p-4 relative flex flex-col border bg-zinc-200/10 dark:bg-zinc-800/30 rounded-2xl md:rounded-r-none md:border-r-0 max-h-[calc(100vh-220px)] overflow-y-auto
             [&::-webkit-scrollbar]:w-1.5
-            [&::-webkit-scrollbar-track]:rounded-md
-            [&::-webkit-scrollbar-thumb]:rounded-md
             [&::-webkit-scrollbar-track]:bg-zinc-200/50
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800/30
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700"
-          >
-            {
-              data.map((item) => (
-                <div key={item.id} className={`p-2 sm:p-4 pl-1 sm:pl-2 ${item.id == 1 ? "pt-1" : ""} ${item.id != data.length ? "border-b" : ""} last:border-0`}>
-                  <div className="flex items-center gap-2 sm:gap-4">
-                    <img className="rounded-full w-10 h-10 sm:w-13 sm:h-13" src={`https://i.pravatar.cc/150?img=${item.id}`} alt={item.author} />
-                    <div className="flex-1">
-                      <div className="flex flex-row justify-between items-start sm:items-center">
-                        <p className="font-semibold text-base sm:text-lg">{item.author}</p>
-                        <Popover >
-                          <PopoverTrigger asChild>
-                            <Button variant="outline" className="h-8 w-8 p-2 sm:p-3">
-                              <Ellipsis />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto min-w-30 p-0" align="end">
-                            <div className="space-y-1">
-                              <div className="text-xs px-3 pt-3 font-medium uppercase text-muted-foreground/60">
-                                Ações
+            >
+              {
+                data.map((item) => (
+                  <div key={item.id} className={`p-2 sm:p-4 pl-1 sm:pl-2 ${item.id == 1 ? "pt-1" : ""} ${item.id != data.length ? "border-b" : ""} last:border-0`}>
+                    <div className="flex items-center gap-2 sm:gap-4">
+                      <img className="rounded-full w-10 h-10 sm:w-13 sm:h-13" src={`https://i.pravatar.cc/150?img=${item.id}`} alt={item.author} />
+                      <div className="flex-1">
+                        <div className="flex flex-row justify-between items-start sm:items-center">
+                          <p className="font-semibold text-base sm:text-lg">{item.author}</p>
+                          <Popover >
+                            <PopoverTrigger asChild>
+                              <Button variant="outline" className="h-8 w-8 p-2 sm:p-3">
+                                <Ellipsis />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto min-w-30 p-0" align="end">
+                              <div className="space-y-1">
+                                <div className="text-xs px-3 pt-3 font-medium uppercase text-muted-foreground/60">
+                                  Ações
+                                </div>
+                                <div className="space-y-1 px-1 pb-1">
+                                  <button className={`flex gap-1 px-2 py-1 bg-zinc-200/0 w-full text-left hover:bg-red-500/15 cursor-pointer rounded-md duration-200`}><Trash size={16} className="mt-[3px]" />Excluir</button>
+                                </div>
                               </div>
-                              <div className="space-y-1 px-1 pb-1">
-                                <button className={`flex gap-1 px-2 py-1 bg-zinc-200/0 w-full text-left hover:bg-red-500/15 cursor-pointer rounded-md duration-200`}><Trash size={16} className="mt-[3px]" />Excluir</button>
-                              </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1">
-                        <p className="text-muted-foreground text-sm sm:text-base">{item.text}</p>
-                        <p className="text-muted-foreground text-xs sm:text-sm">Enviado em: {item.createdAt.toLocaleString()}</p>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1">
+                          <p className="text-muted-foreground text-sm sm:text-base">{item.text}</p>
+                          <p className="text-muted-foreground text-xs sm:text-sm">Enviado em: {item.createdAt.toLocaleString()}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
-            }
+                ))
+              }
 
-            <div
-              className="w-full sticky bottom-0 z-10 border rounded-xl p-2 sm:p-4 space-y-2 shadow-lg bg-background">
-              <h1 className="text-base sm:text-lg">Adicionar novo comentário à tarefa</h1>
-              <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-                <div className="relative w-full">
-                  <MessageCircleMore className="absolute left-2 top-[7px] text-muted-foreground" size={20} />
-                  <Input placeholder="Digite seu comentário aqui..." className="pl-8" />
+              <div
+                className="w-full sticky bottom-0 z-10 border rounded-xl p-2 sm:p-4 space-y-2 shadow-lg bg-background">
+                <h1 className="text-base sm:text-lg">Adicionar novo comentário à tarefa</h1>
+                <div className="flex flex-col sm:flex-row items-center sm:gap-2">
+                  <div className="relative w-full">
+                    <MessageCircleMore className="absolute left-2 top-[7px] text-muted-foreground" size={20} />
+                    <Input placeholder="Digite seu comentário aqui..." className="pl-8" />
+                  </div>
+                  <Button className="cursor-pointer w-full sm:w-auto mt-2 sm:mt-0"><SendHorizontal /></Button>
                 </div>
-                <Button className="cursor-pointer w-full sm:w-auto mt-2 sm:mt-0"><SendHorizontal /></Button>
+              </div>
+            </div>
+
+            <div className="hidden md:flex flex-col p-2 sm:p-4 w-full md:w-[30%] relative justify-between border bg-background rounded-2xl md:rounded-l-none md:border-l-0 max-h-[calc(100vh-220px)] overflow-y-auto">
+              <div>
+                <div className="space-y-2">
+                  <h1 className="text-xl">Nome da tarefa: <span className="font-bold">Tarefa tal</span></h1>
+                  <p className="text-muted-foreground">Descrição da tarefa: <span className="font-semibold">Nessa string tem que ter uma outra string</span></p>
+                </div>
+
+                <div className="mt-3 py-3 flex justify-between items-center border-t">
+                  <p className="text-lg font-semibold">Dificuldade:</p>
+                  <span className={`text-sm font-medium p-1 text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm`}>
+                    Concluído
+                  </span>
+                </div>
+
+                <div className="mt-1 flex justify-between items-center pb-3 border-b">
+                  <p className="text-lg font-semibold">Prioridade:</p>
+                  <span className={`text-sm font-medium p-1 text-red-500/70 border border-red-400/10 dark:border-red-500/10 bg-red-200/40 dark:bg-red-600/20 rounded-sm`}>
+                    Alta
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t">
+                <div className="flex items-center gap-2">
+                  <img className="rounded-full w-5 h-5 lg:w-10 lg:h-10" src={`https://i.pravatar.cc/150?img=1`} />
+                  <h1 className="lg:text-[17px]">Criado por: <span className="font-semibold">José Belmiro</span></h1>
+                </div>
               </div>
             </div>
           </div>
