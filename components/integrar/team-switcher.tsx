@@ -110,7 +110,7 @@ export function TeamSwitcher() {
               </div>
               <div className="grid flex-1 text-left text-base leading-tight">
                 <span className="truncate font-medium">
-                  {activeTeam ?? "Select a Team"}
+                  {activeTeam ?? "Selecione um time"}
                 </span>
               </div>
               <RiExpandUpDownLine
@@ -129,7 +129,7 @@ export function TeamSwitcher() {
             <DropdownMenuLabel className="uppercase text-muted-foreground/60 text-xs">
               EQUIPES
             </DropdownMenuLabel>
-            {loading ? <LoaderCircle size={16} className="animate-spin" /> : team.length > 0 ? team.map((team, index) => (
+            {loading ? <div className="w-full flex items-center justify-center h-10 text-sm font-semibold gap-2 text-muted-foreground"><LoaderCircle size={16} className="animate-spin" /> Carregando...</div> : team.length > 0 ? team.map((team, index) => (
               <div
                 key={team.id_group}
                 onClick={() => handleTeamChange(team)}

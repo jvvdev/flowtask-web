@@ -7,6 +7,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/input";
 import { teamService } from "@/api/dashboard/team-service";
+import ThemeToggle from "@/components/theme-toggle";
+import { JoinGroupDialog } from "./components/joinGroup";
 
 type CreateTeamForm = {
   name: string;
@@ -25,8 +27,9 @@ export default function NotGroupPage() {
     <div className="min-h-dvh bg-background flex flex-col items-center justify-center dark:bg-zinc-950 p-6">
       <div className="w-full max-w-4xl">
         {/* Header */}
-        <div className="flex items-center gap-2 mb-8">
-          <h1 className="text-2xl font-semibold text-foreground">Selecione uma das opções abaixo</h1>
+        <div className="flex flex-col mb-8">
+          <p className="text-[16px] text-muted-foreground">Parece que você não está em nenhum grupo ainda...</p>
+          <h1 className="text-2xl font-semibold text-foreground">Selecione uma das opções abaixo para continuar</h1>
         </div>
 
         {/* Cards Grid */}
@@ -106,93 +109,61 @@ export default function NotGroupPage() {
           </Button>
 
           {
-            actualSelect === 'join' ? <AlertDialog>
-              <AlertDialogTrigger
-                className="px-8 py-2 bg-primary flex items-center justify-center gap-2 rounded-md text-sm hover:bg-primary/90 cursor-pointer"
-              >
-                Continuar
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Entrar em um grupo</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Aqui você pode pedir para entrar em novas equipes.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
+            actualSelect === 'join' ?
+              <JoinGroupDialog /> : actualSelect === 'create' ?
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    className="px-8 py-2 bg-primary flex items-center justify-center gap-2 text-white dark:text-black rounded-md text-sm hover:bg-primary/90 cursor-pointer"
+                  >
+                    Continuar
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Adicionar equipe</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Aqui você pode adicionar novas equipes para gerenciar.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome da equipe</p>
-                      <Input
-                        placeholder="Digite aqui"
-                        className="mb-2"
-                        {...register("name", { required: true })}
-                      />
-                    </div>
-                  </div>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome da equipe</p>
+                          <Input
+                            placeholder="Digite aqui"
+                            className="mb-2"
+                            {...register("name", { required: true })}
+                          />
+                        </div>
 
-                  <AlertDialogFooter className="mt-6">
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction
-                      type="submit"
-                      className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
-                    >
-                      Solicitar entrada
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </form>
-              </AlertDialogContent>
-            </AlertDialog> : actualSelect === 'create' ?
-              <AlertDialog>
-                <AlertDialogTrigger
-                  className="px-8 py-2 bg-primary flex items-center justify-center gap-2 rounded-md text-sm hover:bg-primary/90 cursor-pointer"
-                >
-                  Continuar
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Adicionar equipe</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Aqui você pode adicionar novas equipes para gerenciar.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome da equipe</p>
-                        <Input
-                          placeholder="Digite aqui"
-                          className="mb-2"
-                          {...register("name", { required: true })}
-                        />
+                        <div className="space-y-2">
+                          <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircleMore size={20} />Descrição da equipe</p>
+                          <Input
+                            placeholder="Digite aqui"
+                            className="mb-2"
+                            {...register("description", { required: true })}
+                          />
+                        </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircleMore size={20} />Descrição da equipe</p>
-                        <Input
-                          placeholder="Digite aqui"
-                          className="mb-2"
-                          {...register("description", { required: true })}
-                        />
-                      </div>
-                    </div>
-
-                    <AlertDialogFooter className="mt-6">
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        type="submit"
-                        className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
-                      >
-                        Criar
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </form>
-                </AlertDialogContent>
-              </AlertDialog> :
-              <Button variant="default" className="px-8 bg-background hover:bg-background cursor-not-allowed">Continuar</Button>
+                      <AlertDialogFooter className="mt-6">
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          type="submit"
+                          className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                        >
+                          Criar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </form>
+                  </AlertDialogContent>
+                </AlertDialog> :
+                <Button variant="default" className="px-8 bg-zinc-900/10 hover:bg-zinc-900/10 dark:bg-background dark:hover:bg-background text-black/70 dark:text-white/80 cursor-not-allowed">Continuar</Button>
           }
+        </div>
+
+        <div className="absolute bottom-16 right-16">
+          <ThemeToggle />
         </div>
       </div>
     </div>

@@ -71,7 +71,7 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-3 lg:gap-3 py-4 lg:px-8 lg:py-6">
           {/* Page intro */}
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-2xl md:text-4xl font-semibold">Manager System</h1>
+            <h1 className="text-2xl font-semibold">Manager System</h1>
             <AlertDialog>
               <AlertDialogTrigger
                 className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"

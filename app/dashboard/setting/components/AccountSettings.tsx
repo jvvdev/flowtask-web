@@ -18,7 +18,7 @@ export function AccountSettings() {
                         <p className="text-md font-semibold text-zinc-700 dark:text-zinc-50/80">Nome exibido</p>
                     </div>
 
-                    <div className="w-full flex justify-end items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                    <div className="w-full flex justify-end items-center gap-2 pr-1 text-zinc-600 dark:text-zinc-400">
                         <p className="text-right font-semibold">Adriel Lucas</p>
                         <Pencil className="cursor-pointer text-zinc-700 hover:text-zinc-800 dark:text-zinc-50/80 dark:hover:text-zinc-50 duration-200" size={20} />
                     </div>
@@ -30,7 +30,7 @@ export function AccountSettings() {
                         <p className="text-md font-semibold text-zinc-700 dark:text-zinc-50/80">Email cadastrado</p>
                     </div>
 
-                    <div className="w-full flex justify-end items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                    <div className="w-full flex justify-end items-center gap-2 pr-1 text-zinc-600 dark:text-zinc-400">
                         <p className="text-right font-semibold">a.lucas@example.com</p>
                         <Pencil className="cursor-pointer text-zinc-700 hover:text-zinc-800 dark:text-zinc-50/80 dark:hover:text-zinc-50 duration-200" size={20} />
                     </div>
@@ -42,7 +42,7 @@ export function AccountSettings() {
                         <p className="text-md font-semibold text-zinc-700 dark:text-zinc-50/80">Senha</p>
                     </div>
 
-                    <div className="w-full flex justify-end items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                    <div className="w-full flex justify-end items-center gap-2 pr-1 text-zinc-600 dark:text-zinc-400">
                         <p className="text-right font-semibold">**********</p>
                         <Pencil className="cursor-pointer text-zinc-700 hover:text-zinc-800 dark:text-zinc-50/80 dark:hover:text-zinc-50 duration-200" size={20} />
                     </div>

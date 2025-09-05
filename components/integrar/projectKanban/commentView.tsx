@@ -221,7 +221,7 @@ export function CommentView() {
                                 data.map((item) => (
                                     <div
                                         key={item.id}
-                                        className="p-3 rounded-md bg-zinc-200/20"
+                                        className="p-3 rounded-md bg-zinc-200/20 dark:bg-muted-foreground/10"
                                     >
                                         <p>{item.content}</p>
                                         <div className="flex items-center justify-between">

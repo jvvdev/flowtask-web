@@ -34,7 +34,7 @@ export function Preferences() {
                     </div>
 
                     <div>
-                        <div className="relative inline-grid h-8 w-20.5 grid-cols-[1fr_1fr] items-center text-sm font-medium">
+                        <div className="relative inline-grid h-8 w-20.5 grid-cols-[1fr_1fr]  items-center text-sm font-medium">
                             <Switch
                                 id={id}
                                 checked={checked}
