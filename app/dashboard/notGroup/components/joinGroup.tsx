@@ -133,13 +133,13 @@ export function JoinGroupDialog() {
                 />
                 <Label htmlFor="custom-name" className="flex items-center gap-2 dark:text-zinc-200/80">
                   <ALargeSmall size={20} />
-                  Nome da equipe
+                  { selectedOption === "custom" ? "Nome da equipe" : "Pedir para entrar" }
                 </Label>
               </div>
 
               {selectedOption === "custom" && (
                 <Input
-                  placeholder="Digite aqui"
+                  placeholder="Digite aqui o nome da equipe que deseja entrar"
                   className="mb-2"
                   {...register("customName", { required: selectedOption === "custom" })}
                 />
