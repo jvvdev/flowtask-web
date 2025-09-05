@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { SearchForm } from "@/components/search-form";
-import { TeamSwitcher } from "@/components/team-switcher";
+import { TeamSwitcher } from "@/components/integrar/team-switcher";
 import {
     Sidebar,
     SidebarContent,
@@ -30,15 +30,9 @@ import {
 } from "@remixicon/react";
 
 export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const pathname = usePathname(); // ✅ Hook chamado uma vez no topo
+    const pathname = usePathname();
 
     const data = {
-        teams: [
-            {
-                name: "FlowTask",
-                logo: "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/logo-01_kp2j8x.png",
-            }
-        ],
         navMain: [
             {
                 title: "GERAL",
@@ -72,7 +66,7 @@ export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sideba
     return (
         <Sidebar {...props}>
             <SidebarHeader>
-                <TeamSwitcher teams={data.teams} />
+                <TeamSwitcher />
                 <hr className="border-t border-border mx-2 -mt-px" />
                 <SearchForm className="mt-3" />
             </SidebarHeader>

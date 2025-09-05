@@ -1,6 +1,6 @@
 import { get } from "http"
 
-export const apiRoute = "http://26.13.17.173:3001"
+export const apiRoute = "http://26.13.17.173:8080"
 
 export const routes = {
     // Auth Routes

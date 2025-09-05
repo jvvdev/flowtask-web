@@ -23,10 +23,8 @@ import { Button } from "@/components/button";
 import ThemeToggle from "@/components/theme-toggle";
 import Link from "next/link";
 import { Input } from "@/components/input";
-import { ALargeSmall, ArchiveRestore, Ellipsis, LoaderCircle, MessageCircleMore, Pencil, SendHorizontal, Trash, Trash2, TriangleAlert } from "lucide-react";
+import { ALargeSmall, Ellipsis, LoaderCircle, MessageCircleMore, Pencil, SendHorizontal, Trash, Trash2, TriangleAlert } from "lucide-react";
 import { useState } from "react";
-import { Avatar } from "@/components/avatar";
-import { RiFilter3Line } from "@remixicon/react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
 
 export default function Page() {
@@ -172,7 +170,7 @@ export default function Page() {
                 <span className="text-zinc-400">/</span>
                 <Link href="/dashboard/project" className="text-zinc-400">Projetos</Link>
                 <span className="text-zinc-400">/</span>
-                <a href="/dashboard/project/1" className="text-zinc-400">Manager System</a>
+                <Link href="/dashboard/project/1" className="text-zinc-400">Manager System</Link>
                 <span className="text-zinc-400">/</span>
                 <BreadcrumbItem>
                   <BreadcrumbPage>Tarefa 01</BreadcrumbPage>

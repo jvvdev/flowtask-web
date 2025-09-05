@@ -12,6 +12,13 @@ export async function middleware(req: NextRequest) {
         if (req.url.includes('/auth')) {
             return NextResponse.rewrite(new URL('/dashboard', req.url))
         }
+
+        if (req.url.includes('/dashboard')) {
+            const activeTeam = await getCookie('activeTeam', { req, res });
+            if (!activeTeam) {
+                return NextResponse.rewrite(new URL('/dashboard/notGroup', req.url))
+            }
+        }
     } else {
         // pega o session_id pelo google
         if (req.url.includes('?session_id=')) {

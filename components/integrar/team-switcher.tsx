@@ -5,10 +5,8 @@ import * as React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/dropdown-menu";
 import {
@@ -19,23 +17,33 @@ import {
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
 
 import { RiExpandUpDownLine, RiAddLine } from "@remixicon/react";
-import { Input } from "./input";
-import { ALargeSmall, ChartPie, TriangleAlert, LoaderCircle, CalendarCheck2, UserCog, MessageCircleMore, Trash, Pencil, Users } from "lucide-react";
+import { Input } from "../input";
+import { ALargeSmall, LoaderCircle, MessageCircleMore, Trash, Users } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { teamService } from "@/api/dashboard/team-service";
-import { Button } from "./button";
 import axios from "axios";
 import { routes } from "@/api/routes";
 import { authService } from "@/api/auth-service";
-import { ModifyTeam } from "./integrar/modifyTeam";
+import { ModifyTeam } from "./modifyTeam";
+
+type Team = {
+  id_group: string;
+  name: string;
+  // Adicione outros campos se necessário
+};
+
+type CreateTeamForm = {
+  name: string;
+  description: string;
+};
 
 export function TeamSwitcher() {
-  const [activeTeam, setActiveTeam] = React.useState();
-  const [team, setTeam] = React.useState([]);
+  const [activeTeam, setActiveTeam] = React.useState<string | undefined>();
+  const [team, setTeam] = React.useState<Team[]>([]);
 
   const [loading, setLoading] = React.useState(true);
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<CreateTeamForm>();
 
   React.useEffect(() => {
     async function getData() {
@@ -48,17 +56,36 @@ export function TeamSwitcher() {
       }).then((response) => {
         setTeam(response.data.data)
         setLoading(false)
-        setActiveTeam(response.data.data[0]?.name)
       }).catch((error) => {
         console.error(error);
       })
     }
 
     getData()
+
+    async function getActiveTeam() {
+      if (!activeTeam) {
+        setTimeout(async () => {
+          if (team.length > 0) {
+            const activeTeam = await teamService.getTeamByUser();
+            if (typeof activeTeam === "string") {
+              setActiveTeam(JSON.parse(activeTeam).name);
+            }
+          }
+        }, 500);
+      }
+    }
+
+    getActiveTeam()
   }, [])
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: CreateTeamForm) => {
     teamService.createTeam(data);
+  };
+
+  const handleTeamChange = (team: Team) => {
+    setActiveTeam(team.name);
+    teamService.setTeamByUser(team);
   };
 
   return (
@@ -105,7 +132,7 @@ export function TeamSwitcher() {
             {loading ? <LoaderCircle size={16} className="animate-spin" /> : team.length > 0 ? team.map((team, index) => (
               <div
                 key={team.id_group}
-                onClick={() => setActiveTeam(team.name)}
+                onClick={() => handleTeamChange(team)}
                 className={`rounded-md gap-2 py-1 px-2 flex justify-between items-center ${activeTeam === team.name ? 'bg-muted-foreground/10' : 'cursor-pointer hover:bg-muted-foreground/5'}`}
               >
                 {/* <div className="flex size-6 items-center justify-center rounded-md overflow-hidden">
@@ -132,7 +159,7 @@ export function TeamSwitcher() {
                       <AlertDialogFooter className="">
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => teamService.deleteTeam(team.id_group)}
+                          onClick={() => teamService.deleteTeam(Number(team.id_group))}
                           className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
                         >
                           Deletar

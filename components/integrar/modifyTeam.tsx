@@ -6,11 +6,20 @@ import { Input } from "../input";
 import { ALargeSmall, MessageCircleMore, Pencil } from "lucide-react";
 import { teamService } from "@/api/dashboard/team-service";
 
-export function ModifyTeam(id: any) {
-    const { register, handleSubmit } = useForm();
+type ModifyTeamProps = {
+    id: string;
+};
 
-    const onModifyTeam = (data: any) => {
-        teamService.updateTeam(id.id, data);
+type FormData = {
+    modify_name: string;
+    modify_description: string;
+};
+
+export function ModifyTeam({ id }: ModifyTeamProps) {
+    const { register, handleSubmit } = useForm<FormData>();
+
+    const onModifyTeam = (data: FormData) => {
+        teamService.updateTeam(id, data);
     };
 
     return (
