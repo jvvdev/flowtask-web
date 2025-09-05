@@ -8,12 +8,16 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/input";
 import { teamService } from "@/api/dashboard/team-service";
 
+type CreateTeamForm = {
+  name: string;
+  description?: string;
+};
 
 export default function NotGroupPage() {
   const [actualSelect, setActualSelect] = useState('')
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<CreateTeamForm>();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: CreateTeamForm) => {
     teamService.createTeam(data);
   };
 
