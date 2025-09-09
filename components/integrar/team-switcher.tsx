@@ -49,6 +49,13 @@ export function TeamSwitcher() {
     async function getData() {
       const token = await authService.getToken()
 
+      const userTeams = await teamService.getAllTeams();
+      if (userTeams) {
+        setTeam(JSON.parse(userTeams) as Team[]);
+        setLoading(false)
+        return;
+      }
+
       await axios.get(routes.getTeamByUser, {
         headers: {
           "authToken": token
@@ -56,6 +63,7 @@ export function TeamSwitcher() {
       }).then((response) => {
         setTeam(response.data.data)
         setLoading(false)
+        teamService.setAllTeams(response.data.data)
       }).catch((error) => {
         console.error(error);
       })
@@ -66,11 +74,9 @@ export function TeamSwitcher() {
     async function getActiveTeam() {
       if (!activeTeam) {
         setTimeout(async () => {
-          if (team.length > 0) {
-            const activeTeam = await teamService.getTeamByUser();
-            if (typeof activeTeam === "string") {
-              setActiveTeam(JSON.parse(activeTeam).name);
-            }
+          const activeTeam = await teamService.getTeamByUser();
+          if (typeof activeTeam === "string") {
+            setActiveTeam(JSON.parse(activeTeam).name);
           }
         }, 500);
       }

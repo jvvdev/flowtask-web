@@ -1,8 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "FlowTask  - Relatórios",
-};
+'use client'
 
 import {
   Breadcrumb,
@@ -21,8 +17,19 @@ import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "@/components/button";
 import { NotesComponent } from "@/components/integrar/notes/notesComponent";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
+import { ALargeSmall, MessageCircle, Plus } from "lucide-react";
+import { Input } from "@/components/input";
+import { useForm } from "react-hook-form";
+import { relatoryService } from "@/api/dashboard/relatory-service";
 
 export default function Notes() {
+  const { register, handleSubmit } = useForm();
+
+  function handleCreateNote(data: any) {
+    relatoryService.createRelatory(data);
+  }
+
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />
@@ -61,7 +68,53 @@ export default function Notes() {
                 Confira a visão geral dos seus relatórios e gerencie ou adicione novos com rapidez e facilidade!
               </p>
             </div>
-            <Button className="px-3">Adicionar Relatório</Button>
+            <AlertDialog>
+              <AlertDialogTrigger
+                className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+              >
+                <Plus className="size-5" />
+                <span className="hidden sm:block">Adicionar nota</span>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Adicionar nota</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Aqui você pode adicionar novas notas para gerenciar.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <form onSubmit={handleSubmit(handleCreateNote)}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
+                      <Input
+                        placeholder="Digite aqui"
+                        className="mb-2"
+                        {...register("name")}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircle size={20} />Conteúdo</p>
+                      <Input
+                        placeholder="Digite aqui"
+                        className="mb-2"
+                        {...register("content")}
+                      />
+                    </div>
+                  </div>
+
+                  <AlertDialogFooter className="mt-6">
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      type="submit"
+                      className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                    >
+                      Confirmar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </form>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
 
           <NotesComponent />

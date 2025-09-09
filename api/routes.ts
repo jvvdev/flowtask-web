@@ -1,3 +1,4 @@
+import { create } from "domain"
 import { get } from "http"
 
 export const apiRoute = "http://26.13.17.173:8080"
@@ -16,4 +17,12 @@ export const routes = {
     getTeam: apiRoute + "/get-group",
     getTeams: apiRoute + "/get-groups",
     getTeamByUser: apiRoute + "/get-groups-by-user",
+
+    // Project Routes
+    createProject: apiRoute + "/create-project",
+    getProjectsByUser: apiRoute + "/get-projects/user",
+    getProjects: apiRoute + "/list-projects/group/",
+
+    // Relatory Routes
+    createRelatory: apiRoute + "/create-relatory",
 }

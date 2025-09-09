@@ -95,6 +95,14 @@ class TeamService {
     deleteActiveTeam() {
         deleteCookie('activeTeam');
     }
+
+    async setAllTeams(team: any) {
+        setCookie('allTeams', team);
+    }
+
+    async getAllTeams() {
+        return getCookie('allTeams');
+    }
 }
 
 export const teamService = new TeamService();

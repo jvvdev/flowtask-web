@@ -26,7 +26,7 @@ const chartConfig = {
 
 export function ChartOverHeat() {
   return (
-    <div className="relative p-4 pb-0 w-full 2xl:w-[40%] h-62 space-y-2 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
+    <div className="relative p-4 pb-0 w-full 2xl:w-[50%] h-62 space-y-2 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
       <div>
         <h2 className="text-xl font-semibold">Tarefas concluídas</h2>
       </div>

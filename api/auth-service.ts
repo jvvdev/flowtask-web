@@ -61,6 +61,14 @@ class AuthService {
     async getToken() {
         return getCookie('sessionId');
     }
+
+    async setUserData(data: any) {
+        setCookie('userData', data, { maxAge: 120 });
+    }
+
+    async getUserData() {
+        return getCookie('userData');
+    }
 }
 
 export const authService = new AuthService()

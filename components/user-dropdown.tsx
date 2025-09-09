@@ -31,12 +31,23 @@ export default function UserDropdown() {
     async function getData() {
       const token = await authService.getToken();
 
-      const api = await axios.get(routes.getUser + token).then((response) => {
+      const userData = await authService.getUserData();
+      if (userData) {
+        setData(JSON.parse(userData) as UserData);
+        return;
+      }
+
+      await axios.get(routes.getUser + token).then((response) => {
         setData({
           name: response.data.name,
           email: response.data.email,
           picture: response.data.picture,
         });
+        authService.setUserData({
+          name: response.data.name,
+          email: response.data.email,
+          picture: response.data.picture,
+        })
       }).catch((err) => {
         console.log(err);
       })

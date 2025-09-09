@@ -36,12 +36,12 @@ export function StatsCard({ title, value, change, icon }: StatsCardProps) {
             {title}
           </a>
           <div className="text-2xl font-semibold mb-2">{value}</div>
-          {change ? <div className="text-xs text-muted-foreground/60">
+          {/* {change ? <div className="text-xs text-muted-foreground/60">
             <span className={cn("font-medium", trendColor)}>
               {isPositive ? "↗" : "↘"} {change?.value}
             </span>{" "}
-            vs last week
-          </div> : ""}
+            vs ultima semana
+          </div> : ""} */}
         </div>
       </div>
     </div>

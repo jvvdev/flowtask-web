@@ -68,13 +68,13 @@ export default function Page() {
               <div className="flex flex-col gap-4 w-full">
                 <div className="flex flex-col 2xl:flex-row justify-between gap-4 h-[48%]">
                   <div className="flex flex-col xl:flex-row w-full justify-between gap-4">
-                    {/* shortCuts */}
-                    <ShortCutsWidget />
+                    {/* graph tasks */}
+                    <ChartOverHeat />
                     {/* list overheat members */}
                     <MemberOverHeat />
                   </div>
-                  {/* graph tasks */}
-                  <ChartOverHeat />
+                  {/* shortCuts */}
+                  <ShortCutsWidget />
                 </div>
               </div>
               {/* logs screen */}

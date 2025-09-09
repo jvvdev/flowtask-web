@@ -1,8 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "FlowTask - Projetos",
-};
+'use client'
 
 import {
   Breadcrumb,
@@ -24,12 +20,54 @@ import { ProjectList } from "@/components/integrar/projectList";
 import ThemeToggle from "@/components/theme-toggle";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
 import { Input } from "@/components/input";
-import { Plus, ALargeSmall, MailSearch, ClipboardClock, ClipboardCheck, ChartPie, TriangleAlert, LoaderCircle, CalendarCheck2, UserCog } from "lucide-react";
+import { Plus, ALargeSmall, MailSearch, ClipboardClock, ClipboardCheck, ChartPie, TriangleAlert, LoaderCircle, CalendarCheck2, UserCog, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { routes } from "@/api/routes";
+import { authService } from "@/api/auth-service";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { projectService } from "@/api/dashboard/project-service";
+import { teamService } from "@/api/dashboard/team-service";
+import { json } from "stream/consumers";
 
+export type Project = {
+    id_group: string;
+    id_project: string;
+    title: string;
+    resume: string;
+    owner: string;
+    kanban: any[];
+    members_project: any[];
+    createdAt: string;
+};
 
 export default function Page() {
-  function handleCreateTask() {
-    console.log(window.location.href)
+  const [data, setData] = useState<Project[]>([]);
+  const {register, handleSubmit} = useForm();
+
+  useEffect(() => {
+    async function getData() {
+      const sessionId = await authService.getToken();
+      let actualTeam = await teamService.getTeamByUser();
+
+      actualTeam = JSON.parse(actualTeam as string)
+
+      const data = await axios.get(routes.getProjects + actualTeam.id_group, {
+        headers: {
+          AuthToken: sessionId
+        }
+      }).then(res => {
+        setData(res.data.data)
+      }).catch(err => {
+        console.error(err)
+      });
+    }
+
+    getData();
+  }, []);
+
+  function handleCreateProject(formData: any) {
+    projectService.createProject(formData);
   }
 
   return (
@@ -84,60 +122,22 @@ export default function Page() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <form>
+                <form onSubmit={handleSubmit(handleCreateProject)}>
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
                       <Input
                         placeholder="Digite aqui"
                         className="mb-2"
+                        {...register("name")}
                       />
                     </div>
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ChartPie size={20} />Status</p>
-                      <select
-                        className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-                        defaultValue=""
-                        name="status"
-                      >
-                        <option value="" disabled>Selecione o status</option>
-                        <option value="Baixa">Não iniciado</option>
-                        <option value="Media">Em progresso</option>
-                        <option value="Alta">Concluído</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><TriangleAlert size={20} />Prioridade</p>
-                      <select
-                        className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-                        defaultValue=""
-                        name="prioridade"
-                      >
-                        <option value="" disabled>Selecione a prioridade</option>
-                        <option value="Baixa">Baixa</option>
-                        <option value="Media">Média</option>
-                        <option value="Alta">Alta</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><LoaderCircle size={20} />Progresso</p>
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircle size={20} />Resumo</p>
                       <Input
                         placeholder="Digite aqui"
                         className="mb-2"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><CalendarCheck2 size={20} />Data de entrega</p>
-                      <Input
-                        placeholder="Digite aqui"
-                        className="mb-2"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><UserCog size={20} />Responsável</p>
-                      <Input
-                        placeholder="Digite aqui"
-                        className="mb-2"
+                        {...register("resume")}
                       />
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export default function Page() {
           <InfoCardToProjects />
 
           {/* project list */}
-          <ProjectList />
+          <ProjectList data={data} setData={setData} />
         </div>
       </SidebarInset>
     </SidebarProvider>
