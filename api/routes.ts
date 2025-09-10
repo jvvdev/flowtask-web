@@ -22,7 +22,18 @@ export const routes = {
     createProject: apiRoute + "/create-project",
     getProjectsByUser: apiRoute + "/get-projects/user",
     getProjects: apiRoute + "/list-projects/group/",
+    getProjectDetails: apiRoute + "/projects/",
+    deleteProject: apiRoute + "/delete-project",
+
+    // Kanban Routes
+    getKanbanByProject: apiRoute + "/list-by-project/",
+    createKanban: apiRoute + "/create-kanban",
+    updateKanban: apiRoute + "/update-kanban/",
+    deleteKanban: apiRoute + "/delete-kanban/",
 
     // Relatory Routes
     createRelatory: apiRoute + "/create-relatory",
+    updateRelatory: apiRoute + "/update-relatory",
+    getRelatoryByGroup: apiRoute + "/group-relatory/",
+    deleteRelatory: apiRoute + "/delete-relatory/"
 }

@@ -23,6 +23,8 @@ class ProjectService {
             avatar: ""
         }
 
+        console.log(data)
+
         axios.get(routes.getUser + sessionId, {
             headers: {
                 authToken: sessionId
@@ -34,7 +36,7 @@ class ProjectService {
 
             axios.post(routes.createProject, {
                 title: data.name,
-                resume: data.description,
+                resume: data.resume,
                 owner_email: ownerInfo.email,
                 owner_name: ownerInfo.name,
                 owner_avatar: ownerInfo.avatar,
@@ -44,12 +46,28 @@ class ProjectService {
                     authToken: sessionId
                 }
             }).then(res => {
-                console.log("deu bão", res)
+                window.location.reload();
             }).catch(err => {
-                console.error("Error creating project:", err)
+                console.error(err)
             })
         }).catch(err => {
             console.error("Error fetching user data:", err)
+        })
+    }
+
+    async deleteProject(id: string) {
+        const sessionId = getCookie("sessionId")
+        axios.delete(routes.deleteProject, {
+            headers: {
+                authToken: sessionId
+            },
+            data: {
+                project_id: id
+            }
+        }).then(res => {
+            window.location.reload();
+        }).catch(err => {
+            console.error(err)
         })
     }
 }

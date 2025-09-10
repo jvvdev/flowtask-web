@@ -32,6 +32,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import axios from "axios";
+import { projectService } from "@/api/dashboard/project-service";
 
 export type Project = {
     id_group: string;
@@ -50,6 +51,14 @@ export type ProjectListProps = {
 };
 
 const ITEMS_PER_PAGE = 10;
+
+function getProjectStatus(item: Project) {
+    const kanban = Array.isArray(item.kanban) ? item.kanban : [];
+    if (kanban.length === 0) return "Não iniciado";
+    if (kanban.some(k => k.status === "Finalizado")) return "Finalizado";
+    if (kanban.some(k => k.status === "Em andamento")) return "Em andamento";
+    return "Em andamento";
+}
 
 export function ProjectList({ data, setData }: ProjectListProps) {
     const [isLoading, setIsLoading] = useState(true);
@@ -108,20 +117,32 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => handleOpenProject(selectedProject)}>Abrir</AlertDialogAction>
+                                            <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction className="cursor-pointer" onClick={() => handleOpenProject(selectedProject)}>Abrir</AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
 
-                                <Button className="bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
-                                    onClick={() => {
-                                        // Handle delete project
-                                    }}
-                                >
-                                    <Trash2 className="size-5" />
-                                    <span className="hidden sm:block">Deletar</span>
-                                </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger
+                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
+                                    >
+                                        <Trash2 className="size-5" />
+                                        <span className="hidden sm:block">Deletar</span>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Confirmar</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Você tem certeza de que deseja abrir este projeto?
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction className="bg-red-800 hover:bg-red-700 cursor-pointer" onClick={() => projectService.deleteProject(selectedProject)}>Deletar</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
                         )
                     }
@@ -172,59 +193,62 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                     </TableHeader>
                     <TableBody>
                         {isLoading ? null : paginatedData.length > 0 ? (
-                            paginatedData.map((item) => (
-                                <TableRow
-                                    key={item.id_project}
-                                    className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
-                                >
-                                    <TableCell className="flex gap-2">
-                                        <button className={`border rounded-sm ${selectedProject === item.id_project ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`} onClick={() => { if (selectedProject === item.id_project) setSelectedProject("0"); else setSelectedProject(item.id_project); }}><Check className={`${selectedProject === item.id_project ? "block" : "hidden"}`} size={12} /></button>
-                                        <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.title}</p>
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.resume}
-                                    </TableCell>
-                                    {/* <TableCell>
-                                        {item.Status === "Não iniciado" ? (
-                                            <div className="flex items-center gap-2 relative">
-                                                <div className="relative flex h-2 w-2">
-                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75 animate-ping"></div>
-                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-gray-400"></div>
+                            paginatedData.map((item) => {
+                                const status = getProjectStatus(item);
+                                return (
+                                    <TableRow
+                                        key={item.id_project}
+                                        className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
+                                    >
+                                        <TableCell className="flex gap-2">
+                                            <button className={`border rounded-sm ${selectedProject === item.id_project ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`} onClick={() => { if (selectedProject === item.id_project) setSelectedProject("0"); else setSelectedProject(item.id_project); }}><Check className={`${selectedProject === item.id_project ? "block" : "hidden"}`} size={12} /></button>
+                                            <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.title}</p>
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.resume}
+                                        </TableCell>
+                                        <TableCell>
+                                            {status === "Não iniciado" ? (
+                                                <div className="flex items-center gap-2 relative">
+                                                    <div className="relative flex h-2 w-2">
+                                                        <div className="absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75 animate-ping"></div>
+                                                        <div className="relative inline-flex rounded-full h-2 w-2 bg-gray-400"></div>
+                                                    </div>
+                                                    <span className="opacity-80 overflow-hidden whitespace-nowrap text-ellipsis">Não iniciado</span>
                                                 </div>
-                                                <span className="opacity-80 overflow-hidden whitespace-nowrap text-ellipsis">Não iniciado</span>
-                                            </div>
-                                        ) : item.Status === "Em andamento" ? (
-                                            <div className="flex items-center gap-2 relative">
-                                                <div className="relative flex h-2 w-2">
-                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75 animate-ping"></div>
-                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></div>
+                                            ) : status === "Em andamento" ? (
+                                                <div className="flex items-center gap-2 relative">
+                                                    <div className="relative flex h-2 w-2">
+                                                        <div className="absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75 animate-ping"></div>
+                                                        <div className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></div>
+                                                    </div>
+                                                    <span className="text-purple-400 overflow-hidden whitespace-nowrap text-ellipsis">Em progresso</span>
                                                 </div>
-                                                <span className="text-purple-400 overflow-hidden whitespace-nowrap text-ellipsis">Em progresso</span>
-                                            </div>
-                                        ) : item.Status === "Finalizado" ? (
-                                            <div className="flex items-center gap-2 relative">
-                                                <div className="relative flex h-2 w-2">
-                                                    <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
-                                                    <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                                            ) : status === "Finalizado" ? (
+                                                <div className="flex items-center gap-2 relative">
+                                                    <div className="relative flex h-2 w-2">
+                                                        <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
+                                                        <div className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></div>
+                                                    </div>
+                                                    <span className="text-green-400 overflow-hidden whitespace-nowrap text-ellipsis">Finalizado</span>
                                                 </div>
-                                                <span className="text-green-400 overflow-hidden whitespace-nowrap text-ellipsis">Finalizado</span>
-                                            </div>
-                                        ) : (
-                                            <span className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Status}</span>
-                                        )}
-                                    </TableCell> */}
-                                    {/* <TableCell key={item.id} className="flex items-center justify-start gap-2">
-                                        <CircularProgress progress={item.Progress} />
-                                        <span className="text-sm flex overflow-hidden whitespace-nowrap text-ellipsis">
-                                            {item.Progress}
-                                            <span className="text-zinc-600 dark:text-zinc-400 ms-1">%</span>
-                                        </span>
-                                    </TableCell> */}
-                                    {/* <TableCell>
-                                        <strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.email}</strong>
-                                    </TableCell> */}
-                                </TableRow>
-                            ))
+                                            ) : (
+                                                <span className="overflow-hidden whitespace-nowrap text-ellipsis">{status}</span>
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="flex items-center justify-start gap-2">
+                                            <CircularProgress progress={10} />
+                                            <span className="text-sm flex overflow-hidden whitespace-nowrap text-ellipsis">
+                                                10
+                                                <span className="text-zinc-600 dark:text-zinc-400 ms-1">%</span>
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.owner}</strong>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
                         ) : null}
                     </TableBody>
                 </Table>

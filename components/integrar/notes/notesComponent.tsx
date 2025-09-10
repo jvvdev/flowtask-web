@@ -5,7 +5,7 @@ import { Button } from "../../button";
 import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
 import { Input } from "../../input";
 import { AlignCenter, Bold, CaseSensitive, Check, Info, Italic, LogIn, NotebookPen, Pencil, Trash2, Underline, Undo2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 
 import {
@@ -22,6 +22,12 @@ import {
     ContextMenuItem,
     ContextMenuTrigger,
 } from "@/components/ui/context-menu"
+import axios from "axios";
+import { routes } from "@/api/routes";
+import { authService } from "@/api/auth-service";
+import { teamService } from "@/api/dashboard/team-service";
+import { relatoryService } from "@/api/dashboard/relatory-service";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
 
 const NotesList = [
     {
@@ -147,9 +153,33 @@ const NotesList = [
 ]
 
 export function NotesComponent() {
-    const [currentNote, setCurrentNote] = useState(0)
+    const [currentNote, setCurrentNote] = useState("0")
     const [isEditing, setIsEditing] = useState(false)
     const [noteText, setNoteText] = useState("");
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        async function getData() {
+            const sessionId = await authService.getToken();
+            let actualGroup = await teamService.getTeamByUser();
+
+            actualGroup = actualGroup ? JSON.parse(actualGroup) : null;
+
+            console.log(actualGroup)
+
+            axios.get(routes.getRelatoryByGroup + actualGroup.id_group, {
+                headers: {
+                    authToken: sessionId
+                }
+            }).then(res => {
+                setData(res.data.data)
+            }).catch(err => {
+                console.error(err)
+            });
+        }
+
+        getData()
+    }, []);
 
     const markdownComponents: Components = {
         h1: ({ children }) => <h1 className="text-4xl font-bold  my-4">{children}</h1>,
@@ -203,9 +233,14 @@ export function NotesComponent() {
         td: ({ children }) => <td className="px-2 py-1 text-gray-800">{children}</td>,
     };
 
+    function editNote(noteName: string) {
+        setIsEditing(false);
+        console.log(noteText)
+    }
+
     return (
         <div className="flex justify-between">
-            <div className={`w-full md:max-w-80 ${currentNote === 0 ? 'block' : 'hidden md:block'}`}>
+            <div className={`w-full md:max-w-80 ${currentNote === "0" ? 'block' : 'hidden md:block'}`}>
                 <div className="flex justify-between items-center gap-2">
                     <div className="relative w-full">
                         <Input
@@ -245,24 +280,24 @@ export function NotesComponent() {
                         [&::-webkit-scrollbar-thumb]:bg-zinc-400
                         dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700">
                     {
-                        NotesList.map((item) => (
-                            <div key={item.id}>
+                        data.map((item) => (
+                            <div key={item.id_relatory}>
                                 <ContextMenu>
-                                    <ContextMenuTrigger className="w-full" onClick={() => {setCurrentNote(item.id), setNoteText("")}}>
+                                    <ContextMenuTrigger className="w-full" onClick={() => { setCurrentNote(item.id_relatory), setNoteText("") }}>
                                         <div
-                                            className={`flex flex-col justify-start items-start p-2 ${currentNote === item.id ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
+                                            className={`flex flex-col justify-start items-start p-2 ${currentNote === item.id_relatory ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
                                             <div className="flex items-center justify-between w-full">
                                                 <h3
-                                                    className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote === item.id ? 'text-zinc-100' : ''}`}>
+                                                    className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote === item.id_relatory ? 'text-zinc-100' : ''}`}>
                                                     {item.title}
                                                 </h3>
                                                 <h3
-                                                    className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
-                                                    {item.creator}
+                                                    className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id_relatory ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                                    {item.relatory_owner}
                                                 </h3>
                                             </div>
                                             <p
-                                                className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id ? 'text-zinc-100' : 'text-muted-foreground'}`}>
+                                                className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id_relatory ? 'text-zinc-100' : 'text-muted-foreground'}`}>
                                                 {item.content}
                                             </p>
                                         </div>
@@ -282,62 +317,37 @@ export function NotesComponent() {
                 </div>
             </div>
 
-            <div className={`md:w-[80%] ${currentNote !== 0 ? 'w-full' : ''} h-full`}>
+            <div className={`md:w-[80%] ${currentNote !== "0" ? 'w-full' : ''} h-full`}>
                 {
-                    currentNote == 0 ?
+                    currentNote == "0" ?
                         <div className="hidden md:flex w-full h-full justify-center py-60">
                             <h2 className="text-xl font-semibold">Selecione um relatório para visualizar</h2>
                         </div> : <div className="md:pl-3 py-0.5 h-full pb-10">
                             <div className="flex justify-between items-center w-full">
                                 <div className="flex">
-                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote(0)} />
-                                    <Trash2 className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
+                                    <AlertDialog>
+                                        <AlertDialogTrigger
+                                            className="p-1 flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer"
+                                        >
+                                            <Trash2 className="size-5.5" />
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Confirmar</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Você tem certeza de que deseja excluir este documento?
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+                                                <AlertDialogAction className="bg-red-800 hover:bg-red-700 cursor-pointer" onClick={() => relatoryService.deleteRelatory(currentNote)}>Deletar</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote("0")} />
                                 </div>
-                                {/* <DropdownMenu>
-                                    <DropdownMenuTrigger>
-                                        <CaseSensitive className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuLabel className="flex items-center justify-center gap-2">
-                                            <Bold className={`p-1 rounded-md ${fontWeight == "bold" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer`} size={34} onClick={() => setFontWeight("bold")} />
-                                            <Italic className={`p-1 rounded-md ${fontWeight == "italic" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer`} size={34} onClick={() => setFontWeight("italic")} />
-                                            <Underline className={`p-1 rounded-md ${fontWeight == "underline" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer`} size={34} onClick={() => setFontWeight("underline")} />
-                                            <button className={`px-2 text-2xl rounded-md ${fontWeight == "through" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"} duration-200 cursor-pointer line-through`} onClick={() => setFontWeight("through")}>S</button>
-                                        </DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <div className="flex flex-col space-y-1">
-                                            <button className={`p-1 text-left rounded-sm text-2xl font-semibold ${fontType == "title" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("title")}>
-                                                Título
-                                            </button>
-                                            <button className={`p-1 text-left rounded-sm text-xl font-semibold ${fontType == "header" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("header")}>
-                                                Cabeçalho
-                                            </button>
-                                            <button className={`p-1 text-left rounded-sm text-lg font-semibold ${fontType == "subheader" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("subheader")}>
-                                                Subtítulo
-                                            </button>
-                                            <button className={`p-1 text-left rounded-sm text-base font-semibold ${fontType == "normal" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("normal")}>
-                                                Normal
-                                            </button>
-                                            <button className={`p-1 text-left rounded-sm font-light ${fontType == "thin" ? "bg-green-400 text-zinc-950" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 cursor-pointer"} duration-200`} onClick={() => setFontType("thin")}>
-                                                Fino
-                                            </button>
-                                        </div>
-                                    </DropdownMenuContent>
-                                </DropdownMenu> */}
                                 <div className="flex items-center gap-2">
                                     <p className="px-2 font-semibold text-zinc-400 duration-200">Salvo</p>
-                                    {/* <DropdownMenu>
-                                        <DropdownMenuTrigger>
-                                            <LogIn className="rotate-90 p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            <DropdownMenuLabel className="flex items-center justify-center font-semibold gap-2">
-                                                Upload de arquivo
-                                            </DropdownMenuLabel>
-                                            <DropdownMenuSeparator />
-
-                                        </DropdownMenuContent>
-                                    </DropdownMenu> */}
                                     {
                                         !isEditing ? <Pencil className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setIsEditing(true)} /> :
                                             <div className="flex gap-2">
@@ -363,7 +373,7 @@ export function NotesComponent() {
                                                         </div>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
-                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setIsEditing(false)} />
+                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => editNote()} />
                                             </div>
                                     }
                                 </div>

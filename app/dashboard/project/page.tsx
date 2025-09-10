@@ -58,6 +58,7 @@ export default function Page() {
         }
       }).then(res => {
         setData(res.data.data)
+        
       }).catch(err => {
         console.error(err)
       });

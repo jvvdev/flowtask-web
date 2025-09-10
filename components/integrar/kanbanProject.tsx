@@ -2,7 +2,7 @@
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { ALargeSmall, ArchiveRestore, CalendarPlus, ChartPie, Check, ClipboardCheck, ClipboardClock, ClipboardList, Ellipsis, Loader2, LoaderCircle, MailSearch, MessageCircleMore, Trash2, TriangleAlert } from "lucide-react";
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import {
     Popover,
     PopoverContent,
@@ -22,7 +22,7 @@ import { CircularProgress } from "../circularProgress";
 import { Input } from "../input";
 import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../alert-dialog";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, DragEndEvent, closestCenter } from "@dnd-kit/core";
 import {
     SortableContext,
@@ -33,142 +33,42 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { CommentView } from "./projectKanban/commentView";
+import { kanbanService } from "@/api/dashboard/kanban-service";
+import axios from "axios";
+import { routes } from "@/api/routes";
 
 const ITEMS_PER_PAGE = 10;
 
 interface KanbanTask {
-    id: number;
+    id_kanban: string;
+    id_project: string;
     title: string;
-    priority: string;
+    priority: number;
     description: string;
     status: string;
-    comments: Array<{ id: number; content: string; createdAt: Date }>;
-    createdAt: Date;
+    comments: any;
+    createdBy: string;
+    createdAt: string;
 };
 
 interface ListTaskRowProps {
     item: KanbanTask;
-    selectedTask: number;
-    setSelectedTask: (id: number) => void;
+    selectedTask: string;
+    setSelectedTask: (id: string) => void;
     listHeader: Array<{ id: number; name: string }>;
 }
 
-export function KanbanProject() {
+interface KanbanProjectProps {
+    kanbanList: KanbanTask[];
+    setKanbanList: React.Dispatch<React.SetStateAction<KanbanTask[]>>;
+}
+
+export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps) {
     const [filter, setFilter] = useState("kanban");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedTask, setSelectedTask] = useState(0);
-    const [kanbanList, setKanbanList] = useState([
-        {
-            id: 1,
-            title: "Planejar Sprint",
-            priority: "high",
-            description: "Definir objetivos e tarefas para a próxima sprint.",
-            status: "to do",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 2,
-            title: "Reunião com cliente",
-            priority: "medium",
-            description: "Agendar e realizar reunião de alinhamento de requisitos.",
-            status: "in progress",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 3,
-            title: "Deploy em produção",
-            priority: "low",
-            description: "Publicar nova versão do sistema no ambiente de produção.",
-            status: "done",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 4,
-            title: "Revisar Pull Requests",
-            priority: "medium",
-            description: "Analisar e aprovar PRs pendentes no repositório.",
-            status: "to do",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 5,
-            title: "Implementar autenticação",
-            priority: "high",
-            description: "Adicionar login e registro de usuários usando OAuth.",
-            status: "in progress",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 6,
-            title: "Documentar API",
-            priority: "medium",
-            description: "Atualizar documentação da API REST no Swagger.",
-            status: "done",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 7,
-            title: "Testes automatizados",
-            priority: "low",
-            description: "Criar testes unitários para os principais módulos.",
-            status: "to do",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 8,
-            title: "Ajustar layout mobile",
-            priority: "low",
-            description: "Corrigir responsividade das telas no mobile.",
-            status: "in progress",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 9,
-            title: "Corrigir bug de login",
-            priority: "high",
-            description: "Resolver erro que impede usuários de acessar o sistema.",
-            status: "done",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 10,
-            title: "Configurar CI/CD",
-            priority: "high",
-            description: "Automatizar deploy com pipeline no GitHub Actions.",
-            status: "to do",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 11,
-            title: "Atualizar dependências",
-            priority: "medium",
-            description: "Verificar e atualizar pacotes npm desatualizados.",
-            status: "in progress",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-        {
-            id: 13,
-            title: "Configurar CI/CD",
-            priority: "high",
-            description: "Automatizar deploy com pipeline no GitHub Actions.",
-            status: "to do",
-            comments: [],
-            createdAt: new Date(8.64e15)
-        },
-    ])
+    const [selectedTask, setSelectedTask] = useState<string>("");
     const [listHeader, setListHeader] = useState([
         { id: 1, name: "Título" },
         { id: 2, name: "Descrição" },
@@ -177,11 +77,17 @@ export function KanbanProject() {
         { id: 5, name: "Comentários" },
         { id: 6, name: "Criado em" }
     ]);
+    const params = useParams();
+    const router = useRouter();
 
     const sensors = useSensors(
         useSensor(MouseSensor),
         useSensor(TouchSensor)
     );
+
+    useEffect(() => {
+        setLoading(false);
+    }, [kanbanList]);
 
     function handleCreateTask() {
         console.log("taskID: " + window.location.href.split('/dashboard/project/')[1])
@@ -195,8 +101,6 @@ export function KanbanProject() {
     const totalPages = Math.ceil(filteredKanbanList.length / ITEMS_PER_PAGE);
     const paginatedData = filteredKanbanList.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-    const router = useRouter();
-
     function handleOpenTask(taskID: number) {
         if (taskID) {
             const projectID = window.location.href.split('/dashboard/project/')[1]
@@ -208,68 +112,52 @@ export function KanbanProject() {
         if (!event.over) return;
         if (event.active.id == event.over.id) return;
 
-        const lastID = event.active.id;
-        const newID = event.over.id;
+        const lastID = event.active.id as string;
+        const newID = event.over.id as string;
 
-        setSelectedTask(0);
+        setSelectedTask("");
 
         setKanbanList((items) => {
-            const lastIndex = items.findIndex((i) => i.id === lastID);
-            const newIndex = items.findIndex((i) => i.id === newID);
+            const lastIndex = items.findIndex((i) => i.id_kanban === lastID);
+            const newIndex = items.findIndex((i) => i.id_kanban === newID);
             return arrayMove(items, lastIndex, newIndex);
         });
     };
-
-    function dragEndListHeader(event: DragEndEvent) {
-        if (!event.over) return;
-        if (event.active.id == event.over.id) return;
-
-        const lastID = event.active.id;
-        const newID = event.over.id;
-
-        setListHeader((items) => {
-            const lastIndex = items.findIndex((i) => i.id === lastID);
-            const newIndex = items.findIndex((i) => i.id === newID);
-            return arrayMove(items, lastIndex, newIndex);
-        });
-
-        // fazer com que quando arrastar o titulo, mude o id dele, assim ira mudar o de baixo também
-    }
 
     function dragEndKanban(event: DragEndEvent) {
         if (!event.over) return;
         if (event.active.id == event.over.id) return;
 
-        const lastID = event.active.id;
-        const newID = event.over.id;
+        const lastID = event.active.id as string;
+        const newID = event.over.id as string;
 
         setKanbanList((items) => {
-            const lastTask = items.find((i) => i.id === lastID);
-            const newTask = items.find((i) => i.id === newID);
+            const lastTask = items.find((i) => i.id_kanban === lastID);
+            const newTask = items.find((i) => i.id_kanban === newID);
 
-            const lastIndex = items.findIndex((i) => i.id === lastID);
-            const newIndex = items.findIndex((i) => i.id === newID);
+            const lastIndex = items.findIndex((i) => i.id_kanban === lastID);
+            const newIndex = items.findIndex((i) => i.id_kanban === newID);
 
-            setSelectedTask(0);
+            setSelectedTask("");
 
             const updateEmptyItems = items.map((item) => {
-                if (newID == 1050) {
-                    if (item.id === lastID) {
+                if (newID == "1050") {
+                    if (item.id_kanban === lastID) {
                         return { ...item, status: "to do" };
                     }
-                } else if (newID == 1150) {
-                    if (item.id === lastID) {
+                } else if (newID == "1150") {
+                    if (item.id_kanban === lastID) {
                         return { ...item, status: "in progress" };
                     }
-                } else if (newID == 1250) {
-                    if (item.id === lastID) {
+                } else if (newID == "1250") {
+                    if (item.id_kanban === lastID) {
                         return { ...item, status: "done" };
                     }
                 }
                 return item;
             });
 
-            if (newID == 1050 || newID == 1150 || newID == 1250) {
+            if (newID == "1050" || newID == "1150" || newID == "1250") {
                 if (lastIndex === -1 || newIndex === -1) return updateEmptyItems;
                 return arrayMove(updateEmptyItems, lastIndex, newIndex);
             }
@@ -277,7 +165,7 @@ export function KanbanProject() {
             if (!lastTask || !newTask) return items;
 
             const updatedItems = items.map((item) => {
-                if (item.id === lastID) {
+                if (item.id_kanban === lastID) {
                     return { ...item, status: newTask.status };
                 }
                 return item;
@@ -285,6 +173,20 @@ export function KanbanProject() {
 
             if (lastIndex === -1 || newIndex === -1) return updatedItems;
             return arrayMove(updatedItems, lastIndex, newIndex);
+        });
+    }
+
+    function dragEndListHeader(event: DragEndEvent) {
+        if (!event.over) return;
+        if (event.active.id == event.over.id) return;
+
+        const lastID = event.active.id as number;
+        const newID = event.over.id as number;
+
+        setListHeader((items) => {
+            const lastIndex = items.findIndex((i) => i.id === lastID);
+            const newIndex = items.findIndex((i) => i.id === newID);
+            return arrayMove(items, lastIndex, newIndex);
         });
     }
 
@@ -310,7 +212,7 @@ export function KanbanProject() {
                 }
                 <div className="flex gap-2 items-center">
                     {
-                        selectedTask > 0 && (
+                        selectedTask != "0" && (
                             <div className="flex gap-2">
                                 <CommentView />
 
@@ -330,7 +232,7 @@ export function KanbanProject() {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                            <AlertDialogAction className="bg-red-800 hover:bg-red-700">Deletar tarefa</AlertDialogAction>
+                                            <AlertDialogAction className="bg-red-800 hover:bg-red-700" onClick={() => kanbanService.deleteTask(selectedTask)}>Deletar tarefa</AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
@@ -375,7 +277,7 @@ export function KanbanProject() {
                                 collisionDetection={closestCenter}
                             >
                                 <SortableContext
-                                    items={kanbanList.map(task => task.id)}
+                                    items={kanbanList.map(task => task.id_kanban)}
                                     strategy={verticalListSortingStrategy}
                                 >
                                     <div className="duration-200 w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
@@ -390,12 +292,12 @@ export function KanbanProject() {
 
                                         <div className="flex flex-col items-center gap-3">
                                             {
-                                                kanbanList.filter(task => task.status === "to do").length === 0 ?
+                                                kanbanList.filter(task => task.status === "Pendente").length === 0 ?
                                                     <KanbanEmptyState taskID={1050} />
                                                     :
-                                                    kanbanList.filter(task => task.status === "to do").map(task => (
+                                                    kanbanList.filter(task => task.status === "Pendente").map(task => (
                                                         <KanbanTaskView
-                                                            key={task.id}
+                                                            key={task.id_kanban}
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
@@ -408,7 +310,7 @@ export function KanbanProject() {
                                 </SortableContext>
 
                                 <SortableContext
-                                    items={kanbanList.map(task => task.id)}
+                                    items={kanbanList.map(task => task.id_kanban)}
                                     strategy={verticalListSortingStrategy}
                                 >
                                     <div className="duration-200 w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
@@ -428,7 +330,7 @@ export function KanbanProject() {
                                                     :
                                                     kanbanList.filter(task => task.status === "in progress").map(task => (
                                                         <KanbanTaskView
-                                                            key={task.id}
+                                                            key={task.id_kanban}
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
@@ -441,7 +343,7 @@ export function KanbanProject() {
                                 </SortableContext>
 
                                 <SortableContext
-                                    items={kanbanList.map(task => task.id)}
+                                    items={kanbanList.map(task => task.id_kanban)}
                                     strategy={verticalListSortingStrategy}
                                 >
                                     <div className="duration-200 w-full bg-zinc-200/40 dark:bg-zinc-800/30 dark:border dark:border-zinc-700/20 rounded-xl p-4 space-y-4">
@@ -460,7 +362,7 @@ export function KanbanProject() {
                                                     :
                                                     kanbanList.filter(task => task.status === "done").map(task => (
                                                         <KanbanTaskView
-                                                            key={task.id}
+                                                            key={task.id_kanban}
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
@@ -480,7 +382,7 @@ export function KanbanProject() {
                                     sensors={sensors}
                                 >
                                     <SortableContext
-                                        items={paginatedData.map(task => task.id)}
+                                        items={paginatedData.map(task => task.id_kanban)}
                                         strategy={verticalListSortingStrategy}
                                     >
                                         <div className="overflow-x-auto">
@@ -510,7 +412,7 @@ export function KanbanProject() {
                                                     {loading ? null : paginatedData.length > 0 ? (
                                                         paginatedData.map(item => (
                                                             <ListTaskRow
-                                                                key={item.id}
+                                                                key={item.id_kanban}
                                                                 item={item}
                                                                 selectedTask={selectedTask}
                                                                 setSelectedTask={setSelectedTask}
@@ -581,7 +483,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
         setNodeRef,
         transform,
         transition,
-    } = useSortable({ id: item.id });
+    } = useSortable({ id: item.id_kanban });
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -592,16 +494,16 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
         return (
             <TableCell className="flex gap-2 py-[17px]">
                 <button
-                    className={`z-20 border rounded-sm ${selectedTask === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
+                    className={`z-20 border rounded-sm ${selectedTask === item.id_kanban ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
                     tabIndex={0}
                     role="button"
                     onMouseDown={e => e.stopPropagation()}
                     onClick={() => {
-                        if (selectedTask === item.id) setSelectedTask(0);
-                        else setSelectedTask(item.id);
+                        if (selectedTask === item.id_kanban) setSelectedTask("");
+                        else setSelectedTask(item.id_kanban);
                     }}
                 >
-                    <Check className={`${selectedTask === item.id ? "block" : "hidden"}`} size={12} />
+                    <Check className={`${selectedTask === item.id_kanban ? "block" : "hidden"}`} size={12} />
                 </button>
                 <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.title}</p>
             </TableCell>
@@ -619,7 +521,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
     function PriorityCollumn() {
         return (
             <TableCell>
-                {item.priority === "high" ? (
+                {item.priority === 1 ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75 animate-ping"></div>
@@ -627,7 +529,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                         </div>
                         <span className="text-red-500 overflow-hidden whitespace-nowrap text-ellipsis">Alta</span>
                     </div>
-                ) : item.priority === "medium" ? (
+                ) : item.priority === 2 ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
@@ -635,7 +537,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                         </div>
                         <span className="text-yellow-500 overflow-hidden whitespace-nowrap text-ellipsis">Média</span>
                     </div>
-                ) : item.priority === "low" ? (
+                ) : item.priority === 3 ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
@@ -644,7 +546,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                         <span className="text-green-500 overflow-hidden whitespace-nowrap text-ellipsis">Baixa</span>
                     </div>
                 ) : (
-                    <span>{item.priority}</span> // Caso não seja nenhum dos 3, só mostra o texto
+                    <span>{item.priority}</span>
                 )}
             </TableCell>
         )
@@ -687,7 +589,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
     function CommentsCollumn() {
         return (
             <TableCell>
-                <p>{item.comments.length == 0 ? "Sem comentários" : item.comments + " Comentários"}</p>
+                <p>{item.comments == null || item.comments.length == 0 ? "Sem comentários" : item.comments + " Comentários"}</p>
             </TableCell>
         )
     }
@@ -702,7 +604,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
 
     return (
         <TableRow
-            key={item.id}
+            key={item.id_kanban}
             ref={setNodeRef}
             style={style}
             {...attributes}
@@ -773,7 +675,7 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
         transform,
         transition,
         isDragging
-    } = useSortable({ id: item.id });
+    } = useSortable({ id: item.id_kanban });
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -786,7 +688,7 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
 
     return (
         <div
-            key={item.id}
+            key={item.id_kanban}
             ref={setNodeRef}
             style={style}
             {...attributes}
@@ -794,9 +696,9 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
             className="select-none w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
             <div className="flex justify-between">
                 <div className="flex flex-col items-start w-full">
-                    <span className={`text-sm font-medium p-1 ${item.status === "done" ? "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm" : item.priority === "high" ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : item.priority === "medium" ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
+                    <span className={`text-sm font-medium p-1 ${item.status === "done" ? "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm" : item.priority === 1 ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : item.priority === 2 ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
                         {
-                            item.status === "done" ? "Concluído" : item.priority == "high" ? "Alta" : item.priority == "medium" ? "Média" : "Baixa"
+                            item.status === "done" ? "Concluído" : item.priority === 1 ? "Alta" : item.priority === 2 ? "Média" : "Baixa"
                         }
                     </span>
                     <h1 className="text-xl font-semibold mt-1">{item.title}</h1>
@@ -812,7 +714,7 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
                                 role="button"
                                 onMouseDown={e => e.stopPropagation()}
                                 onClick={() => {
-                                    selectedTask == item.id ? setSelectedTask(0) : setSelectedTask(item.id);
+                                    selectedTask == item.id_kanban ? setSelectedTask("") : setSelectedTask(item.id_kanban);
                                 }}
                             >
                                 Selecionar tarefa
@@ -828,11 +730,11 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
             <p className="text-sm text-muted-foreground">{item.description}</p>
             <div className="flex items-center justify-between mt-1.5">
                 <div className="text-muted-foreground">
-                    Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">Jordana Lima</span>
+                    Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{item.createdBy}</span>
                 </div>
                 <div className="flex items-center gap-1 text-muted-foreground">
                     <MessageCircleMore size={18} />
-                    <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{item.comments.length}</span> comentários</p>
+                    <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{item.comments ? item.comments.length : 0}</span> comentários</p>
                 </div>
             </div>
         </div>
