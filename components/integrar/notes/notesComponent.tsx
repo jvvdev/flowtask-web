@@ -164,6 +164,7 @@ export function NotesComponent() {
             let actualGroup = await teamService.getTeamByUser();
 
             actualGroup = actualGroup ? JSON.parse(actualGroup) : null;
+            if (!actualGroup) return;
 
             console.log(actualGroup)
 
