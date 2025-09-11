@@ -1,7 +1,7 @@
 'use client'
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
-import { ALargeSmall, ArchiveRestore, CalendarPlus, ChartPie, Check, ClipboardCheck, ClipboardClock, ClipboardList, Ellipsis, Loader2, LoaderCircle, MailSearch, MessageCircleMore, Trash2, TriangleAlert } from "lucide-react";
+import { ALargeSmall, ArchiveRestore, CalendarPlus, ChartPie, Check, ClipboardCheck, ClipboardClock, ClipboardList, Ellipsis, Loader2, LoaderCircle, MailSearch, MessageCircle, MessageCircleMore, Pencil, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { use, useState, useEffect } from "react";
 import {
     Popover,
@@ -38,6 +38,10 @@ import axios from "axios";
 import { routes } from "@/api/routes";
 import { authService } from "@/api/auth-service";
 import { teamService } from "@/api/dashboard/team-service";
+import { register } from "module";
+import { useForm } from "react-hook-form";
+import { se } from "date-fns/locale";
+import { Truculenta } from "next/font/google";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -83,6 +87,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedTask, setSelectedTask] = useState<string>("0");
+    const [selectedTaskData, setSelectedTaskData] = useState<KanbanTask | null>(null);
     const [projectInfo, setProjectInfo] = useState<ProjectInfo>({ title: "" });
     const [listHeader, setListHeader] = useState([
         { id: 1, name: "Título" },
@@ -92,8 +97,11 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
         { id: 5, name: "Comentários" },
         { id: 6, name: "Criado em" }
     ]);
+    const [debounce, setDebounce] = useState(false)
     const params = useParams();
     const router = useRouter();
+
+    const { register, handleSubmit } = useForm()
 
     const sensors = useSensors(
         useSensor(MouseSensor),
@@ -108,6 +116,23 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
         console.log("taskID: " + window.location.href.split('/dashboard/project/')[1])
     }
 
+    function handleUpdateTask(data: any) {
+        console.log(data)
+        console.log(selectedTaskData)
+
+        kanbanService.updateTask(selectedTaskData, data);
+    }
+
+    function handleSelectTask(data: KanbanTask | null) {
+        if (!data) {
+            setSelectedTask("0");
+            setSelectedTaskData(null);
+            return;
+        }
+        setSelectedTask(data.id_kanban);
+        setSelectedTaskData(data);
+    }
+
     // Filtra as tarefas pelo título usando searchQuery
     const filteredKanbanList = kanbanList.filter(task =>
         task.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -116,79 +141,93 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
     const totalPages = Math.ceil(filteredKanbanList.length / ITEMS_PER_PAGE);
     const paginatedData = filteredKanbanList.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-    function handleOpenTask(taskID: number) {
-        if (taskID) {
-            const projectID = window.location.href.split('/dashboard/project/')[1]
-            router.push(`/dashboard/project/${projectID}/${taskID}`);
+    function dragEndList(event: DragEndEvent) {
+        if (!debounce) {
+            if (!event.over) return;
+            if (event.active.id == event.over.id) return;
+
+            const lastID = event.active.id as string;
+            const newID = event.over.id as string;
+
+            setSelectedTask("0");
+
+            setKanbanList((items) => {
+                const lastIndex = items.findIndex((i) => i.id_kanban === lastID);
+                const newIndex = items.findIndex((i) => i.id_kanban === newID);
+                return arrayMove(items, lastIndex, newIndex);
+            });
+
+            setTimeout(() => {
+                setDebounce(false);
+            }, 5000);
+        } else {
+            console.warn("Você deve aguardar para fazer essa ação novamente")
         }
     };
 
-    function dragEndList(event: DragEndEvent) {
-        if (!event.over) return;
-        if (event.active.id == event.over.id) return;
-
-        const lastID = event.active.id as string;
-        const newID = event.over.id as string;
-
-        setSelectedTask("");
-
-        setKanbanList((items) => {
-            const lastIndex = items.findIndex((i) => i.id_kanban === lastID);
-            const newIndex = items.findIndex((i) => i.id_kanban === newID);
-            return arrayMove(items, lastIndex, newIndex);
-        });
-    };
-
     function dragEndKanban(event: DragEndEvent) {
-        if (!event.over) return;
-        if (event.active.id == event.over.id) return;
+        if (!debounce) {
+            if (!event.over) return;
+            if (event.active.id == event.over.id) return;
 
-        const lastID = event.active.id as string;
-        const newID = event.over.id as string;
+            const lastID = event.active.id as string;
+            const newID = event.over.id as string;
 
-        setKanbanList((items) => {
-            const lastTask = items.find((i) => i.id_kanban === lastID);
-            const newTask = items.find((i) => i.id_kanban === newID);
+            setDebounce(true);
 
-            const lastIndex = items.findIndex((i) => i.id_kanban === lastID);
-            const newIndex = items.findIndex((i) => i.id_kanban === newID);
+            setKanbanList((items) => {
+                const lastTask = items.find((i) => i.id_kanban === lastID);
+                const newTask = items.find((i) => i.id_kanban === newID);
 
-            setSelectedTask("");
+                const lastIndex = items.findIndex((i) => i.id_kanban === lastID);
+                const newIndex = items.findIndex((i) => i.id_kanban === newID);
 
-            const updateEmptyItems = items.map((item) => {
-                if (newID == "1050") {
-                    if (item.id_kanban === lastID) {
-                        return { ...item, status: "to do" };
+                setSelectedTask("0");
+
+                const updateEmptyItems = items.map((item) => {
+                    if (newID == "1050") {
+                        if (item.id_kanban === lastID) {
+                            kanbanService.updateTaskDragAndDrop(item, "Pendente");
+                            return { ...item, status: "Pendente" };
+                        }
+                    } else if (newID == "1150") {
+                        if (item.id_kanban === lastID) {
+                            kanbanService.updateTaskDragAndDrop(item, "Em progresso");
+                            return { ...item, status: "Em progresso" };
+                        }
+                    } else if (newID == "1250") {
+                        if (item.id_kanban === lastID) {
+                            kanbanService.updateTaskDragAndDrop(item, "Concluída");
+                            return { ...item, status: "Concluída" };
+                        }
                     }
-                } else if (newID == "1150") {
-                    if (item.id_kanban === lastID) {
-                        return { ...item, status: "in progress" };
-                    }
-                } else if (newID == "1250") {
-                    if (item.id_kanban === lastID) {
-                        return { ...item, status: "done" };
-                    }
+                    return item;
+                });
+
+                if (newID == "1050" || newID == "1150" || newID == "1250") {
+                    if (lastIndex === -1 || newIndex === -1) return updateEmptyItems;
+                    return arrayMove(updateEmptyItems, lastIndex, newIndex);
                 }
-                return item;
+
+                if (!lastTask || !newTask) return items;
+
+                const updatedItems = items.map((item) => {
+                    if (item.id_kanban === lastID) {
+                        return { ...item, status: newTask.status };
+                    }
+                    return item;
+                });
+
+                if (lastIndex === -1 || newIndex === -1) return updatedItems;
+                return arrayMove(updatedItems, lastIndex, newIndex);
             });
 
-            if (newID == "1050" || newID == "1150" || newID == "1250") {
-                if (lastIndex === -1 || newIndex === -1) return updateEmptyItems;
-                return arrayMove(updateEmptyItems, lastIndex, newIndex);
-            }
-
-            if (!lastTask || !newTask) return items;
-
-            const updatedItems = items.map((item) => {
-                if (item.id_kanban === lastID) {
-                    return { ...item, status: newTask.status };
-                }
-                return item;
-            });
-
-            if (lastIndex === -1 || newIndex === -1) return updatedItems;
-            return arrayMove(updatedItems, lastIndex, newIndex);
-        });
+            setTimeout(() => {
+                setDebounce(false);
+            }, 5000);
+        } else {
+            console.warn("Você deve aguardar para fazer essa ação novamente")
+        }
     }
 
     function dragEndListHeader(event: DragEndEvent) {
@@ -210,11 +249,11 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
             <div className={`flex w-full items-center ${filter == "list" ? "justify-between" : "justify-end"}`}>
                 {
                     filter == "list" ?
-                        <div className="relative">
+                        paginatedData.length > 0 ? <div className="relative">
                             <Input
                                 onChange={(e) => {
                                     setSearchQuery(e.target.value);
-                                    setCurrentPage(1); 
+                                    setCurrentPage(1);
                                 }}
                                 value={searchQuery}
                                 placeholder="Pesquisar pelo nome"
@@ -223,7 +262,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                             <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
                                 <RiSearch2Line size={20} aria-hidden="true" />
                             </div>
-                        </div> : ""
+                        </div> : "" : ""
                 }
                 <div className="flex gap-2 items-center">
                     {
@@ -233,7 +272,86 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
 
                                 <AlertDialog>
                                     <AlertDialogTrigger
-                                        className="px-2 h-9 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
+                                        className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-500/15 dark:bg-yellow-500/20 hover:bg-yellow-500/20 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-yellow-500 cursor-pointer"
+                                    >
+                                        <Pencil className="size-5" />
+                                        <span className="hidden sm:block">Modificar tarefa</span>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Modificar tarefa</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Aqui você pode modificar suas tarefas.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+
+                                        <form onSubmit={handleSubmit(handleUpdateTask)}>
+                                            <div className="space-y-4">
+                                                <div className="space-y-2">
+                                                    <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
+                                                    <Input
+                                                        placeholder="Digite aqui"
+                                                        className="mb-2"
+                                                        defaultValue={selectedTaskData?.title}
+                                                        {...register("title")}
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircle size={20} />Descrição</p>
+                                                    <Input
+                                                        placeholder="Digite aqui"
+                                                        className="mb-2"
+                                                        defaultValue={selectedTaskData?.description}
+                                                        {...register("description")}
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <p className="flex items-center gap-2 dark:text-zinc-200/80"><TriangleAlert size={20} />Prioridade</p>
+                                                    <select
+                                                        className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
+                                                        defaultValue={selectedTaskData?.priority}
+                                                        {...register("priority")}
+                                                    >
+                                                        <option value="" disabled>Selecione a prioridade</option>
+                                                        <option value="0">Baixa</option>
+                                                        <option value="1">Média</option>
+                                                        <option value="2">Alta</option>
+                                                    </select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <p className="flex items-center gap-2 dark:text-zinc-200/80"><TriangleAlert size={20} />Status</p>
+                                                    <select
+                                                        className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
+                                                        defaultValue={selectedTaskData?.status}
+                                                        {...register("status")}
+                                                    >
+                                                        <option value="" disabled>Selecione a prioridade</option>
+                                                        <option value="Pendente">Pendente</option>
+                                                        <option value="Em progresso">Em progresso</option>
+                                                        <option value="Concluída">Concluída</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <AlertDialogFooter className="mt-6">
+                                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    type="submit"
+                                                    className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                                                >
+                                                    Confirmar
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </form>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+                                <AlertDialog>
+                                    <AlertDialogTrigger
+                                        className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
                                     >
                                         <Trash2 className="size-5" />
                                         <span className="hidden sm:block">Deletar</span>
@@ -254,29 +372,31 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                             </div>
                         )
                     }
-                    <Popover >
-                        <PopoverTrigger asChild>
-                            <Button variant="outline" className="">
-                                <RiFilter3Line
-                                    className="size-5 -ms-1.5 text-muted-foreground/60"
-                                    size={20}
-                                    aria-hidden="true"
-                                />
-                                <span className="hidden sm:block">Exibição  </span>
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto min-w-36 p-0" align="end">
-                            <div className="space-y-1">
-                                <div className="text-xs px-3 pt-3 font-medium uppercase text-muted-foreground/60">
-                                    Exibição
+                    {
+                        paginatedData.length > 0 && (<Popover >
+                            <PopoverTrigger asChild>
+                                <Button variant="outline" className="cursor-pointer">
+                                    <RiFilter3Line
+                                        className="size-5 -ms-1.5 text-muted-foreground/60"
+                                        size={20}
+                                        aria-hidden="true"
+                                    />
+                                    <span className="hidden sm:block">Exibição  </span>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto min-w-36 p-0" align="end">
+                                <div className="space-y-1">
+                                    <div className="text-xs px-3 pt-3 font-medium uppercase text-muted-foreground/60">
+                                        Exibição
+                                    </div>
+                                    <div className="space-y-1 px-1 pb-1">
+                                        <button className={`px-2 py-1 bg-zinc-200/0 w-full text-left ${filter == "kanban" ? "bg-zinc-400/5" : "hover:bg-zinc-200/5 cursor-pointer"} rounded-md duration-200`} onClick={() => setFilter("kanban")}>Kanban</button>
+                                        <button className={`px-2 py-1 bg-zinc-200/0 w-full text-left ${filter == "list" ? "bg-zinc-400/5" : "hover:bg-zinc-200/5 cursor-pointer"} rounded-md duration-200`} onClick={() => setFilter("list")}>Lista</button>
+                                    </div>
                                 </div>
-                                <div className="space-y-1 px-1 pb-1">
-                                    <button className={`px-2 py-1 bg-zinc-200/0 w-full text-left ${filter == "kanban" ? "bg-zinc-400/5" : "hover:bg-zinc-200/5 cursor-pointer"} rounded-md duration-200`} onClick={() => setFilter("kanban")}>Kanban</button>
-                                    <button className={`px-2 py-1 bg-zinc-200/0 w-full text-left ${filter == "list" ? "bg-zinc-400/5" : "hover:bg-zinc-200/5 cursor-pointer"} rounded-md duration-200`} onClick={() => setFilter("list")}>Lista</button>
-                                </div>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+                            </PopoverContent>
+                        </Popover>)
+                    }
                 </div>
             </div>
             {
@@ -285,7 +405,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                         <Loader2 className="animate-spin" />
                     </div>
                     : filter == "kanban" ?
-                        <div className="flex flex-col md:flex-row items-start gap-4 mt-4">
+                        paginatedData.length > 0 ? <div className="flex flex-col md:flex-row items-start gap-4 mt-4">
                             <DndContext
                                 onDragEnd={dragEndKanban}
                                 sensors={sensors}
@@ -300,7 +420,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                             <div className="flex items-center w-full gap-1.5">
                                                 <div className="h-3 w-3 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
                                                 <h1>A fazer</h1>
-                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "to do").length}</div>
+                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "Pendente").length}</div>
                                             </div>
                                             <div className="w-full h-1 bg-purple-700/80 dark:bg-purple-800 rounded-full"></div>
                                         </div>
@@ -317,6 +437,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
                                                             listHeader={listHeader}
+                                                            handleSelectTask={handleSelectTask}
                                                         />
                                                     ))
                                             }
@@ -333,23 +454,24 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                             <div className="flex items-center w-full gap-1.5">
                                                 <div className="h-3 w-3 bg-yellow-400/80 rounded-full"></div>
                                                 <h1>Em progresso</h1>
-                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "in progress").length}</div>
+                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "Em progresso").length}</div>
                                             </div>
                                             <div className="w-full h-1 bg-yellow-400/80 rounded-full"></div>
                                         </div>
 
                                         <div className="flex flex-col items-center gap-3">
                                             {
-                                                kanbanList.filter(task => task.status === "in progress").length === 0 ?
+                                                kanbanList.filter(task => task.status === "Em progresso").length === 0 ?
                                                     <KanbanEmptyState taskID={1150} />
                                                     :
-                                                    kanbanList.filter(task => task.status === "in progress").map(task => (
+                                                    kanbanList.filter(task => task.status === "Em progresso").map(task => (
                                                         <KanbanTaskView
                                                             key={task.id_kanban}
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
                                                             listHeader={listHeader}
+                                                            handleSelectTask={handleSelectTask}
                                                         />
                                                     ))
                                             }
@@ -366,22 +488,23 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                             <div className="flex items-center w-full gap-1.5">
                                                 <div className="h-3 w-3 bg-green-600/80 rounded-full"></div>
                                                 <h1>Concluído</h1>
-                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "done").length}</div>
+                                                <div className="text-sm h-5 w-5 flex items-center justify-center bg-zinc-400/40 dark:bg-zinc-700/70 text-zinc-800 dark:text-zinc-200/70 rounded-full">{kanbanList.filter(task => task.status === "Concluída").length}</div>
                                             </div>
                                             <div className="w-full h-1 bg-green-600/80 rounded-full"></div>
                                         </div>
                                         <div className="flex flex-col items-center gap-3">
                                             {
-                                                kanbanList.filter(task => task.status === "done").length === 0 ?
+                                                kanbanList.filter(task => task.status === "Concluída").length === 0 ?
                                                     <KanbanEmptyState taskID={1250} />
                                                     :
-                                                    kanbanList.filter(task => task.status === "done").map(task => (
+                                                    kanbanList.filter(task => task.status === "Concluída").map(task => (
                                                         <KanbanTaskView
                                                             key={task.id_kanban}
                                                             item={task}
                                                             selectedTask={selectedTask}
                                                             setSelectedTask={setSelectedTask}
                                                             listHeader={listHeader}
+                                                            handleSelectTask={handleSelectTask}
                                                         />
                                                     ))
                                             }
@@ -389,7 +512,9 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                     </div>
                                 </SortableContext>
                             </DndContext>
-                        </div > :
+                        </div > : <div className="w-full flex items-center justify-center mt-10 font-semibold">
+                            Não foi encontrado nenhum kanban neste projeto.
+                        </div> :
                         filter == "list" ?
                             <div className="mt-4">
                                 <DndContext
@@ -412,13 +537,13 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                                                 items={listHeader.map(task => task.id)}
                                                                 strategy={verticalListSortingStrategy}
                                                             >
-                                                                {listHeader.map(item => (
+                                                                {loading ? null : paginatedData.length > 0 ? listHeader.map(item => (
                                                                     <ListHeader
                                                                         key={item.id}
                                                                         taskID={item.id}
                                                                         name={item.name}
                                                                     />
-                                                                ))}
+                                                                )) : ""}
                                                             </SortableContext>
                                                         </TableRow>
                                                     </DndContext>
@@ -432,15 +557,10 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                                                 selectedTask={selectedTask}
                                                                 setSelectedTask={setSelectedTask}
                                                                 listHeader={listHeader}
+                                                                handleSelectTask={handleSelectTask}
                                                             />
                                                         ))
-                                                    ) : (
-                                                        <TableRow>
-                                                            <TableCell colSpan={listHeader.length}>
-                                                                <p className="text-center font-semibold">Nenhum projeto encontrado</p>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )}
+                                                    ) : ""}
                                                 </TableBody>
                                             </Table>
                                         </div>
@@ -491,7 +611,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
     );
 }
 
-function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTaskRowProps) {
+function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader, handleSelectTask }: ListTaskRowProps & { handleSelectTask: (data: KanbanTask | null) => void }) {
     const {
         attributes,
         listeners,
@@ -514,8 +634,8 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                     role="button"
                     onMouseDown={e => e.stopPropagation()}
                     onClick={() => {
-                        if (selectedTask === item.id_kanban) setSelectedTask("");
-                        else setSelectedTask(item.id_kanban);
+                        if (selectedTask === item.id_kanban) handleSelectTask(null);
+                        else handleSelectTask(item);
                     }}
                 >
                     <Check className={`${selectedTask === item.id_kanban ? "block" : "hidden"}`} size={12} />
@@ -536,7 +656,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
     function PriorityCollumn() {
         return (
             <TableCell>
-                {item.priority === 1 ? (
+                {item.priority === 0 ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75 animate-ping"></div>
@@ -544,7 +664,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                         </div>
                         <span className="text-red-500 overflow-hidden whitespace-nowrap text-ellipsis">Alta</span>
                     </div>
-                ) : item.priority === 2 ? (
+                ) : item.priority === 1 ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
@@ -552,7 +672,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                         </div>
                         <span className="text-yellow-500 overflow-hidden whitespace-nowrap text-ellipsis">Média</span>
                     </div>
-                ) : item.priority === 3 ? (
+                ) : item.priority === 2 ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
@@ -570,7 +690,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
     function StatusCollumn() {
         return (
             <TableCell>
-                {item.status === "to do" ? (
+                {item.status === "Pendente" ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75 animate-ping"></div>
@@ -578,7 +698,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                         </div>
                         <span className="text-purple-400 overflow-hidden whitespace-nowrap text-ellipsis">A fazer</span>
                     </div>
-                ) : item.status === "in progress" ? (
+                ) : item.status === "Em progresso" ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75 animate-ping"></div>
@@ -586,7 +706,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
                         </div>
                         <span className="text-yellow-400 overflow-hidden whitespace-nowrap text-ellipsis">Em progresso</span>
                     </div>
-                ) : item.status === "done" ? (
+                ) : item.status === "Concluída" ? (
                     <div className="flex items-center gap-2 relative">
                         <div className="relative flex h-2 w-2">
                             <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
@@ -612,7 +732,7 @@ function ListTaskRow({ item, selectedTask, setSelectedTask, listHeader }: ListTa
     function CreatedCollumn() {
         return (
             <TableCell>
-                <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.createdAt.toLocaleString()}</p>
+                <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.createdAt.toLocaleString().slice(8, 10) + "/" + item.createdAt.toLocaleString().slice(5, 7) + "/" + item.createdAt.toLocaleString().slice(0, 4) + " às " + item.createdAt.toLocaleString().slice(11, 16)}</p>
             </TableCell>
         )
     }
@@ -682,7 +802,7 @@ function ListHeader({ taskID, name }: { taskID: number; name: string }) {
     );
 }
 
-function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: ListTaskRowProps) {
+function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader, handleSelectTask }: ListTaskRowProps & { handleSelectTask: (data: KanbanTask) => void }) {
     const {
         attributes,
         listeners,
@@ -711,9 +831,9 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
             className="select-none w-full p-2 bg-zinc-50 border dark:bg-zinc-900/60 dark:border-zinc-700/40 rounded-lg">
             <div className="flex justify-between">
                 <div className="flex flex-col items-start w-full">
-                    <span className={`text-sm font-medium p-1 ${item.status === "done" ? "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm" : item.priority === 1 ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : item.priority === 2 ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
+                    <span className={`text-sm font-medium p-1 ${item.status === "Concluída" ? "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm" : item.priority === 2 ? "text-red-500/70 border border-red-400/10 dark:border-red-500/15 bg-red-200/40 dark:bg-red-600/20 rounded-sm" : item.priority === 1 ? "text-yellow-500/70 border border-yellow-400/10 dark:border-yellow-500/10 bg-yellow-200/20 dark:bg-yellow-600/20 rounded-sm" : "text-green-500/70 border border-green-400/10 dark:border-green-500/10 bg-green-200/40 dark:bg-green-600/20 rounded-sm"}`}>
                         {
-                            item.status === "done" ? "Concluído" : item.priority === 1 ? "Alta" : item.priority === 2 ? "Média" : "Baixa"
+                            item.status === "Concluída" ? "Concluído" : item.priority === 2 ? "Alta" : item.priority === 1 ? "Média" : "Baixa"
                         }
                     </span>
                     <h1 className="text-xl font-semibold mt-1">{item.title}</h1>
@@ -729,7 +849,8 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
                                 role="button"
                                 onMouseDown={e => e.stopPropagation()}
                                 onClick={() => {
-                                    selectedTask == item.id_kanban ? setSelectedTask("") : setSelectedTask(item.id_kanban);
+                                    if (selectedTask === item.id_kanban) handleSelectTask(null);
+                                    else handleSelectTask(item);
                                 }}
                             >
                                 Selecionar tarefa
@@ -743,11 +864,11 @@ function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader }: Lis
                 </DropdownMenu>
             </div>
             <p className="text-sm text-muted-foreground">{item.description}</p>
-            <div className="flex items-center justify-between mt-1.5">
-                <div className="text-muted-foreground">
+            <div className="flex flex-col gap-1 2xl:gap-0 2xl:flex-row 2xl:items-center justify-between mt-1.5">
+                <div className="text-muted-foreground 2xl:w-[80%]">
                     Criador: <span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{item.createdBy}</span>
                 </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
+                <div className="flex items-center gap-1 2xl:w-[40%] text-muted-foreground">
                     <MessageCircleMore size={18} />
                     <p className="text-sm"><span className="font-semibold text-zinc-950/90 dark:text-zinc-200/90">{item.comments ? item.comments.length : 0}</span> comentários</p>
                 </div>

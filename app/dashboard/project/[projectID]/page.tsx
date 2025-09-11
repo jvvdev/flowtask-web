@@ -51,6 +51,7 @@ interface KanbanTask {
 
 interface ProjectInfo {
   title: string;
+  resume: string;
   // Adicione outros campos conforme necessário
 }
 
@@ -64,7 +65,7 @@ export default function Page() {
   const params = useParams();
   const router = useRouter();
   const [data, setData] = useState<KanbanTask[]>([]);
-  const [projectInfo, setProjectInfo] = useState<ProjectInfo>({ title: "" });
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo>({ title: "", resume: "" });
   const { register, handleSubmit } = useForm<TaskForm>();
 
   useEffect(() => {
@@ -139,7 +140,10 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-3 lg:gap-3 py-4 lg:px-8 lg:py-6">
           {/* Page intro */}
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-2xl font-semibold">{projectInfo.title}</h1>
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-semibold">{projectInfo.title}</h1>
+              <p className="text-sm text-zinc-400">{projectInfo.resume}</p>
+            </div>
             <div>
               <AlertDialog>
                 <AlertDialogTrigger
