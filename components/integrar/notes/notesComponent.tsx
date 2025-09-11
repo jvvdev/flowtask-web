@@ -152,18 +152,31 @@ const NotesList = [
     }
 ]
 
+interface Note {
+  id_relatory: string;
+  title: string;
+  content: string;
+  relatory_owner: string;
+}
+
 export function NotesComponent() {
     const [currentNote, setCurrentNote] = useState("0")
     const [isEditing, setIsEditing] = useState(false)
     const [noteText, setNoteText] = useState("");
-    const [data, setData] = useState([])
+    const [data, setData] = useState<Note[]>([])
 
     useEffect(() => {
         async function getData() {
             const sessionId = await authService.getToken();
-            let actualGroup = await teamService.getTeamByUser();
-
-            actualGroup = actualGroup ? JSON.parse(actualGroup) : null;
+            let actualGroupRaw = await teamService.getTeamByUser();
+            let actualGroup: { id_group: string } | null = null;
+            if (actualGroupRaw) {
+                try {
+                    actualGroup = JSON.parse(actualGroupRaw);
+                } catch {
+                    actualGroup = null;
+                }
+            }
             if (!actualGroup) return;
 
             console.log(actualGroup)
@@ -374,7 +387,7 @@ export function NotesComponent() {
                                                         </div>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
-                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => editNote()} />
+                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => editNote(currentNote)} />
                                             </div>
                                     }
                                 </div>
