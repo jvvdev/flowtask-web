@@ -31,19 +31,18 @@ import { teamService } from "@/api/dashboard/team-service";
 import { json } from "stream/consumers";
 
 export type Project = {
-    id_group: string;
-    id_project: string;
-    title: string;
-    resume: string;
-    owner: string;
-    kanban: any[];
-    members_project: any[];
-    createdAt: string;
+  project_id: string;
+  project_title: string;
+  project_resume: string;
+  project_owner: string;
+  completion_percentage: null | number;
+  completed_kanbans: number;
+  total_kanbans: number;
 };
 
 export default function Page() {
   const [data, setData] = useState<Project[]>([]);
-  const {register, handleSubmit} = useForm();
+  const { register, handleSubmit } = useForm();
 
   useEffect(() => {
     async function getData() {
@@ -52,13 +51,13 @@ export default function Page() {
 
       actualTeam = JSON.parse(actualTeam as string)
 
-      const data = await axios.get(routes.getProjects + actualTeam.id_group, {
+      const data = await axios.get(routes.getProjectsDetailsByUser + actualTeam.id_group, {
         headers: {
           AuthToken: sessionId
         }
       }).then(res => {
         setData(res.data.data)
-        
+
       }).catch(err => {
         console.error(err)
       });

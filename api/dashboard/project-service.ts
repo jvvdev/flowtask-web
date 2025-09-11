@@ -38,6 +38,7 @@ class ProjectService {
                 title: data.name,
                 resume: data.resume,
                 owner_email: ownerInfo.email,
+                owner: sessionId,
                 owner_name: ownerInfo.name,
                 owner_avatar: ownerInfo.avatar,
                 id_group: JSON.parse(actualGroup as string).id_group

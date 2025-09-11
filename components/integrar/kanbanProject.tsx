@@ -36,6 +36,8 @@ import { CommentView } from "./projectKanban/commentView";
 import { kanbanService } from "@/api/dashboard/kanban-service";
 import axios from "axios";
 import { routes } from "@/api/routes";
+import { authService } from "@/api/auth-service";
+import { teamService } from "@/api/dashboard/team-service";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -68,7 +70,8 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedTask, setSelectedTask] = useState<string>("");
+    const [selectedTask, setSelectedTask] = useState<string>("0");
+    const [projectInfo, setProjectInfo] = useState([]);
     const [listHeader, setListHeader] = useState([
         { id: 1, name: "Título" },
         { id: 2, name: "Descrição" },
@@ -199,7 +202,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                             <Input
                                 onChange={(e) => {
                                     setSearchQuery(e.target.value);
-                                    setCurrentPage(1); // volta para página 1 ao pesquisar
+                                    setCurrentPage(1); 
                                 }}
                                 value={searchQuery}
                                 placeholder="Pesquisar pelo nome"

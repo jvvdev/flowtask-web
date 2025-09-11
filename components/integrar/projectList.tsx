@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import {
     Table,
     TableBody,
@@ -33,16 +33,18 @@ import {
 } from "@/components/ui/alert-dialog"
 import axios from "axios";
 import { projectService } from "@/api/dashboard/project-service";
+import { authService } from "@/api/auth-service";
+import { teamService } from "@/api/dashboard/team-service";
+import { routes } from "@/api/routes";
 
 export type Project = {
-    id_group: string;
-    id_project: string;
-    title: string;
-    resume: string;
-    owner: string;
-    kanban: any[];
-    members_project: any[];
-    createdAt: string;
+    project_id: string;
+    project_title: string;
+    project_resume: string;
+    project_owner: string;
+    completion_percentage: null | number;
+    completed_kanbans: number;
+    total_kanbans: number;
 };
 
 export type ProjectListProps = {
@@ -51,14 +53,6 @@ export type ProjectListProps = {
 };
 
 const ITEMS_PER_PAGE = 10;
-
-function getProjectStatus(item: Project) {
-    const kanban = Array.isArray(item.kanban) ? item.kanban : [];
-    if (kanban.length === 0) return "Não iniciado";
-    if (kanban.some(k => k.status === "Finalizado")) return "Finalizado";
-    if (kanban.some(k => k.status === "Em andamento")) return "Em andamento";
-    return "Em andamento";
-}
 
 export function ProjectList({ data, setData }: ProjectListProps) {
     const [isLoading, setIsLoading] = useState(true);
@@ -73,7 +67,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
         setIsLoading(false);
     }, [data]);
 
-    let filteredData = data.filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    let filteredData = Array.isArray(data) ? data.filter((item) => item.project_title.toLowerCase().includes(searchQuery.toLowerCase())) : [];
     // filteredData = filteredData.filter((item) => item.Status.toLowerCase().includes(filter.toLowerCase()));
     const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
     const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -194,21 +188,20 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                     <TableBody>
                         {isLoading ? null : paginatedData.length > 0 ? (
                             paginatedData.map((item) => {
-                                const status = getProjectStatus(item);
                                 return (
                                     <TableRow
-                                        key={item.id_project}
+                                        key={item.project_id}
                                         className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
                                     >
                                         <TableCell className="flex gap-2">
-                                            <button className={`border rounded-sm ${selectedProject === item.id_project ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`} onClick={() => { if (selectedProject === item.id_project) setSelectedProject("0"); else setSelectedProject(item.id_project); }}><Check className={`${selectedProject === item.id_project ? "block" : "hidden"}`} size={12} /></button>
-                                            <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.title}</p>
+                                            <button className={`border rounded-sm ${selectedProject === item.project_id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`} onClick={() => { if (selectedProject === item.project_id) setSelectedProject("0"); else setSelectedProject(item.project_id); }}><Check className={`${selectedProject === item.project_id ? "block" : "hidden"}`} size={12} /></button>
+                                            <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.project_title}</p>
                                         </TableCell>
                                         <TableCell>
-                                            {item.resume}
+                                            {item.project_resume}
                                         </TableCell>
                                         <TableCell>
-                                            {status === "Não iniciado" ? (
+                                            {item.completion_percentage === null || item.completion_percentage === 0 ? (
                                                 <div className="flex items-center gap-2 relative">
                                                     <div className="relative flex h-2 w-2">
                                                         <div className="absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75 animate-ping"></div>
@@ -216,7 +209,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                                                     </div>
                                                     <span className="opacity-80 overflow-hidden whitespace-nowrap text-ellipsis">Não iniciado</span>
                                                 </div>
-                                            ) : status === "Em andamento" ? (
+                                            ) : item.completion_percentage >= 0 ? (
                                                 <div className="flex items-center gap-2 relative">
                                                     <div className="relative flex h-2 w-2">
                                                         <div className="absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75 animate-ping"></div>
@@ -224,7 +217,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                                                     </div>
                                                     <span className="text-purple-400 overflow-hidden whitespace-nowrap text-ellipsis">Em progresso</span>
                                                 </div>
-                                            ) : status === "Finalizado" ? (
+                                            ) : item.completion_percentage === 100 ? (
                                                 <div className="flex items-center gap-2 relative">
                                                     <div className="relative flex h-2 w-2">
                                                         <div className="absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75 animate-ping"></div>
@@ -237,14 +230,14 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                                             )}
                                         </TableCell>
                                         <TableCell className="flex items-center justify-start gap-2">
-                                            <CircularProgress progress={10} />
+                                            <CircularProgress progress={item.completion_percentage == null ? 0 : item.completion_percentage} />
                                             <span className="text-sm flex overflow-hidden whitespace-nowrap text-ellipsis">
-                                                10
+                                                {item.completion_percentage}
                                                 <span className="text-zinc-600 dark:text-zinc-400 ms-1">%</span>
                                             </span>
                                         </TableCell>
                                         <TableCell>
-                                            <strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.owner}</strong>
+                                            <strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.project_owner}</strong>
                                         </TableCell>
                                     </TableRow>
                                 );

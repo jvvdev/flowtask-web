@@ -31,21 +31,22 @@ import { useForm } from "react-hook-form";
 import { kanbanService } from "@/api/dashboard/kanban-service";
 
 interface KanbanTask {
-    id_kanban: string;
-    id_project: string;
-    title: string;
-    priority: number;
-    description: string;
-    status: string;
-    comments: any;
-    createdBy: string;
-    createdAt: string;
+  id_kanban: string;
+  id_project: string;
+  title: string;
+  priority: number;
+  description: string;
+  status: string;
+  comments: any;
+  createdBy: string;
+  createdAt: string;
 };
 
 export default function Page() {
   const params = useParams();
   const router = useRouter();
   const [data, setData] = useState<KanbanTask[]>([]);
+  const [projectInfo, setProjectInfo] = useState([]);
   const { register, handleSubmit } = useForm();
 
   useEffect(() => {
@@ -69,6 +70,24 @@ export default function Page() {
     kanbanService.createTask(data, projectId);
   }
 
+  useEffect(() => {
+    async function getData() {
+      const sessionId = await authService.getToken();
+
+      await axios.get(routes.getProjectDetails + params.projectID, {
+        headers: {
+          AuthToken: sessionId
+        }
+      }).then(res => {
+        setProjectInfo(res.data.data)
+      }).catch(err => {
+        console.error(err)
+      });
+    }
+
+    getData();
+  }, [])
+
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />
@@ -89,7 +108,7 @@ export default function Page() {
                 <Link href="/dashboard/project" className="text-zinc-400">Tarefas</Link>
                 <span className="text-zinc-400">/</span>
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Manager System</BreadcrumbPage>
+                  <BreadcrumbPage>{projectInfo.title}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -102,7 +121,7 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-3 lg:gap-3 py-4 lg:px-8 lg:py-6">
           {/* Page intro */}
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-2xl font-semibold">Manager System</h1>
+            <h1 className="text-2xl font-semibold">{projectInfo.title}</h1>
             <div>
               <AlertDialog>
                 <AlertDialogTrigger

@@ -1,7 +1,8 @@
 import { create } from "domain"
 import { get } from "http"
 
-export const apiRoute = "http://26.13.17.173:8080"
+// export const apiRoute = "http://26.13.17.173:8080"
+export const apiRoute = "https://flowtask-dev.vemency.com"
 
 export const routes = {
     // Auth Routes
@@ -22,6 +23,7 @@ export const routes = {
     createProject: apiRoute + "/create-project",
     getProjectsByUser: apiRoute + "/get-projects/user",
     getProjects: apiRoute + "/list-projects/group/",
+    getProjectsDetailsByUser: apiRoute + "/project-metrics/",
     getProjectDetails: apiRoute + "/projects/",
     deleteProject: apiRoute + "/delete-project",
 

@@ -2,7 +2,7 @@ import { BrainCog, Clipboard, UserRoundCheck, Users } from "lucide-react";
 
 export function ShortCutsWidget() {
     return (
-        <div className="p-4 space-y-2 w-[40%] h-62 max-h-[400px] border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
+        <div className="p-4 space-y-2 w-full 2xl:w-[40%] h-62 max-h-[400px] border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
             <div>
                 <h2 className="text-xl font-semibold">Atalhos</h2>
             </div>

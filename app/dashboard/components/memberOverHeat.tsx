@@ -22,7 +22,7 @@ const memberOverHeat = [
 
 export function MemberOverHeat() {
     return (
-        <div className="p-4 space-y-2 w-[50%] h-62 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
+        <div className="p-4 space-y-2 w-full xl:w-[50%] h-62 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
             <div>
                 <h2 className="text-xl font-semibold">Membros com sobrecarga</h2>
             </div>
