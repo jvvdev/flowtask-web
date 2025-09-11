@@ -40,33 +40,41 @@ export type Project = {
   total_kanbans: number;
 };
 
+type ProjectForm = {
+  name: string;
+  resume: string;
+};
+
 export default function Page() {
   const [data, setData] = useState<Project[]>([]);
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<ProjectForm>();
 
   useEffect(() => {
     async function getData() {
       const sessionId = await authService.getToken();
-      let actualTeam = await teamService.getTeamByUser();
-
-      actualTeam = JSON.parse(actualTeam as string)
-
-      const data = await axios.get(routes.getProjectsDetailsByUser + actualTeam.id_group, {
+      const teamRaw = await teamService.getTeamByUser();
+      if (!teamRaw) return;
+      let actualTeam: { id_group: string };
+      try {
+        actualTeam = JSON.parse(teamRaw as string);
+      } catch {
+        return;
+      }
+      if (!actualTeam?.id_group) return;
+      await axios.get(routes.getProjectsDetailsByUser + actualTeam.id_group, {
         headers: {
           AuthToken: sessionId
         }
       }).then(res => {
         setData(res.data.data)
-
       }).catch(err => {
         console.error(err)
       });
     }
-
     getData();
   }, []);
 
-  function handleCreateProject(formData: any) {
+  function handleCreateProject(formData: ProjectForm) {
     projectService.createProject(formData);
   }
 

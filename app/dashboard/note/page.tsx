@@ -15,7 +15,6 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
-import { Button } from "@/components/button";
 import { NotesComponent } from "@/components/integrar/notes/notesComponent";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
 import { ALargeSmall, MessageCircle, Plus } from "lucide-react";
@@ -23,10 +22,15 @@ import { Input } from "@/components/input";
 import { useForm } from "react-hook-form";
 import { relatoryService } from "@/api/dashboard/relatory-service";
 
-export default function Notes() {
-  const { register, handleSubmit } = useForm();
+type NoteForm = {
+  name: string;
+  content: string;
+};
 
-  function handleCreateNote(data: any) {
+export default function Notes() {
+  const { register, handleSubmit } = useForm<NoteForm>();
+
+  function handleCreateNote(data: NoteForm) {
     relatoryService.createRelatory(data);
   }
 

@@ -65,13 +65,18 @@ interface KanbanProjectProps {
     setKanbanList: React.Dispatch<React.SetStateAction<KanbanTask[]>>;
 }
 
+interface ProjectInfo {
+    title: string;
+    // Adicione outros campos conforme necessário
+}
+
 export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps) {
     const [filter, setFilter] = useState("kanban");
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedTask, setSelectedTask] = useState<string>("0");
-    const [projectInfo, setProjectInfo] = useState([]);
+    const [projectInfo, setProjectInfo] = useState<ProjectInfo>({ title: "" });
     const [listHeader, setListHeader] = useState([
         { id: 1, name: "Título" },
         { id: 2, name: "Descrição" },

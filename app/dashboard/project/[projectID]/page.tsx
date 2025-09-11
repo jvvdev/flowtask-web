@@ -42,12 +42,23 @@ interface KanbanTask {
   createdAt: string;
 };
 
+interface ProjectInfo {
+  title: string;
+  // Adicione outros campos conforme necessário
+}
+
+interface TaskForm {
+  name: string;
+  description: string;
+  priority: string;
+}
+
 export default function Page() {
   const params = useParams();
   const router = useRouter();
   const [data, setData] = useState<KanbanTask[]>([]);
-  const [projectInfo, setProjectInfo] = useState([]);
-  const { register, handleSubmit } = useForm();
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo>({ title: "" });
+  const { register, handleSubmit } = useForm<TaskForm>();
 
   useEffect(() => {
     async function getData() {
@@ -65,7 +76,7 @@ export default function Page() {
     getData()
   }, [params.projectID, router]);
 
-  function handleCreateTask(data: any) {
+  function handleCreateTask(data: TaskForm) {
     const projectId = window.location.href.split('/dashboard/project/')[1]
     kanbanService.createTask(data, projectId);
   }

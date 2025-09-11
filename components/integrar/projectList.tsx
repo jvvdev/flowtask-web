@@ -67,7 +67,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
         setIsLoading(false);
     }, [data]);
 
-    let filteredData = Array.isArray(data) ? data.filter((item) => item.project_title.toLowerCase().includes(searchQuery.toLowerCase())) : [];
+    const filteredData = Array.isArray(data) ? data.filter((item) => item.project_title.toLowerCase().includes(searchQuery.toLowerCase())) : [];
     // filteredData = filteredData.filter((item) => item.Status.toLowerCase().includes(filter.toLowerCase()));
     const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
     const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
