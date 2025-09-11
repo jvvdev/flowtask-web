@@ -41,6 +41,13 @@ import { teamService } from "@/api/dashboard/team-service";
 
 const ITEMS_PER_PAGE = 10;
 
+interface KanbanComment {
+    id: string;
+    content: string;
+    createdAt: string;
+    // outros campos se necessário
+}
+
 interface KanbanTask {
     id_kanban: string;
     id_project: string;
@@ -48,7 +55,7 @@ interface KanbanTask {
     priority: number;
     description: string;
     status: string;
-    comments: any;
+    comments: KanbanComment[] | null;
     createdBy: string;
     createdAt: string;
 };

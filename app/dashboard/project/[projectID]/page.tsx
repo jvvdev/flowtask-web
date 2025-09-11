@@ -30,6 +30,13 @@ import { set } from "date-fns";
 import { useForm } from "react-hook-form";
 import { kanbanService } from "@/api/dashboard/kanban-service";
 
+interface KanbanComment {
+  id: string;
+  content: string;
+  createdAt: string;
+  // outros campos se necessário
+}
+
 interface KanbanTask {
   id_kanban: string;
   id_project: string;
@@ -37,7 +44,7 @@ interface KanbanTask {
   priority: number;
   description: string;
   status: string;
-  comments: any;
+  comments: KanbanComment[] | null;
   createdBy: string;
   createdAt: string;
 };
