@@ -168,7 +168,7 @@ export function NotesComponent() {
     useEffect(() => {
         async function getData() {
             const sessionId = await authService.getToken();
-            let actualGroupRaw = await teamService.getTeamByUser();
+            const actualGroupRaw = await teamService.getTeamByUser();
             let actualGroup: { id_group: string } | null = null;
             if (actualGroupRaw) {
                 try {
