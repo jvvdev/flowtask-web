@@ -37,5 +37,8 @@ export const routes = {
     createRelatory: apiRoute + "/create-relatory",
     updateRelatory: apiRoute + "/update-relatory",
     getRelatoryByGroup: apiRoute + "/group-relatory/",
-    deleteRelatory: apiRoute + "/delete-relatory/"
+    deleteRelatory: apiRoute + "/delete-relatory/",
+
+    // Task Routes
+    createTask: apiRoute + "/create-task",
 }

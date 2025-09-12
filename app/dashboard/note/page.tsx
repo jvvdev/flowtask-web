@@ -52,7 +52,7 @@ export default function Notes() {
                 </BreadcrumbItem>
                 <span className="text-zinc-400">/</span>
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Relatórios</BreadcrumbPage>
+                  <BreadcrumbPage>Documentos</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -69,7 +69,7 @@ export default function Notes() {
             <div className="space-y-1">
               <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
               <p className="text-xs md:text-sm text-muted-foreground">
-                Confira a visão geral dos seus relatórios e gerencie ou adicione novos com rapidez e facilidade!
+                Confira a visão geral dos seus documentos e gerencie ou adicione novos com rapidez e facilidade!
               </p>
             </div>
             <AlertDialog>

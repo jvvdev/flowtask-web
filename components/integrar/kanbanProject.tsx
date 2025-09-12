@@ -101,7 +101,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
     const params = useParams();
     const router = useRouter();
 
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit } = useForm<UpdateTaskForm>()
 
     const sensors = useSensors(
         useSensor(MouseSensor),
@@ -116,7 +116,14 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
         console.log("taskID: " + window.location.href.split('/dashboard/project/')[1])
     }
 
-    function handleUpdateTask(data: any) {
+    interface UpdateTaskForm {
+        title: string;
+        description: string;
+        priority: string;
+        status: string;
+    }
+
+    function handleUpdateTask(data: UpdateTaskForm) {
         console.log(data)
         console.log(selectedTaskData)
 
@@ -802,7 +809,7 @@ function ListHeader({ taskID, name }: { taskID: number; name: string }) {
     );
 }
 
-function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader, handleSelectTask }: ListTaskRowProps & { handleSelectTask: (data: KanbanTask) => void }) {
+function KanbanTaskView({ item, selectedTask, setSelectedTask, listHeader, handleSelectTask }: ListTaskRowProps & { handleSelectTask: (data: KanbanTask | null) => void }) {
     const {
         attributes,
         listeners,

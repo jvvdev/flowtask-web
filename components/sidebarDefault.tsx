@@ -49,7 +49,7 @@ export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sideba
                 url: "#",
                 items: [
                     { title: "Tarefas", url: "/dashboard/task", icon: RiListCheck },
-                    { title: "Relatórios", url: "/dashboard/note", icon: RiClipboardLine },
+                    { title: "Documentos", url: "/dashboard/note", icon: RiClipboardLine },
                 ],
             },
             {

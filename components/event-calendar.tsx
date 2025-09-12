@@ -189,6 +189,7 @@ export function EventCalendar({
         position: "bottom-left",
       });
     }
+    console.log("Event saved:", event); // Debug log
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
   };
@@ -301,7 +302,7 @@ export function EventCalendar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="max-sm:size-8"
+                  className="max-sm:size-8 cursor-pointer"
                   onClick={handlePrevious}
                   aria-label="Previous"
                 >
@@ -310,36 +311,26 @@ export function EventCalendar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="max-sm:size-8"
+                  className="max-sm:size-8 cursor-pointer"
                   onClick={handleNext}
                   aria-label="Next"
                 >
                   <ChevronRightIcon size={16} aria-hidden="true" />
                 </Button>
               </div>
-              <Button
-                className="max-sm:h-8 max-sm:px-2.5!"
-                onClick={handleToday}
-              >
-                Hoje
-              </Button>
             </div>
             <div className="flex items-center justify-between gap-2">
               <Button
-                variant="outline"
-                className="max-sm:h-8 max-sm:px-2.5!"
-                onClick={() => {
-                  setSelectedEvent(null); // Ensure we're creating a new event
-                  setIsEventDialogOpen(true);
-                }}
+                className="max-sm:h-8 max-sm:px-2.5! cursor-pointer"
+                onClick={handleToday}
               >
-                Nova tarefa
+                Hoje
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="gap-1.5 max-sm:h-8 max-sm:px-2! max-sm:gap-1"
+                    className="gap-1.5 max-sm:h-8 max-sm:px-2! max-sm:gap-1 cursor-pointer"
                   >
                     <span className="capitalize">{view}</span>
                     <ChevronDownIcon
@@ -350,20 +341,30 @@ export function EventCalendar({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-32">
-                  <DropdownMenuItem onClick={() => setView("Mês")}>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => setView("Mês")}>
                     Mês <DropdownMenuShortcut>M</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setView("Semana")}>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => setView("Semana")}>
                     Semana <DropdownMenuShortcut>S</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setView("Dia")}>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => setView("Dia")}>
                     Dia <DropdownMenuShortcut>D</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setView("Agenda")}>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => setView("Agenda")}>
                     Agenda <DropdownMenuShortcut>A</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              <Button
+                variant="outline"
+                className="max-sm:h-8 max-sm:px-2.5! cursor-pointer"
+                onClick={() => {
+                  setSelectedEvent(null); // Ensure we're creating a new event
+                  setIsEventDialogOpen(true);
+                }}
+              >
+                Nova tarefa
+              </Button>
             </div>
           </div>
         </div>

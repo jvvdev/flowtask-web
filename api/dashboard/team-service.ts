@@ -16,6 +16,12 @@ import { authService } from "../auth-service";
 import { routes } from "../routes";
 
 class TeamService {
+    async deleteAllTeams() {
+        deleteCookie('allTeams');
+        deleteCookie('activeTeam');
+        window.location.reload();
+    }
+
     async createTeam(data: any) {
         const token = await authService.getToken();
 
@@ -56,25 +62,23 @@ class TeamService {
         });
     }
 
-    async deleteTeam(id: number) {
-        const token = await authService.getToken();
+    async deleteTeam(id: string) {
+        const session_id = await authService.getToken();
 
         const api = await axios.delete(routes.deleteTeam, {
             headers: {
-                "authToken": token
+                "authToken": session_id
             },
             data: {
                 id_group: id
             }
         }).then((response) => {
+            this.deleteAllTeams()
             return true
         }).catch((error) => {
             console.error(error);
         });
     }
-
-    // fazer com que peça o token do team pelo front, e depois voltar ele para o front
-    // fazer com que quando criar o grupo, ou selecionar o front me mande, e eu coloque ele como o grupo atual
 
     async getTeamByUser() {
         return getCookie('activeTeam');
@@ -94,6 +98,7 @@ class TeamService {
 
     deleteActiveTeam() {
         deleteCookie('activeTeam');
+        window.location.reload();
     }
 
     async setAllTeams(team: any) {

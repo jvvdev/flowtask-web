@@ -18,7 +18,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 import { RiExpandUpDownLine, RiAddLine } from "@remixicon/react";
 import { Input } from "../input";
-import { ALargeSmall, LoaderCircle, MessageCircleMore, Trash, Users } from "lucide-react";
+import { ALargeSmall, LoaderCircle, MessageCircleMore, RotateCw, Trash, Users } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { teamService } from "@/api/dashboard/team-service";
 import axios from "axios";
@@ -63,6 +63,10 @@ export function TeamSwitcher() {
       }).then((response) => {
         setTeam(response.data.data)
         setLoading(false)
+        if (response.data.data.length === 0) {
+          setLoading(false)
+          return;
+        }
         teamService.setAllTeams(response.data.data)
       }).catch((error) => {
         console.error(error);
@@ -132,8 +136,11 @@ export function TeamSwitcher() {
             side="bottom"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="uppercase text-muted-foreground/60 text-xs">
-              EQUIPES
+            <DropdownMenuLabel className="flex justify-between uppercase text-muted-foreground/60 text-xs">
+              <p>EQUIPES</p>
+              <div className="group hover:bg-zinc-800 p-0.5 rounded-sm duration-200 cursor-pointer">
+                <RotateCw size={16} className="group-hover:rotate-45 transition-transform duration-200" onClick={() => teamService.deleteAllTeams()}/>
+              </div>
             </DropdownMenuLabel>
             {loading ? <div className="w-full flex items-center justify-center h-10 text-sm font-semibold gap-2 text-muted-foreground"><LoaderCircle size={16} className="animate-spin" /> Carregando...</div> : team.length > 0 ? team.map((team, index) => (
               <div
@@ -165,7 +172,7 @@ export function TeamSwitcher() {
                       <AlertDialogFooter className="">
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => teamService.deleteTeam(Number(team.id_group))}
+                          onClick={() => teamService.deleteTeam(team.id_group)}
                           className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
                         >
                           Deletar

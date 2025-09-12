@@ -39,6 +39,8 @@ import {
   DefaultEndHour,
 } from "@/components/constants";
 import { CalendarEvent, EventColor } from "./types";
+import { TriangleAlert } from "lucide-react";
+import axios from "axios";
 
 interface EventDialogProps {
   event: CalendarEvent | null;
@@ -59,6 +61,7 @@ export function EventDialog({
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
+  const [users, setUsers] = useState([])
   const [startTime, setStartTime] = useState(`${DefaultStartHour}:00`);
   const [endTime, setEndTime] = useState(`${DefaultEndHour}:00`);
   const [allDay, setAllDay] = useState(false);
@@ -93,6 +96,12 @@ export function EventDialog({
       resetForm();
     }
   }, [event]);
+
+  useEffect(() => {
+    async function getUsers(event: KeyboardEvent) {
+      axios.get
+    }
+  }, [])
 
   const resetForm = () => {
     setTitle("");
@@ -193,37 +202,37 @@ export function EventDialog({
     bgClass: string;
     borderClass: string;
   }> = [
-    {
-      value: "blue",
-      label: "Blue",
-      bgClass: "bg-blue-400 data-[state=checked]:bg-blue-400",
-      borderClass: "border-blue-400 data-[state=checked]:border-blue-400",
-    },
-    {
-      value: "violet",
-      label: "Violet",
-      bgClass: "bg-violet-400 data-[state=checked]:bg-violet-400",
-      borderClass: "border-violet-400 data-[state=checked]:border-violet-400",
-    },
-    {
-      value: "rose",
-      label: "Rose",
-      bgClass: "bg-rose-400 data-[state=checked]:bg-rose-400",
-      borderClass: "border-rose-400 data-[state=checked]:border-rose-400",
-    },
-    {
-      value: "emerald",
-      label: "Emerald",
-      bgClass: "bg-emerald-400 data-[state=checked]:bg-emerald-400",
-      borderClass: "border-emerald-400 data-[state=checked]:border-emerald-400",
-    },
-    {
-      value: "orange",
-      label: "Orange",
-      bgClass: "bg-orange-400 data-[state=checked]:bg-orange-400",
-      borderClass: "border-orange-400 data-[state=checked]:border-orange-400",
-    },
-  ];
+      {
+        value: "blue",
+        label: "Blue",
+        bgClass: "bg-blue-400 data-[state=checked]:bg-blue-400",
+        borderClass: "border-blue-400 data-[state=checked]:border-blue-400",
+      },
+      {
+        value: "violet",
+        label: "Violet",
+        bgClass: "bg-violet-400 data-[state=checked]:bg-violet-400",
+        borderClass: "border-violet-400 data-[state=checked]:border-violet-400",
+      },
+      {
+        value: "rose",
+        label: "Rose",
+        bgClass: "bg-rose-400 data-[state=checked]:bg-rose-400",
+        borderClass: "border-rose-400 data-[state=checked]:border-rose-400",
+      },
+      {
+        value: "emerald",
+        label: "Emerald",
+        bgClass: "bg-emerald-400 data-[state=checked]:bg-emerald-400",
+        borderClass: "border-emerald-400 data-[state=checked]:border-emerald-400",
+      },
+      {
+        value: "orange",
+        label: "Orange",
+        bgClass: "bg-orange-400 data-[state=checked]:bg-orange-400",
+        borderClass: "border-orange-400 data-[state=checked]:border-orange-400",
+      },
+    ];
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -232,8 +241,8 @@ export function EventDialog({
           <DialogTitle>{event?.id ? "Editar evento" : "Cria tarefa"}</DialogTitle>
           <DialogDescription className="sr-only">
             {event?.id
-              ? "Edit the details of this event"
-              : "Add a new event to your calendar"}
+              ? "Edite as informações da sua tarefa"
+              : "Adicione uma nova tarefa ao seu calendário"}
           </DialogDescription>
         </DialogHeader>
         {error && (
@@ -259,6 +268,43 @@ export function EventDialog({
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <select
+              className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
+              defaultValue="0"
+            >
+              <option value="" disabled>Selecione o status</option>
+              <option value="0">Não iniciado</option>
+              <option value="1">Em andamento</option>
+              <option value="2">Concluído</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="priority">Prioridade</Label>
+            <select
+              className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
+              defaultValue="0"
+            >
+              <option value="" disabled>Selecione a prioridade</option>
+              <option value="0">Baixa</option>
+              <option value="1">Média</option>
+              <option value="2">Alta</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="attributedAt">Atribuido para</Label>
+            <select
+              className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
+              defaultValue=""
+            >
+              <option value="" disabled>Selecione o usuário</option>
+              
+            </select>
           </div>
 
           <div className="flex gap-4">
@@ -403,14 +449,14 @@ export function EventDialog({
             <Label htmlFor="all-day">Dia todo</Label>
           </div>
 
-          <div className="*:not-first:mt-1.5">
+          {/* <div className="*:not-first:mt-1.5">
             <Label htmlFor="location">Localização</Label>
             <Input
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
-          </div>
+          </div> */}
           <fieldset className="space-y-4">
             <legend className="text-foreground text-sm leading-none font-medium">
               Etiqueta

@@ -28,6 +28,7 @@ import { authService } from "@/api/auth-service";
 import { teamService } from "@/api/dashboard/team-service";
 import { relatoryService } from "@/api/dashboard/relatory-service";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
+import { EditAlert } from "./editAlert";
 
 const NotesList = [
     {
@@ -160,7 +161,7 @@ interface Note {
 }
 
 export function NotesComponent() {
-    const [currentNote, setCurrentNote] = useState("0")
+    const [currentNote, setCurrentNote] = useState(null as null | Note)
     const [isEditing, setIsEditing] = useState(false)
     const [noteText, setNoteText] = useState("");
     const [data, setData] = useState<Note[]>([])
@@ -249,12 +250,12 @@ export function NotesComponent() {
 
     function editNote(noteName: string) {
         setIsEditing(false);
-        console.log(noteText)
+        relatoryService.updateRelatoryText(currentNote, noteText)
     }
 
     return (
         <div className="flex justify-between">
-            <div className={`w-full md:max-w-80 ${currentNote === "0" ? 'block' : 'hidden md:block'}`}>
+            <div className={`w-full md:max-w-80 ${currentNote === null as null | Note ? 'block' : 'hidden md:block'}`}>
                 <div className="flex justify-between items-center gap-2">
                     <div className="relative w-full">
                         <Input
@@ -297,28 +298,31 @@ export function NotesComponent() {
                         data.map((item) => (
                             <div key={item.id_relatory}>
                                 <ContextMenu>
-                                    <ContextMenuTrigger className="w-full" onClick={() => { setCurrentNote(item.id_relatory), setNoteText("") }}>
+                                    <ContextMenuTrigger className="w-full" onClick={() => { setCurrentNote(item), setNoteText(item.content) }}>
                                         <div
-                                            className={`flex flex-col justify-start items-start p-2 ${currentNote === item.id_relatory ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
+                                            className={`flex flex-col justify-start items-start p-2 ${currentNote && currentNote.id_relatory === item.id_relatory ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
                                             <div className="flex items-center justify-between w-full">
                                                 <h3
-                                                    className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote === item.id_relatory ? 'text-zinc-100' : ''}`}>
+                                                    className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote && currentNote.id_relatory === item.id_relatory ? 'text-zinc-100' : ''}`}>
                                                     {item.title}
                                                 </h3>
                                                 <h3
-                                                    className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id_relatory ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                                    className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote && currentNote.id_relatory === item.id_relatory ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
                                                     {item.relatory_owner}
                                                 </h3>
                                             </div>
                                             <p
-                                                className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote === item.id_relatory ? 'text-zinc-100' : 'text-muted-foreground'}`}>
-                                                {item.content}
+                                                className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote?.id_relatory === item.id_relatory ? 'text-zinc-100' : 'text-muted-foreground'}`}>
+                                                {
+                                                    currentNote && item.id_relatory === currentNote.id_relatory ? noteText : item.content
+                                                }
                                             </p>
                                         </div>
                                     </ContextMenuTrigger>
                                     <ContextMenuContent className="p-0 border-0">
+                                        <EditAlert data={item} />
                                         <ContextMenuItem
-                                            className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
+                                            className="px-2 flex items-center justify-center gap-2 rounded-md rounded-t-none text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
                                         >
                                             <Trash2 className="size-5 text-red-500" />
                                             <p className="text-red-500">Deletar</p>
@@ -331,9 +335,9 @@ export function NotesComponent() {
                 </div>
             </div>
 
-            <div className={`md:w-[80%] ${currentNote !== "0" ? 'w-full' : ''} h-full`}>
+            <div className={`md:w-[80%] ${currentNote !== null as null | Note ? 'w-full' : ''} h-full`}>
                 {
-                    currentNote == "0" ?
+                    currentNote == null as null | Note ?
                         <div className="hidden md:flex w-full h-full justify-center py-60">
                             <h2 className="text-xl font-semibold">Selecione um relatório para visualizar</h2>
                         </div> : <div className="md:pl-3 py-0.5 h-full pb-10">
@@ -354,11 +358,11 @@ export function NotesComponent() {
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
-                                                <AlertDialogAction className="bg-red-800 hover:bg-red-700 cursor-pointer" onClick={() => relatoryService.deleteRelatory(currentNote)}>Deletar</AlertDialogAction>
+                                                <AlertDialogAction className="bg-red-800 hover:bg-red-700 cursor-pointer" onClick={() => currentNote && relatoryService.deleteRelatory(currentNote.id_relatory)}>Deletar</AlertDialogAction>
                                             </AlertDialogFooter>
                                         </AlertDialogContent>
                                     </AlertDialog>
-                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote("0")} />
+                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote(null as null | Note)} />
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <p className="px-2 font-semibold text-zinc-400 duration-200">Salvo</p>
@@ -387,7 +391,7 @@ export function NotesComponent() {
                                                         </div>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
-                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => editNote(currentNote)} />
+                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => currentNote && editNote(currentNote.id_relatory)} />
                                             </div>
                                     }
                                 </div>

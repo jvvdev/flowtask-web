@@ -21,10 +21,44 @@ class RelatoryService {
         });
     }
 
-    async updateRelatory(id: string, data: any) {
+    async updateRelatoryText(data: any, modifiedText?: string) {
         const sessionId = getCookie("sessionId");
 
-        
+        console.log(data)
+
+        axios.post(routes.updateRelatory, {
+            id: data.id_relatory,
+            relatory_owner: data.relatory_owner ,
+            title: data.title,
+            content: modifiedText ? modifiedText : data.content,
+        }, {
+            headers: {
+                authToken: sessionId
+            }
+        }).then(res => {
+            
+        }).catch(err => {
+            console.error(err)
+        });
+    }
+
+    async updateRelatoryTitle(data: any, modifiedTitle: string) {
+        const sessionId = getCookie("sessionId");
+
+        axios.post(routes.updateRelatory, {
+            id: data.id_relatory,
+            relatory_owner: data.relatory_owner ,
+            title: modifiedTitle ? modifiedTitle : data.title,
+            content: data.content,
+        }, {
+            headers: {
+                authToken: sessionId
+            }
+        }).then(res => {
+            window.location.reload();
+        }).catch(err => {
+            console.error(err)
+        });
     }
 
     async deleteRelatory(id: string) {
