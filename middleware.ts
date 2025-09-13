@@ -26,6 +26,9 @@ export async function middleware(req: NextRequest) {
             console.log(session_id)
 
             cookieService.set('sessionId', session_id, { secure: true, maxAge: 604800 })
+            cookieService.getAll().forEach((cookie) => {
+                console.log(cookie.name, cookie.value);
+            })
             return NextResponse.rewrite(new URL('/dashboard', req.url))
         }
 
