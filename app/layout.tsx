@@ -31,7 +31,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <CalendarProvider>{children}</CalendarProvider>
-          <Toaster />
+          <Toaster richColors  />
         </ThemeProvider>
       </body>
     </html>

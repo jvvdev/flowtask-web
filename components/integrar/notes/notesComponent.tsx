@@ -260,16 +260,16 @@ export function NotesComponent() {
                     <div className="relative w-full">
                         <Input
                             placeholder="Pesquisar pelo nome"
-                            className="peer min-w-40 ps-9 dark:bg-background dark:bg-gradient-to-br dark:from-accent/60 dark:to-accent"
+                            className="peer min-w-40 max-w-78.5 ps-9 bg-zinc-200/70 hover:bg-zinc-200 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 duration-200"
                         />
                         <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
                             <RiSearch2Line size={20} aria-hidden="true" />
                         </div>
                     </div>
 
-                    <Popover>
+                    {/* <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="cursor-pointer">
+                            <Button variant="outline" className="cursor-pointer bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700">
                                 <AlignCenter className="opacity-50" />
                             </Button>
                         </PopoverTrigger>
@@ -283,7 +283,7 @@ export function NotesComponent() {
                                 </div>
                             </div>
                         </PopoverContent>
-                    </Popover>
+                    </Popover> */}
                 </div>
 
                 <div className="space-y-2 mt-2 flex flex-col max-h-[76vh] overflow-y-auto pr-1.5
@@ -299,8 +299,7 @@ export function NotesComponent() {
                             <div key={item.id_relatory}>
                                 <ContextMenu>
                                     <ContextMenuTrigger className="w-full" onClick={() => { setCurrentNote(item), setNoteText(item.content) }}>
-                                        <div
-                                            className={`flex flex-col justify-start items-start p-2 ${currentNote && currentNote.id_relatory === item.id_relatory ? 'bg-gradient-to-l from-green-700 to-green-600' : 'dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
+                                        <div className={`flex flex-col justify-start items-start p-2 ${currentNote && currentNote.id_relatory === item.id_relatory ? 'bg-gradient-to-l from-green-700 to-green-600' : 'bg-zinc-200/70 hover:bg-zinc-200 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
                                             <div className="flex items-center justify-between w-full">
                                                 <h3
                                                     className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote && currentNote.id_relatory === item.id_relatory ? 'text-zinc-100' : ''}`}>

@@ -14,7 +14,7 @@ export const routes = {
     // Team Routes
     createTeam: apiRoute + "/create-group",
     updateTeam: apiRoute + "/update-group",
-    deleteTeam: apiRoute + "/delete-group",
+    deleteTeam: apiRoute + "/delete-group/",
     getTeam: apiRoute + "/get-group",
     getTeams: apiRoute + "/get-groups",
     getTeamByUser: apiRoute + "/get-groups-by-user",

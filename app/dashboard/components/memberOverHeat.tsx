@@ -36,8 +36,8 @@ export function MemberOverHeat() {
                         dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700"
             >
                 <div className="w-full flex justify-between px-2 py-1 bg-sidebar border border-border rounded-lg mb-2">
-                    <p className="w-full font-semibold text-sm flex items-center gap-1"><User size={16} />Nome</p>
-                    <p className="w-[60%] font-semibold text-sm flex items-center gap-1"><Asterisk size={16} />Sobrecarga</p>
+                    <p className="w-full text-zinc-600 dark:text-zinc-500 text-sm flex items-center gap-1"><User size={16} />Nome</p>
+                    <p className="w-[60%] text-zinc-600 dark:text-zinc-500 text-sm flex items-center gap-1"><Asterisk size={16} />Sobrecarga</p>
                 </div>
                 {
                     memberOverHeat.map(member => (

@@ -54,7 +54,7 @@ export function ListLogs() {
                         : <Table className="table-fixed min-w-140 border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
-                                    <TableHead className="relative h-9 w-[80%] select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                    <TableHead className="relative h-9 w-[84%] select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                         <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ShieldAlert size={18} /> Atividade</p>
                                     </TableHead>
                                     <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
@@ -75,7 +75,7 @@ export function ListLogs() {
                                                 {item.action}
                                             </TableCell>
                                             <TableCell>
-                                                {item.date.toLocaleDateString()} 
+                                                {item.date.toLocaleString()} 
                                             </TableCell>
                                         </TableRow>
                                     ))

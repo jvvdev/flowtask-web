@@ -26,6 +26,7 @@ interface UserData {
 
 export default function UserDropdown() {
   const [data, setData] = useState<UserData>({ name: "", email: "", picture: "" });
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function getData() {
@@ -34,6 +35,7 @@ export default function UserDropdown() {
       const userData = await authService.getUserData();
       if (userData) {
         setData(JSON.parse(userData) as UserData);
+        setLoading(false)
         return;
       }
 
@@ -48,6 +50,7 @@ export default function UserDropdown() {
           email: response.data.email,
           picture: response.data.picture,
         })
+        setLoading(false)
       }).catch((err) => {
         console.log(err);
       })
@@ -59,25 +62,39 @@ export default function UserDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
-          <Avatar className="size-8">
-            <AvatarImage
-              src={data.picture}
-              width={32}
-              height={32}
-              alt="Profile image"
-            />
-            <AvatarFallback>-</AvatarFallback>
-          </Avatar>
+          {
+            loading ?
+              <div>
+                <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+              </div> :
+              <Avatar className="size-8">
+                <AvatarImage
+                  src={data.picture}
+                  width={32}
+                  height={32}
+                  alt="Profile image"
+                />
+                <AvatarFallback>-</AvatarFallback>
+              </Avatar>
+          }
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64" align="end">
         <DropdownMenuLabel className="flex min-w-0 flex-col">
-          <span className="truncate text-sm font-medium text-foreground">
-            {data.name ? data.name : "Nome não disponível"}
-          </span>
-          <span className="truncate text-xs font-normal text-muted-foreground">
-            {data.email ? data.email : "Email não disponível"}
-          </span>
+          {
+            loading ?
+              <div className="h-4 w-32 animate-pulse rounded bg-muted" /> :
+              <span className="truncate text-sm font-medium text-foreground">
+                {data.name ? data.name : "Nome não disponível"}
+              </span>
+          }
+          {
+            loading ?
+              <div className="mt-1 h-3 w-40 animate-pulse rounded bg-muted" /> :
+              <span className="truncate text-xs font-normal text-muted-foreground">
+                {data.email ? data.email : "Email não disponível"}
+              </span>
+          }
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

@@ -32,6 +32,7 @@ interface UserData {
 export default function Settings() {
   const [currentTab, setCurrentTab] = useState(0)
   const [data, setData] = useState<UserData>({ name: "", email: "", picture: "" });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getData() {
@@ -40,6 +41,7 @@ export default function Settings() {
       const userData = await authService.getUserData();
       if (userData) {
         setData(JSON.parse(userData) as UserData);
+        setLoading(false)
         return;
       }
 
@@ -54,6 +56,7 @@ export default function Settings() {
           email: response.data.email,
           picture: response.data.picture,
         })
+        setLoading(false)
       }).catch((err) => {
         console.log(err);
       })
@@ -98,19 +101,37 @@ export default function Settings() {
               </div>
 
               <div className="flex items-center gap-3 p-2 mt-5 bg-zinc-200/70 dark:bg-zinc-800/70 dark:border-zinc-200/5 dark:text-zinc-50/90 border rounded-lg">
-                <Avatar className="size-14">
-                  <AvatarImage
-                    src={data.picture}
-                    width={32}
-                    height={32}
-                    alt="Profile image"
-                  />
-                  <AvatarFallback>-</AvatarFallback>
-                </Avatar>
+                {
+                  loading ? (
+                    <div className="w-14 h-14 bg-zinc-300/70 dark:bg-zinc-700/70 rounded-full animate-pulse" />
+                  ) : (
+                    <Avatar className="size-14">
+                      <AvatarImage
+                        src={data.picture}
+                        width={32}
+                        height={32}
+                        alt="Profile image"
+                      />
+                      <AvatarFallback>-</AvatarFallback>
+                    </Avatar>
+                  )}
 
                 <div className="flex flex-col">
-                  <p className="text-lg font-semibold">{data.name ? data.name : "Nome não disponível"}</p>
-                  <span className="text-sm text-muted-foreground">{data.email ? data.email : "Email não disponível"}</span>
+                  {
+                    loading ?
+                      <div className="h-4 w-18 animate-pulse rounded bg-muted-foreground/20" /> :
+                      <span className="font-semibold">
+                        {data.name ? data.name : "Nome não disponível"}
+                      </span>
+                  }
+                  {
+                    loading ?
+                      <div className="mt-2 h-4 w-40 animate-pulse rounded bg-muted-foreground/20" /> :
+                      <span className="text-sm text-muted-foreground">
+                        {data.email ? data.email : "Email não disponível"}
+                      </span>
+                  }
+
                 </div>
               </div>
 
@@ -120,11 +141,11 @@ export default function Settings() {
               </button>
 
               <button onClick={() => setCurrentTab(2)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-t-lg border border-b-0 ${currentTab === 2 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:hover:bg-zinc-700/40 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
-                <UserCog className="p-1.5 bg-zinc-500/70 text-zinc-50 rounded-md" size={32} />
+                <UserCog className="p-1.5 bg-zinc-400/80 dark:bg-zinc-950/40 text-zinc-50 rounded-md" size={32} />
                 <p className="text-md font-semibold">Configurações da conta</p>
               </button>
               <button onClick={() => setCurrentTab(3)} className={`w-full p-2 flex items-center gap-2 rounded-b-lg border ${currentTab === 3 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:hover:bg-zinc-700/40 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
-                <ALargeSmall className="p-1.5 bg-zinc-500/70 text-zinc-50 rounded-md" size={32} />
+                <ALargeSmall className="p-1.5 bg-zinc-400/80 dark:bg-zinc-950/40 text-zinc-50 rounded-md" size={32} />
                 <p className="text-md font-semibold">Preferências</p>
               </button>
             </div>
@@ -135,7 +156,7 @@ export default function Settings() {
               {currentTab === 3 && <Preferences />}
             </div>
 
-            <Undo2 className={`${currentTab === 0 ? "hidden" : "block md:hidden"} absolute left-4 top-22`} onClick={() => setCurrentTab(0)}/>
+            <Undo2 className={`${currentTab === 0 ? "hidden" : "block md:hidden"} absolute left-4 top-22`} onClick={() => setCurrentTab(0)} />
           </div>
         </div>
       </SidebarInset>

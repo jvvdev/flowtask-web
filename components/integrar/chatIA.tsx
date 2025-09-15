@@ -66,7 +66,7 @@ export function IASection() {
             }
 
             <div className={`w-full flex flex-col justify-center items-center`}>
-                <div className={`${isChatting ? "w-[95%] sm:w-120 2xl:w-[40%]" : "w-[95%] sm:w-120 2xl:w-[40%]"} flex flex-col mt-6 p-2 bg-zinc-50 dark:bg-zinc-800/30 border ${onFocus ? "rounded-t-xl" : "rounded-xl"} duration-100`}>
+                <div className={`${isChatting ? "w-[95%] sm:w-120 2xl:w-[40%]" : "w-[95%] sm:w-120 2xl:w-[40%]"} flex mt-6 p-2 bg-zinc-50 dark:bg-zinc-800/30 border ${onFocus ? "rounded-t-xl" : "rounded-xl"} duration-100`}>
                     <textarea
                         ref={textareaRef}
                         className="p-2 outline-none w-full resize-none overflow-auto"
@@ -77,48 +77,16 @@ export function IASection() {
                         onInput={handleInput}
                         rows={1}
                     />
-                    <div className="flex justify-between">
-                        <div className="flex gap-0.5 p-0.5 bg-zinc-300/60 dark:bg-zinc-900 rounded-lg text-sm text-zinc-700/80 dark:text-zinc-400">
-                            <button
-                                className={`relative group ${mode == 1 ? "bg-zinc-50 dark:bg-zinc-800/70 text-zinc-950 dark:text-zinc-200" : "hover:bg-zinc-300 dark:hover:bg-zinc-800/30 cursor-pointer"} p-1 px-2 rounded-md duration-200`}
-                                onClick={() => setMode(1)}
-                            >
-                                Perguntar
-                                <div className="absolute hidden -left-15 top-12 group-hover:block w-50 border bg-zinc-50 dark:bg-zinc-800/30 p-1 rounded-md">
-                                    <span className="text-sm font-semibold">Responder suas perguntas</span>
-                                </div>
-                            </button>
-                            <button
-                                className={`relative group ${mode == 2 ? "bg-zinc-50 dark:bg-zinc-800/70 text-zinc-950 dark:text-zinc-200" : "hover:bg-zinc-300 dark:hover:bg-zinc-800/30 cursor-pointer"} p-1 px-2 rounded-md duration-200`}
-                                onClick={() => setMode(2)}
-                            >
-                                Pesquisa
-                                <div className="absolute hidden -left-15 top-12 group-hover:block w-50 border bg-zinc-50 dark:bg-zinc-800/30 p-1 rounded-md">
-                                    <span className="text-sm font-semibold">Pesquisar sobre um assunto</span>
-                                </div>
-                            </button>
-                            <button
-                                className={`relative group ${mode == 3 ? "bg-zinc-50 dark:bg-zinc-800/70 text-zinc-950 dark:text-zinc-200" : "hover:bg-zinc-300 dark:hover:bg-zinc-800/30 cursor-pointer"} p-1 px-2 rounded-md duration-200`}
-                                onClick={() => setMode(3)}
-                            >
-                                Criar
-                                <div className="absolute hidden -left-7 top-12 group-hover:block w-26 border bg-zinc-50 dark:bg-zinc-800/30 p-1 rounded-md">
-                                    <span className="text-sm font-semibold">Criar dados</span>
-                                </div>
-                            </button>
-                        </div>
-
-                        <div className="flex items-center justify-center gap-2">
-                            <button className="group relative p-1 px-2 rounded-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-800 duration-200">
-                                @
-                                <div className="absolute hidden -left-16 top-12 group-hover:block w-40 border bg-zinc-50 dark:bg-zinc-800/30 p-1 rounded-md cursor-pointer">
-                                    <span className="text-sm font-semibold">Mencionar alguem</span>
-                                </div>
-                            </button>
-                            <button className="p-1.5 rounded-md bg-zinc-200 text-zinc-600 dark:bg-zinc-800/70 dark:text-zinc-400 hover:bg-green-600 hover:text-zinc-50 duration-200 cursor-pointer">
-                                <MoveRight size={20} />
-                            </button>
-                        </div>
+                    <div className="flex items-center justify-center gap-2">
+                        <button className="group relative p-1 px-2 rounded-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-800 duration-200">
+                            @
+                            <div className="absolute hidden -left-16 top-12 group-hover:block w-40 border bg-zinc-50 dark:bg-zinc-800/30 p-1 rounded-md cursor-pointer">
+                                <span className="text-sm font-semibold">Mencionar alguem</span>
+                            </div>
+                        </button>
+                        <button className="p-1.5 rounded-md bg-zinc-200 text-zinc-600 dark:bg-zinc-800/70 dark:text-zinc-400 hover:bg-green-600 hover:text-zinc-50 duration-200 cursor-pointer">
+                            <MoveRight size={20} />
+                        </button>
                     </div>
                 </div>
                 {

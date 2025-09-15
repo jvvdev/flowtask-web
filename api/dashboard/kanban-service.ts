@@ -39,7 +39,7 @@ class KanbanService {
                 authToken: sessionId
             }
         }).then(res => {
-            console.log(res)
+            return "ok"
         }).catch(err => {
             console.error(err)
         });

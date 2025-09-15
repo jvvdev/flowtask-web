@@ -23,12 +23,9 @@ export async function middleware(req: NextRequest) {
         // pega o session_id pelo google
         if (req.url.includes('?session_id=')) {
             const session_id = req.url.split('/dashboard?session_id=')[1];
-            console.log(session_id)
 
             cookieService.set('sessionId', session_id, { maxAge: 604800 })
-            cookieService.getAll().forEach((cookie) => {
-                console.log(cookie.name, cookie.value);
-            })
+            // cookieService.set('sessionId', session_id, { secure: true, maxAge: 604800 })
             return NextResponse.rewrite(new URL('/dashboard', req.url))
         }
 

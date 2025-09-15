@@ -52,7 +52,7 @@ export type ProjectListProps = {
     setData: React.Dispatch<React.SetStateAction<Project[]>>;
 };
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 9;
 
 export function ProjectList({ data, setData }: ProjectListProps) {
     const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +98,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                             <div className="flex gap-2">
                                 <AlertDialog>
                                     <AlertDialogTrigger
-                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-600/80 dark:bg-green-500/20 hover:bg-green-700/80 dark:hover:bg-green-500/30 border border-green-500/20 text-white dark:text-green-500 cursor-pointer"
                                     >
                                         <ArchiveRestore className="size-5" />
                                         <span className="hidden sm:block">Abrir projeto</span>
@@ -119,7 +119,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
 
                                 <AlertDialog>
                                     <AlertDialogTrigger
-                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
+                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-700/80 dark:bg-red-500/20 hover:bg-red-700/90 dark:hover:bg-red-500/30 border border-red-500/20 text-white dark:text-red-500 cursor-pointer"
                                     >
                                         <Trash2 className="size-5" />
                                         <span className="hidden sm:block">Deletar</span>
@@ -143,9 +143,9 @@ export function ProjectList({ data, setData }: ProjectListProps) {
 
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="cursor-pointer">
+                            <Button variant="outline" className="cursor-pointer bg-zinc-400/40 hover:bg-zinc-400/30">
                                 <RiFilter3Line
-                                    className="size-5 -ms-1.5 text-muted-foreground/60"
+                                    className="size-5 -ms-1.5 text-muted-foreground/90"
                                     size={20}
                                     aria-hidden="true"
                                 />
@@ -171,16 +171,16 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                             <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
                             </TableHead>
-                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative w-180 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><MessageCircle size={18} /> Resumo</p>
                             </TableHead>
-                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative w-40 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ChartPie size={18} /> Status</p>
                             </TableHead>
-                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative w-40 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><LoaderCircle size={18} /> Progresso</p>
                             </TableHead>
-                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative w-55 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><UserCog size={18} /> Responsável</p>
                             </TableHead>
                         </TableRow>

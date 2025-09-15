@@ -57,7 +57,7 @@ const Projects = [
   { id: 20, Name: "Gustavo Lima", Email: "gustavo.lima@empresa.com", PendingTasks: 4, TotalTasks: 22 },
 ];
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 9;
 
 export function ContactsTables() {
   const [isLoading, setIsLoading] = useState(true);
@@ -138,36 +138,36 @@ export function ContactsTables() {
                             {...register("id")}
                           />
                         <div className="space-y-2">
-                          <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
+                          <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
                           <Input
-                            placeholder="Nome"
+                            placeholder="Ex: Keith Adams"
                             className="mb-2"
                             defaultValue={data.find(item => item.id === selectedMember)?.Name || ""}
                             {...register("name")}
                           />
                         </div>
                         <div className="space-y-2">
-                          <p className="flex items-center gap-2 dark:text-zinc-200/80"><MailSearch size={20} />Email</p>
+                          <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Email</p>
                           <Input
-                            placeholder="Email"
+                            placeholder="Ex: keith@example.com"
                             className="mb-2"
                             defaultValue={data.find(item => item.id === selectedMember)?.Email || ""}
                             {...register("email")}
                           />
                         </div>
                         <div className="space-y-2">
-                          <p className="flex items-center gap-2 dark:text-zinc-200/80"><ClipboardClock size={20} />Tarefas pendentes</p>
+                          <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Tarefas pendentes</p>
                           <Input
-                            placeholder="Nome"
+                            placeholder="Ex: 15"
                             className="mb-2"
                             defaultValue={data.find(item => item.id === selectedMember)?.PendingTasks || ""}
                             {...register("pendingTasks")}
                           />
                         </div>
                         <div className="space-y-2">
-                          <p className="flex items-center gap-2 dark:text-zinc-200/80"><ClipboardCheck size={20} />Tarefas concluídas</p>
+                          <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Tarefas concluídas</p>
                           <Input
-                            placeholder="Nome"
+                            placeholder="Ex: 30"
                             className="mb-2"
                             defaultValue={data.find(item => item.id === selectedMember)?.TotalTasks || ""}
                             {...register("totalTasks")}
@@ -179,7 +179,7 @@ export function ContactsTables() {
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                          className="font-semibold bg-yellow-500/15 dark:bg-yellow-500/20 hover:bg-yellow-500/20 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-yellow-500 cursor-pointer"
+                          className="font-semibold cursor-pointer"
                         >
                           Confirmar
                         </AlertDialogAction>

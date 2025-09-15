@@ -65,13 +65,13 @@ class TeamService {
     async deleteTeam(id: string) {
         const session_id = await authService.getToken();
 
-        const api = await axios.delete(routes.deleteTeam, {
+        const api = await axios.delete(routes.deleteTeam + id, {
             headers: {
                 "authToken": session_id
             },
-            data: {
-                id_group: id
-            }
+            // data: {
+            //     id_group: id
+            // }
         }).then((response) => {
             this.deleteAllTeams()
             return true

@@ -238,7 +238,7 @@ export function EventDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{event?.id ? "Editar evento" : "Cria tarefa"}</DialogTitle>
+          <DialogTitle>{event?.id ? "Editar evento" : "Criar tarefa"}</DialogTitle>
           <DialogDescription className="sr-only">
             {event?.id
               ? "Edite as informações da sua tarefa"
@@ -272,39 +272,45 @@ export function EventDialog({
 
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
-            <select
-              className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-              defaultValue="0"
-            >
-              <option value="" disabled>Selecione o status</option>
-              <option value="0">Não iniciado</option>
-              <option value="1">Em andamento</option>
-              <option value="2">Concluído</option>
-            </select>
+            <div className="px-2 py-1.5 border border-border rounded-md bg-background">
+              <select
+                className="w-full bg-background text-sm outline-none"
+                defaultValue="0"
+              >
+                <option value="" disabled>Selecione o status</option>
+                <option value="0">Não iniciado</option>
+                <option value="1">Em andamento</option>
+                <option value="2">Concluído</option>
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="priority">Prioridade</Label>
-            <select
-              className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-              defaultValue="0"
-            >
-              <option value="" disabled>Selecione a prioridade</option>
-              <option value="0">Baixa</option>
-              <option value="1">Média</option>
-              <option value="2">Alta</option>
-            </select>
+            <div className="px-2 py-1.5 border border-border rounded-md bg-background">
+              <select
+                className="w-full bg-background text-sm outline-none"
+                defaultValue="0"
+              >
+                <option value="" disabled>Selecione a prioridade</option>
+                <option value="0">Baixa</option>
+                <option value="1">Média</option>
+                <option value="2">Alta</option>
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="attributedAt">Atribuido para</Label>
-            <select
-              className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-              defaultValue=""
-            >
-              <option value="" disabled>Selecione o usuário</option>
-              
-            </select>
+            <div className="px-2 py-1.5 border border-border rounded-md bg-background">
+              <select
+                className="w-full bg-background text-sm outline-none"
+                defaultValue=""
+              >
+                <option value="" disabled>Selecione o usuário</option>
+
+              </select>
+            </div>
           </div>
 
           <div className="flex gap-4">

@@ -147,7 +147,7 @@ export default function Page() {
             <div>
               <AlertDialog>
                 <AlertDialogTrigger
-                  className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                  className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-500/20 hover:bg-zinc-500/20 dark:hover:bg-zinc-500/30 border border-zinc-500/20 text-zinc-600 dark:text-zinc-200/90 cursor-pointer"
                 >
                   <Plus className="size-5" />
                   <span className="hidden sm:block">Criar tarefa</span>
@@ -163,7 +163,7 @@ export default function Page() {
                   <form onSubmit={handleSubmit(handleCreateTask)}>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
+                        <p className="flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
                         <Input
                           placeholder="Digite aqui"
                           className="mb-2"
@@ -171,7 +171,7 @@ export default function Page() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircle size={20} />Descrição</p>
+                        <p className="flex items-center gap-2 dark:text-zinc-200/80">Descrição</p>
                         <Input
                           placeholder="Digite aqui"
                           className="mb-2"
@@ -179,17 +179,19 @@ export default function Page() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80"><TriangleAlert size={20} />Prioridade</p>
-                        <select
-                          className="mb-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
-                          defaultValue="0"
-                          {...register("priority", { required: true })}
-                        >
-                          <option value="" disabled>Selecione a prioridade</option>
-                          <option value="0">Baixa</option>
-                          <option value="1">Média</option>
-                          <option value="2">Alta</option>
-                        </select>
+                        <p className="flex items-center gap-2 dark:text-zinc-200/80">Prioridade</p>
+                        <div className="px-2 border border-border bg-background outline-none rounded-md">
+                          <select
+                            className="w-full bg-background border-border py-2 text-sm outline-none"
+                            defaultValue="0"
+                            {...register("priority", { required: true })}
+                          >
+                            <option value="" disabled>Selecione a prioridade</option>
+                            <option value="0">Baixa</option>
+                            <option value="1">Média</option>
+                            <option value="2">Alta</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
 

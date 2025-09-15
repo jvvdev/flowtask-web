@@ -66,7 +66,7 @@ export default function Page() {
             </div>
             <AlertDialog>
               <AlertDialogTrigger
-                className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-500/20 hover:bg-zinc-500/20 dark:hover:bg-zinc-500/30 border border-zinc-500/20 text-zinc-600 dark:text-zinc-200/90 cursor-pointer"
               >
                 <Plus className="size-5" />
                 <span className="hidden sm:block">Adicionar membro</span>
@@ -82,30 +82,30 @@ export default function Page() {
                 <form>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
                       <Input
-                        placeholder="Nome"
+                        placeholder="Ex: Keith Adams"
                         className="mb-2"
                       />
                     </div>
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><MailSearch size={20} />Email</p>
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Email</p>
                       <Input
-                        placeholder="Email"
+                        placeholder="Ex: keith@example.com"
                         className="mb-2"
                       />
                     </div>
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ClipboardClock size={20} />Tarefas pendentes</p>
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Tarefas pendentes</p>
                       <Input
-                        placeholder="Nome"
+                        placeholder="Ex: 15"
                         className="mb-2"
                       />
                     </div>
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ClipboardCheck size={20} />Tarefas concluídas</p>
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Tarefas concluídas</p>
                       <Input
-                        placeholder="Nome"
+                        placeholder="Ex: 30"
                         className="mb-2"
                       />
                     </div>

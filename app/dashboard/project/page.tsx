@@ -117,7 +117,7 @@ export default function Page() {
             </div>
             <AlertDialog>
               <AlertDialogTrigger
-                className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-500/20 hover:bg-zinc-500/20 dark:hover:bg-zinc-500/30 border border-zinc-500/20 text-zinc-600 dark:text-zinc-200/90 cursor-pointer"
               >
                 <Plus className="size-5" />
                 <span className="hidden sm:block">Adicionar projeto</span>
@@ -133,7 +133,7 @@ export default function Page() {
                 <form onSubmit={handleSubmit(handleCreateProject)}>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome</p>
+                      <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
                       <Input
                         placeholder="Digite aqui"
                         className="mb-2"
@@ -141,7 +141,7 @@ export default function Page() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircle size={20} />Resumo</p>
+                      <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Resumo</p>
                       <Input
                         placeholder="Digite aqui"
                         className="mb-2"
