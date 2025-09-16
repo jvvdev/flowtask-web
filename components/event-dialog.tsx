@@ -103,11 +103,15 @@ export function EventDialog({
   useEffect(() => {
     async function getUsers() {
       const sessionId = await authService.getToken();
-      let actualGroup = await teamService.getTeamByUser();
+      const actualGroup = await teamService.getTeamByUser();
 
-      actualGroup = JSON.parse(actualGroup);
+      let parsedGroup = null;
+      if (typeof actualGroup === 'string') {
+        parsedGroup = JSON.parse(actualGroup);
+      }
 
-      axios.get(routes.getMembersByTeam + actualGroup.id_group, {
+      if (parsedGroup?.id_group) {
+        axios.get(routes.getMembersByTeam + parsedGroup.id_group, {
         headers: {
           authToken: sessionId
         }
@@ -116,6 +120,7 @@ export function EventDialog({
       }).catch(err => {
         console.error(err);
       });
+      }
     }
 
     getUsers()
