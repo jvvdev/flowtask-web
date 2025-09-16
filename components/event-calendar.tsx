@@ -330,7 +330,7 @@ export function EventCalendar({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="gap-1.5 max-sm:h-8 max-sm:px-2! max-sm:gap-1 cursor-pointer"
+                    className="gap-1.5 max-sm:h-8 max-sm:px-2! max-sm:gap-1 bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
                   >
                     <span className="capitalize">{view}</span>
                     <ChevronDownIcon
@@ -357,7 +357,7 @@ export function EventCalendar({
               </DropdownMenu>
               <Button
                 variant="outline"
-                className="max-sm:h-8 max-sm:px-2.5! cursor-pointer"
+                className="max-sm:h-8 max-sm:px-2.5! bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
                 onClick={() => {
                   setSelectedEvent(null); // Ensure we're creating a new event
                   setIsEventDialogOpen(true);

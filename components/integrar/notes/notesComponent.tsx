@@ -29,6 +29,7 @@ import { teamService } from "@/api/dashboard/team-service";
 import { relatoryService } from "@/api/dashboard/relatory-service";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
 import { EditAlert } from "./editAlert";
+import { CreateForm } from "./createAlert";
 
 const NotesList = [
     {
@@ -154,10 +155,10 @@ const NotesList = [
 ]
 
 interface Note {
-  id_relatory: string;
-  title: string;
-  content: string;
-  relatory_owner: string;
+    id_relatory: string;
+    title: string;
+    content: string;
+    relatory_owner: string;
 }
 
 export function NotesComponent() {
@@ -254,8 +255,8 @@ export function NotesComponent() {
     }
 
     return (
-        <div className="flex justify-between">
-            <div className={`w-full md:max-w-80 ${currentNote === null as null | Note ? 'block' : 'hidden md:block'}`}>
+        <div className="flex justify-between max-h-[75vh] gap-5">
+            <div className={`relative w-full ${currentNote === null as null | Note ? 'block h-screen max-h-[100%]' : 'hidden md:block md:max-w-80'}`}>
                 <div className="flex justify-between items-center gap-2">
                     <div className="relative w-full">
                         <Input
@@ -286,14 +287,14 @@ export function NotesComponent() {
                     </Popover> */}
                 </div>
 
-                <div className="space-y-2 mt-2 flex flex-col max-h-[76vh] overflow-y-auto pr-1.5
+                <div className={`${currentNote === null as null | Note ? 'grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 max-h-[83%]' : 'hidden md:max-w-80 md:flex flex-col max-h-[85%] space-y-2'} mt-2 overflow-y-auto pr-1.5
                         [&::-webkit-scrollbar]:w-1.5
                         [&::-webkit-scrollbar-track]:rounded-md
                         [&::-webkit-scrollbar-thumb]:rounded-md
                         [&::-webkit-scrollbar-track]:bg-zinc-200/50
                         dark:[&::-webkit-scrollbar-track]:bg-zinc-800/30
                         [&::-webkit-scrollbar-thumb]:bg-zinc-400
-                        dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                        dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700`}>
                     {
                         data.map((item) => (
                             <div key={item.id_relatory}>
@@ -332,70 +333,89 @@ export function NotesComponent() {
                         ))
                     }
                 </div>
+
+                <CreateForm />
             </div>
 
-            <div className={`md:w-[80%] ${currentNote !== null as null | Note ? 'w-full' : ''} h-full`}>
+            <div className={`md:w-[80%] bg-zinc-200/70 dark:bg-zinc-800/30 border rounded-md ${currentNote !== null as null | Note ? 'w-full' : 'hidden'}`}>
                 {
                     currentNote == null as null | Note ?
                         <div className="hidden md:flex w-full h-full justify-center py-60">
                             <h2 className="text-xl font-semibold">Selecione um relatório para visualizar</h2>
-                        </div> : <div className="md:pl-3 py-0.5 h-full pb-10">
-                            <div className="flex justify-between items-center w-full">
-                                <div className="flex">
-                                    <AlertDialog>
-                                        <AlertDialogTrigger
-                                            className="p-1 flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer"
-                                        >
-                                            <Trash2 className="size-5.5" />
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                                <AlertDialogTitle>Confirmar</AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                    Você tem certeza de que deseja excluir este documento?
-                                                </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                                <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
-                                                <AlertDialogAction className="bg-red-800 hover:bg-red-700 cursor-pointer" onClick={() => currentNote && relatoryService.deleteRelatory(currentNote.id_relatory)}>Deletar</AlertDialogAction>
-                                            </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                    </AlertDialog>
-                                    <Undo2 className="md:hidden p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setCurrentNote(null as null | Note)} />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <p className="px-2 font-semibold text-zinc-400 duration-200">Salvo</p>
-                                    {
-                                        !isEditing ? <Pencil className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => setIsEditing(true)} /> :
-                                            <div className="flex gap-2">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger>
-                                                        <Info className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} />
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent className="w-72 p-2">
-                                                        <DropdownMenuLabel className="flex items-center justify-center font-semibold gap-2">
-                                                            Ajuda
-                                                        </DropdownMenuLabel>
-                                                        <DropdownMenuSeparator />
+                        </div> : <div className="relative md:pl-3 py-0.5 h-[96vh] pb-10">
 
-                                                        <div className="text-sm space-y-2">
-                                                            <p className="flex flex-col"><strong># Cabeçalhos:</strong> <span className="text-2xl"><strong>#</strong> Título 1</span><span className="text-xl"><strong>##</strong> Título 2</span><span className="text-lg"><strong>###</strong> Título 3</span></p>
-                                                            <p className="flex flex-col"><strong>Ênfase:</strong> <span>*<span className="italic">itálico</span>*</span> <span>**<strong>negrito</strong>**</span> <span>~~<span className="line-through">tachado</span>~~</span></p>
-                                                            <p className="flex flex-col"><strong>Listas:</strong> - item <span>1. item</span></p>
-                                                            <p className="flex flex-col"><strong>Links:</strong> [texto] <span>(url)</span></p>
-                                                            <p className="flex flex-col"><strong>Código:</strong> `inline` ou ```bloco```</p>
-                                                            <p className="flex flex-col"><strong>Citações:</strong> &gt; texto</p>
-                                                            <p className="flex flex-col"><strong>Linhas:</strong> --- ou ***</p>
-                                                            <p className="flex flex-col"><strong>Checklists:</strong> - [ ] não feito, - [x] feito</p>
-                                                        </div>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                                <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => currentNote && editNote(currentNote.id_relatory)} />
-                                            </div>
-                                    }
+                            <div className={`absolute -top-[1px] ${!isEditing ? "right-[141px] md:right-36" : "right-[180px] md:right-[181px]"} w-4 h-4 bg-background z-10`}>
+                                <div className={`absolute top-0 right-0 w-4 h-4 bg-zinc-200/70 dark:bg-zinc-800/30 border-t border-r rounded-tr-md`}></div>
+                            </div>
+
+                            <div className={`absolute top-[14px] right-[0px] ${!isEditing ? "w-[142px] md:w-[145px]" : "w-[181px] md:w-[182px]"} h-5.5 bg-zinc-200/70 dark:bg-zinc-800/30 z-10`}>
+                                <div className={`absolute top-0 right-0 ${!isEditing ? "w-[142px] md:w-[145px] " : "w-[181px] md:w-[182px]"} h-5.5 bg-background border-l border-b rounded-bl-md`}></div>
+                            </div>
+
+                            <div className="absolute top-[35px] -right-[4.5px] w-5 h-4 bg-background z-10">
+                                <div className="absolute top-0 right-1 w-4 h-4 bg-zinc-200/70 dark:bg-zinc-800/30 border-t border-r rounded-tr-md"></div>
+                            </div>
+
+                            <Undo2 className="md:hidden absolute top-1 left-2 p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer z-10" size={30} onClick={() => setCurrentNote(null as null | Note)} />
+
+                            <div className="flex items-center justify-between w-full">
+                                <div></div>
+                                <div className="absolute -right-1 -top-1 flex items-center gap-2 bg-background py-1 px-3.5">
+                                    <p className="font-semibold text-zinc-400 duration-200 z-10">Salvo</p>
+                                    <div className="flex">
+                                        <AlertDialog>
+                                            <AlertDialogTrigger
+                                                className="p-1 flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer z-10"
+                                            >
+                                                <Trash2 className="size-5.5" />
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>Confirmar</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Você tem certeza de que deseja excluir este documento?
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+                                                    <AlertDialogAction className="bg-red-800 hover:bg-red-700 cursor-pointer" onClick={() => currentNote && relatoryService.deleteRelatory(currentNote.id_relatory)}>Deletar</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {
+                                            !isEditing ? <Pencil className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer z-10" size={30} onClick={() => setIsEditing(true)} /> :
+                                                <div className="flex gap-2 z-10">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger>
+                                                            <Info className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer z-10" size={30} />
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent className="w-72 p-2">
+                                                            <DropdownMenuLabel className="flex items-center justify-center font-semibold gap-2">
+                                                                Ajuda
+                                                            </DropdownMenuLabel>
+                                                            <DropdownMenuSeparator />
+
+                                                            <div className="text-sm space-y-2">
+                                                                <p className="flex flex-col"><strong># Cabeçalhos:</strong> <span className="text-2xl"><strong>#</strong> Título 1</span><span className="text-xl"><strong>##</strong> Título 2</span><span className="text-lg"><strong>###</strong> Título 3</span></p>
+                                                                <p className="flex flex-col"><strong>Ênfase:</strong> <span>*<span className="italic">itálico</span>*</span> <span>**<strong>negrito</strong>**</span> <span>~~<span className="line-through">tachado</span>~~</span></p>
+                                                                <p className="flex flex-col"><strong>Listas:</strong> - item <span>1. item</span></p>
+                                                                <p className="flex flex-col"><strong>Links:</strong> [texto] <span>(url)</span></p>
+                                                                <p className="flex flex-col"><strong>Código:</strong> `inline` ou ```bloco```</p>
+                                                                <p className="flex flex-col"><strong>Citações:</strong> &gt; texto</p>
+                                                                <p className="flex flex-col"><strong>Linhas:</strong> --- ou ***</p>
+                                                                <p className="flex flex-col"><strong>Checklists:</strong> - [ ] não feito, - [x] feito</p>
+                                                            </div>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                    <Check className="p-1 rounded-md hover:bg-zinc-800 text-green-600 hover:text-green-400 duration-200 cursor-pointer" size={30} onClick={() => currentNote && editNote(currentNote.id_relatory)} />
+                                                </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex gap-4 h-full">
+                            <div className="flex gap-4 h-full py-6">
                                 {
                                     isEditing ? <textarea
                                         className="w-full h-full p-2 outline-none placeholder:text-2xl"

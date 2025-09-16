@@ -158,7 +158,7 @@ export function CommentView() {
     return (
         <AlertDialog>
             <AlertDialogTrigger
-                className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-600/80 dark:bg-green-500/20 hover:bg-green-700/80 dark:hover:bg-green-500/30 border border-green-500/20 text-white dark:text-green-500 cursor-pointer"
             >
                 <ArchiveRestore className="size-5" />
                 <span className="hidden sm:block">Abrir tarefa</span>

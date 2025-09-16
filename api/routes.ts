@@ -18,6 +18,7 @@ export const routes = {
     getTeam: apiRoute + "/get-group",
     getTeams: apiRoute + "/get-groups",
     getTeamByUser: apiRoute + "/get-groups-by-user",
+    getMembersByTeam: apiRoute + "/get-users-by-group/",
 
     // Project Routes
     createProject: apiRoute + "/create-project",

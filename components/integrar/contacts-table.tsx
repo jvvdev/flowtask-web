@@ -116,7 +116,7 @@ export function ContactsTables() {
               <div className="flex gap-2">
                 <AlertDialog>
                   <AlertDialogTrigger
-                    className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-500/15 dark:bg-yellow-500/20 hover:bg-yellow-500/20 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-yellow-500 cursor-pointer"
+                    className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-600/80 dark:bg-yellow-500/20 hover:bg-yellow-700/90 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-white dark:text-yellow-500 cursor-pointer"
                   >
                     <Pencil className="size-5" />
                     <span className="hidden sm:block">Modificar</span>
@@ -188,7 +188,7 @@ export function ContactsTables() {
                   </AlertDialogContent>
                 </AlertDialog>
 
-                <Button className="bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer"
+                <Button className="bg-red-700/80 dark:bg-red-500/20 hover:bg-red-700/90 dark:hover:bg-red-500/30 border border-red-500/20 text-white dark:text-red-500 cursor-pointer"
                   onClick={() => {
                     memberService.DeleteMember(selectedMember);
                   }}

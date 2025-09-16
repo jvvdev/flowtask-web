@@ -41,6 +41,9 @@ import {
 import { CalendarEvent, EventColor } from "./types";
 import { TriangleAlert } from "lucide-react";
 import axios from "axios";
+import { authService } from "@/api/auth-service";
+import { teamService } from "@/api/dashboard/team-service";
+import { routes } from "@/api/routes";
 
 interface EventDialogProps {
   event: CalendarEvent | null;
@@ -98,9 +101,24 @@ export function EventDialog({
   }, [event]);
 
   useEffect(() => {
-    async function getUsers(event: KeyboardEvent) {
-      axios.get
+    async function getUsers() {
+      const sessionId = await authService.getToken();
+      let actualGroup = await teamService.getTeamByUser();
+
+      actualGroup = JSON.parse(actualGroup);
+
+      axios.get(routes.getMembersByTeam + actualGroup.id_group, {
+        headers: {
+          authToken: sessionId
+        }
+      }).then(res => {
+        console.log(res);
+      }).catch(err => {
+        console.error(err);
+      });
     }
+
+    getUsers()
   }, [])
 
   const resetForm = () => {

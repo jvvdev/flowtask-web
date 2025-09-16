@@ -147,7 +147,7 @@ export default function Page() {
             <div>
               <AlertDialog>
                 <AlertDialogTrigger
-                  className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-500/20 hover:bg-zinc-500/20 dark:hover:bg-zinc-500/30 border border-zinc-500/20 text-zinc-600 dark:text-zinc-200/90 cursor-pointer"
+                  className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
                 >
                   <Plus className="size-5" />
                   <span className="hidden sm:block">Criar tarefa</span>
