@@ -54,37 +54,30 @@ export function DayView({
     });
   }, [currentDate]);
 
+  // Eventos do dia
   const dayEvents = useMemo(() => {
-    return events
-      .filter((event) => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
-        return (
-          isSameDay(currentDate, eventStart) ||
-          isSameDay(currentDate, eventEnd) ||
-          (currentDate > eventStart && currentDate < eventEnd)
-        );
-      })
-      .sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+    return events.filter((event) => {
+      const eventStart = new Date(event.initDate);
+      const eventEnd = new Date(event.endDate);
+      return (
+        isSameDay(currentDate, eventStart) ||
+        isSameDay(currentDate, eventEnd) ||
+        (currentDate > eventStart && currentDate < eventEnd)
       );
+    });
   }, [currentDate, events]);
 
-  // Filter all-day events
+  // Eventos all_day
   const all_dayEvents = useMemo(() => {
-    return dayEvents.filter((event) => {
-      // Include explicitly marked all-day events or multi-day events
-      return event.all_day || isMultiDayEvent(event);
-    });
+    return dayEvents.filter((event) => event.all_day === true);
   }, [dayEvents]);
 
-  // Get only single-day time-based events
+  // Eventos com horário
   const timeEvents = useMemo(() => {
-    return dayEvents.filter((event) => {
-      // Exclude all-day events and multi-day events
-      return !event.all_day && !isMultiDayEvent(event);
-    });
+    return dayEvents.filter((event) => !event.all_day);
   }, [dayEvents]);
+
+  // Removido: duplicidade de timeEvents
 
   // Process events to calculate positions
   const positionedEvents = useMemo(() => {
@@ -93,10 +86,10 @@ export function DayView({
 
     // Sort events by start time and duration
     const sortedEvents = [...timeEvents].sort((a, b) => {
-      const aStart = new Date(a.start);
-      const bStart = new Date(b.start);
-      const aEnd = new Date(a.end);
-      const bEnd = new Date(b.end);
+      const aStart = new Date(a.initDate);
+      const bStart = new Date(b.initDate);
+      const aEnd = new Date(a.endDate);
+      const bEnd = new Date(b.endDate);
 
       // First sort by start time
       if (aStart < bStart) return -1;
@@ -112,8 +105,8 @@ export function DayView({
     const columns: { event: CalendarEvent; end: Date }[][] = [];
 
     sortedEvents.forEach((event) => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
+  const eventStart = new Date(event.initDate);
+  const eventEnd = new Date(event.endDate);
 
       // Adjust start and end times if they're outside this day
       const adjustedStart = isSameDay(currentDate, eventStart)
@@ -143,7 +136,7 @@ export function DayView({
           const overlaps = col.some((c) =>
             areIntervalsOverlapping(
               { start: adjustedStart, end: adjustedEnd },
-              { start: new Date(c.event.start), end: new Date(c.event.end) },
+              { start: new Date(c.event.initDate), end: new Date(c.event.endDate) },
             ),
           );
           if (!overlaps) {
@@ -199,14 +192,14 @@ export function DayView({
             </div>
             <div className="border-border/70 relative border-r p-1 last:border-r-0">
               {all_dayEvents.map((event) => {
-                const eventStart = new Date(event.start);
-                const eventEnd = new Date(event.end);
+                const eventStart = new Date(event.initDate);
+                const eventEnd = new Date(event.endDate);
                 const isFirstDay = isSameDay(currentDate, eventStart);
                 const isLastDay = isSameDay(currentDate, eventEnd);
 
                 return (
                   <EventItem
-                    key={`spanning-${event.id}`}
+                    key={`spanning-${event.id_task}`}
                     onClick={(e) => handleEventClick(event, e)}
                     event={event}
                     view="month"
@@ -243,7 +236,7 @@ export function DayView({
           {/* Positioned events */}
           {positionedEvents.map((positionedEvent) => (
             <div
-              key={positionedEvent.event.id}
+              key={positionedEvent.event.id_task}
               className="absolute z-10 px-0.5"
               style={{
                 top: `${positionedEvent.top}px`,

@@ -137,7 +137,6 @@ export function EventCalendar({
   };
 
   const handleEventSelect = (event: CalendarEvent) => {
-    console.log("Event selected:", event); // Debug log
     setSelectedEvent(event);
     setIsEventDialogOpen(true);
   };
@@ -175,48 +174,66 @@ export function EventCalendar({
   const handleEventSave = (event: CalendarEvent) => {
     if (event.id_task) {
       onEventUpdate?.(event);
-      // Show toast notification when an event is updated
+      taskService.updateTask(event);
       toast(`A tarefa "${event.title}" foi atualizada`, {
         description: format(new Date(event.initDate), "d 'de' MMM, yyyy"),
       });
     } else {
-      onEventAdd?.({
+      const newEvent = {
         ...event,
         id_task: Math.random().toString(36).substring(2, 11),
-      });
-      // Show toast notification when an event is added
+      };
+      onEventAdd?.(newEvent);
+      taskService.createTask(newEvent);
       toast(`A tarefa "${event.title}" foi criada`, {
         description: format(new Date(event.initDate), "d 'de' MMM, yyyy"),
       });
     }
-    taskService.createTask(event)
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
   };
 
-  const handleEventDelete = (eventId: string) => {
+  const handleEventDelete = async (eventId: string) => {
     const deletedEvent = events.find((e) => e.id_task === eventId);
-    onEventDelete?.(eventId);
-    setIsEventDialogOpen(false);
-    setSelectedEvent(null);
 
-    // Show toast notification when an event is deleted
     if (deletedEvent) {
-      toast(`Event "${deletedEvent.title}" deleted`, {
-        description: format(new Date(deletedEvent.initDate), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
+      try {
+        const result = await taskService.deleteTask(eventId);
+
+        toast(`A tarefa "${deletedEvent.title}" foi deletada`, {
+          description: format(new Date(deletedEvent.initDate), "d 'de' MMM, yyyy"),
+        });
+
+        onEventDelete?.(eventId);
+        setIsEventDialogOpen(false);
+        setSelectedEvent(null);
+
+      } catch (err) {
+
+        toast("Erro ao deletar a tarefa", {
+          description: "Tente novamente mais tarde.",
+        });
+
+      }
     }
   };
 
-  const handleEventUpdate = (updatedEvent: CalendarEvent) => {
-    onEventUpdate?.(updatedEvent);
+  const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
+    try {
+      const result = await taskService.updateTask(updatedEvent)
 
-    // Show toast notification when an event is updated via drag and drop
-    toast(`Event "${updatedEvent.title}" moved`, {
-      description: format(new Date(updatedEvent.initDate), "MMM d, yyyy"),
-      position: "bottom-left",
-    });
+      onEventUpdate?.(updatedEvent);
+
+      toast(`A tarefa "${updatedEvent.title}" foi movida`, {
+        description: format(new Date(updatedEvent.initDate), "d 'de' MMM, yyyy"),
+      });
+    } catch (err) {
+
+      toast("Erro ao mover a tarefa", {
+        description: "Tente novamente mais tarde.",
+      });
+
+    }
   };
 
   function capitalize(str: string) {

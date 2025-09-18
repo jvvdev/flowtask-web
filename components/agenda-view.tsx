@@ -48,14 +48,16 @@ export function AgendaView({
             size={32}
             className="text-muted-foreground/50 mb-2"
           />
-          <h3 className="text-lg font-medium">Nenhum evento encontrado</h3>
+          <h3 className="text-lg font-medium">Nenhuma tarefa encontrado</h3>
           <p className="text-muted-foreground">
-            Não há eventos para o periodo selecionado.
+            Não há tarefas para o periodo selecionado.
           </p>
         </div>
       ) : (
         days.map((day) => {
-          const dayEvents = getAgendaEventsForDay(events, day);
+          const dayEvents: CalendarEvent[] = getAgendaEventsForDay(events, day);
+          const all_dayEvents: CalendarEvent[] = dayEvents.filter((event: CalendarEvent) => event.all_day === true);
+          const timeEvents: CalendarEvent[] = dayEvents.filter((event: CalendarEvent) => !event.all_day);
 
           if (dayEvents.length === 0) return null;
 
@@ -71,9 +73,19 @@ export function AgendaView({
                 {format(day, "EEEE, dd 'de' MMM", { locale: ptBR })}
               </span>
               <div className="mt-6 space-y-2">
-                {dayEvents.map((event) => (
+                {/* Eventos all_day */}
+                {all_dayEvents.map((event) => (
                   <EventItem
-                    key={event.id}
+                    key={event.id_task}
+                    event={event}
+                    view="agenda"
+                    onClick={(e) => handleEventClick(event, e)}
+                  />
+                ))}
+                {/* Eventos com horário */}
+                {timeEvents.map((event) => (
+                  <EventItem
+                    key={event.id_task}
                     event={event}
                     view="agenda"
                     onClick={(e) => handleEventClick(event, e)}

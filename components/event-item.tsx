@@ -15,6 +15,7 @@ import { getEventColorClasses, getBorderRadiusClasses } from "./utils";
 // 'a' - am/pm
 // ':mm' - minutes with leading zero (only if the token 'mm' is present)
 const formatTimeWithOptionalMinutes = (date: Date) => {
+  if (!date || isNaN(date.getTime())) return "";
   return format(date, getMinutes(date) === 0 ? "HH:mm" : "HH:mm", { locale: ptBR });
 };
 

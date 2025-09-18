@@ -291,7 +291,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                 <div className="flex gap-2 items-center">
                     {selectedTask != "0" && (
                         <div className="flex gap-2">
-                            <CommentView />
+                            <CommentView taskID={selectedTask} taskData={selectedTaskData}/>
 
                             <AlertDialog>
                                 <AlertDialogTrigger className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-600/80 dark:bg-yellow-500/20 hover:bg-yellow-700/90 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-white dark:text-yellow-500 cursor-pointer">

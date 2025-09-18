@@ -1,8 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "FlowTask - Equipe",
-};
+'use client'
 
 import {
   Breadcrumb,
@@ -23,10 +19,19 @@ import { StatsGrid } from "@/components/stats-grid";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
-import { ALargeSmall, ClipboardCheck, ClipboardClock, MailSearch, Pencil, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Input } from "@/components/input";
+import { useForm } from "react-hook-form";
+import { memberService } from "@/api/dashboard/member-service";
 
 export default function Page() {
+  const {register, handleSubmit} = useForm();
+
+  function onSubmit(data: any) {
+    memberService.InviteMember(data);
+    console.log(data)
+  }
+  
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />
@@ -69,44 +74,24 @@ export default function Page() {
                 className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
               >
                 <Plus className="size-5" />
-                <span className="hidden sm:block">Adicionar membro</span>
+                <span className="hidden sm:block">Convidar membro</span>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Adicionar membro</AlertDialogTitle>
+                  <AlertDialogTitle>Convidar membro</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Aqui você pode adicionar novos membros a sua equipe.
+                    Aqui você pode convidar novos membros a sua equipe.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-4">
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
-                      <Input
-                        placeholder="Ex: Keith Adams"
-                        className="mb-2"
-                      />
-                    </div>
                     <div className="space-y-2">
                       <p className="flex items-center gap-2 dark:text-zinc-200/80">Email</p>
                       <Input
                         placeholder="Ex: keith@example.com"
                         className="mb-2"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Tarefas pendentes</p>
-                      <Input
-                        placeholder="Ex: 15"
-                        className="mb-2"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Tarefas concluídas</p>
-                      <Input
-                        placeholder="Ex: 30"
-                        className="mb-2"
+                        {...register("email")}
                       />
                     </div>
                   </div>

@@ -23,6 +23,7 @@ import { authService } from "@/api/auth-service";
 import { routes } from "@/api/routes";
 import axios from "axios";
 import { Console } from "console";
+import { NotifyDropdown } from "@/components/notifyDropdown";
 
 interface UserData {
   name: string;
@@ -40,25 +41,15 @@ export default function Settings() {
       const token = await authService.getToken();
 
       const userData = await authService.getUserData();
-      if (userData) {
-        setData(JSON.parse(userData) as UserData);
-        setLoading(false)
-        return;
-      }
+      // if (userData) {
+      //   setData(JSON.parse(userData) as UserData);
+      //   setLoading(false)
+      //   return;
+      // }
 
       await axios.get(routes.getUser + token).then((response) => {
-        setData({
-          name: response.data.name,
-          email: response.data.email,
-          avatar: response.data.avatar,
-        });
-        authService.setUserData({
-          name: response.data.name,
-          email: response.data.email,
-          avatar: response.data.avatar,
-          google_id: response.data.google_id,
-        })
-        console.log("User data fetched successfully");
+        setData(response.data);
+        authService.setUserData(response.data);
         setLoading(false)
       }).catch((err) => {
         console.log(err);
@@ -90,6 +81,7 @@ export default function Settings() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <NotifyDropdown />
         </header>
         <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
 

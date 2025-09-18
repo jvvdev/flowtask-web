@@ -10,6 +10,7 @@ export const routes = {
     authAccount: apiRoute + "/auth-account",
     authGoogle: apiRoute + "/auth/google",
     getUser: apiRoute + "/auth/get-account?session_id=",
+    logout: apiRoute + "/auth/logout",
 
     // Team Routes
     createTeam: apiRoute + "/create-group",
@@ -19,6 +20,7 @@ export const routes = {
     getTeams: apiRoute + "/get-groups",
     getTeamByUser: apiRoute + "/get-groups-by-user",
     getMembersByTeam: apiRoute + "/get-users-by-group/",
+    inviteMember: apiRoute + "/groups/invite",
 
     // Project Routes
     createProject: apiRoute + "/create-project",
@@ -42,6 +44,13 @@ export const routes = {
 
     // Task Routes
     createTask: apiRoute + "/create-task",
+    updateTask: apiRoute + "/update-task/",
+    deleteTask: apiRoute + "/delete-task/",
     getTasksByGroup: apiRoute + "/tasks/group/",
     getTasksByUser: apiRoute + "/tasks/person",
+
+    // Comment Routes
+    createComment: apiRoute + "/kanban/comment",
+    getCommentsByTask: apiRoute + "/kanban/",
+    deleteComment: apiRoute + "/comment/",
 }

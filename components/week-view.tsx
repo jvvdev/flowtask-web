@@ -74,8 +74,8 @@ export function WeekView({
   const all_dayEvents = useMemo(() => {
     return events
       .filter((event) => {
-        // Include explicitly marked all-day events or multi-day events
-        return event.all_day || isMultiDayEvent(event);
+        // Apenas eventos explicitamente marcados como all_day
+        return event.all_day === true;
       })
       .filter((event) => {
         const eventStart = new Date(event.initDate);
@@ -94,8 +94,8 @@ export function WeekView({
     const result = days.map((day) => {
       // Get events for this day that are not all-day events or multi-day events
       const dayEvents = events.filter((event) => {
-        // Skip all-day events and multi-day events
-        if (event.all_day || isMultiDayEvent(event)) return false;
+  // Skip apenas eventos all_day
+  if (event.all_day) return false;
 
         const eventStart = new Date(event.initDate);
         const eventEnd = new Date(event.endDate);

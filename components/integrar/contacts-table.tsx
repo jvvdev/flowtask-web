@@ -33,28 +33,13 @@ import {
 } from "@/components/ui/alert-dialog"
 import { memberService } from "@/api/dashboard/member-service";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import { routes } from "@/api/routes";
+import { teamService } from "@/api/dashboard/team-service";
+import { authService } from "@/api/auth-service";
 
 const Projects = [
-  { id: 1, Name: "Ana Paula Souza", Email: "ana.souza@empresa.com", PendingTasks: 4, TotalTasks: 20 },
-  { id: 2, Name: "Carlos Eduardo Lima", Email: "carlos.lima@empresa.com", PendingTasks: 7, TotalTasks: 22 },
-  { id: 3, Name: "Fernanda Oliveira", Email: "fernanda.oliveira@empresa.com", PendingTasks: 0, TotalTasks: 30 },
-  { id: 4, Name: "Bruno Costa", Email: "bruno.costa@empresa.com", PendingTasks: 12, TotalTasks: 40 },
-  { id: 5, Name: "Juliana Pereira", Email: "juliana.pereira@empresa.com", PendingTasks: 5, TotalTasks: 25 },
-  { id: 6, Name: "Marcos Vinicius", Email: "marcos.vinicius@empresa.com", PendingTasks: 0, TotalTasks: 18 },
-  { id: 7, Name: "Patricia Lima", Email: "patricia.lima@empresa.com", PendingTasks: 4, TotalTasks: 28 },
-  { id: 8, Name: "Rafael Almeida", Email: "rafael.almeida@empresa.com", PendingTasks: 9, TotalTasks: 26 },
-  { id: 9, Name: "Camila Santos", Email: "camila.santos@empresa.com", PendingTasks: 0, TotalTasks: 19 },
-  { id: 10, Name: "Lucas Martins", Email: "lucas.martins@empresa.com", PendingTasks: 3, TotalTasks: 24 },
-  { id: 11, Name: "Amanda Ribeiro", Email: "amanda.ribeiro@empresa.com", PendingTasks: 2, TotalTasks: 15 },
-  { id: 12, Name: "Eduardo Silva", Email: "eduardo.silva@empresa.com", PendingTasks: 6, TotalTasks: 21 },
-  { id: 13, Name: "Beatriz Souza", Email: "beatriz.souza@empresa.com", PendingTasks: 1, TotalTasks: 17 },
-  { id: 14, Name: "Rodrigo Mendes", Email: "rodrigo.mendes@empresa.com", PendingTasks: 8, TotalTasks: 29 },
-  { id: 15, Name: "Larissa Costa", Email: "larissa.costa@empresa.com", PendingTasks: 0, TotalTasks: 20 },
-  { id: 16, Name: "Felipe Rocha", Email: "felipe.rocha@empresa.com", PendingTasks: 5, TotalTasks: 23 },
-  { id: 17, Name: "Camila Oliveira", Email: "camila.oliveira@empresa.com", PendingTasks: 3, TotalTasks: 18 },
-  { id: 18, Name: "Bruno Souza", Email: "bruno.souza@empresa.com", PendingTasks: 7, TotalTasks: 27 },
-  { id: 19, Name: "Patrícia Mendes", Email: "patricia.mendes@empresa.com", PendingTasks: 0, TotalTasks: 16 },
-  { id: 20, Name: "Gustavo Lima", Email: "gustavo.lima@empresa.com", PendingTasks: 4, TotalTasks: 22 },
+  { user_id: "", name: "Ana Paula Souza", email: "ana.souza@empresa.com", PendingTasks: 4, TotalTasks: 20 },
 ];
 
 const ITEMS_PER_PAGE = 9;
@@ -62,28 +47,42 @@ const ITEMS_PER_PAGE = 9;
 export function ContactsTables() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<typeof Projects>([]);
-  const [selectedMember, setSelectedMember] = useState(0);
+  const [selectedMember, setSelectedMember] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
-    setTimeout(() => {
-      setData(Projects);
-      setIsLoading(false);
-    }, 0);
+    async function getData() {
+      const sessionId = await authService.getToken();
+      let actualTeam = await teamService.getTeamByUser();
+      if (!actualTeam) return;
+      actualTeam = JSON.parse(actualTeam as string);
+      
+      await axios.get(routes.getMembersByTeam + actualTeam.id_group, {
+        headers: {
+          AuthToken: sessionId
+        }
+      }).then(res => {
+        setData(res.data.data)
+        setIsLoading(false)
+      }).catch(err => {
+        console.error(err)
+      });
+    }
+    getData();
   }, []);
 
   // Atualiza os valores do formulário ao trocar o membro selecionado
   useEffect(() => {
-    if (selectedMember > 0) {
-      const member = data.find(item => item.id === selectedMember);
+    if (selectedMember !== "") {
+      const member = data.find(item => item.user_id === selectedMember);
       if (member) {
         reset({
-          id: member.id,
-          name: member.Name,
-          email: member.Email,
+          id: member.user_id,
+          name: member.name,
+          email: member.email,
           pendingTasks: member.PendingTasks,
           totalTasks: member.TotalTasks,
         });
@@ -92,7 +91,7 @@ export function ContactsTables() {
   }, [selectedMember, data, reset]);
 
   // Filtra e pagina os dados
-  const filteredData = data.filter(item => item.Name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredData = data.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
@@ -112,7 +111,7 @@ export function ContactsTables() {
 
         <div className="flex gap-2">
           {
-            selectedMember > 0 && (
+            selectedMember !== "" && (
               <div className="flex gap-2">
                 <AlertDialog>
                   <AlertDialogTrigger
@@ -132,17 +131,17 @@ export function ContactsTables() {
                     <form onSubmit={handleSubmit(memberService.ModifyMember)}>
                       <div className="space-y-4">
                         <Input
-                            placeholder="Nome"
-                            className="hidden"
-                            defaultValue={data.find(item => item.id === selectedMember)?.id || ""}
-                            {...register("id")}
-                          />
+                          placeholder="Nome"
+                          className="hidden"
+                          defaultValue={data.find(item => item.user_id === selectedMember)?.user_id || ""}
+                          {...register("id")}
+                        />
                         <div className="space-y-2">
                           <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
                           <Input
                             placeholder="Ex: Keith Adams"
                             className="mb-2"
-                            defaultValue={data.find(item => item.id === selectedMember)?.Name || ""}
+                            defaultValue={data.find(item => item.user_id === selectedMember)?.name || ""}
                             {...register("name")}
                           />
                         </div>
@@ -151,7 +150,7 @@ export function ContactsTables() {
                           <Input
                             placeholder="Ex: keith@example.com"
                             className="mb-2"
-                            defaultValue={data.find(item => item.id === selectedMember)?.Email || ""}
+                            defaultValue={data.find(item => item.user_id === selectedMember)?.email || ""}
                             {...register("email")}
                           />
                         </div>
@@ -160,7 +159,7 @@ export function ContactsTables() {
                           <Input
                             placeholder="Ex: 15"
                             className="mb-2"
-                            defaultValue={data.find(item => item.id === selectedMember)?.PendingTasks || ""}
+                            defaultValue={data.find(item => item.user_id === selectedMember)?.PendingTasks || ""}
                             {...register("pendingTasks")}
                           />
                         </div>
@@ -169,7 +168,7 @@ export function ContactsTables() {
                           <Input
                             placeholder="Ex: 30"
                             className="mb-2"
-                            defaultValue={data.find(item => item.id === selectedMember)?.TotalTasks || ""}
+                            defaultValue={data.find(item => item.user_id === selectedMember)?.TotalTasks || ""}
                             {...register("totalTasks")}
                           />
                         </div>
@@ -254,23 +253,23 @@ export function ContactsTables() {
                 const taskProgress = item.TotalTasks > 0 ? Math.round((completed / item.TotalTasks) * 100) : 0;
                 return (
                   <TableRow
-                    key={item.id}
+                    key={item.user_id}
                     className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
                   >
                     <TableCell className="flex gap-2">
                       <button
-                        className={`border rounded-sm ${selectedMember === item.id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
+                        className={`border rounded-sm ${selectedMember === item.user_id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
                         onClick={() => {
-                          if (selectedMember === item.id) setSelectedMember(0);
-                          else setSelectedMember(item.id);
+                          if (selectedMember === item.user_id) setSelectedMember("");
+                          else setSelectedMember(item.user_id);
                         }}
                       >
-                        <Check className={`${selectedMember === item.id ? "block" : "hidden"}`} size={12} />
+                        <Check className={`${selectedMember === item.user_id ? "block" : "hidden"}`} size={12} />
                       </button>
-                      <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.Name}</p>
+                      <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.name}</p>
                     </TableCell>
                     <TableCell>
-                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.Email}</p>
+                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.email}</p>
                     </TableCell>
                     <TableCell>
                       <p className="font-semibold">{item.PendingTasks}</p>

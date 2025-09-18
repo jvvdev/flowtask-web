@@ -28,6 +28,8 @@ import {
     RiChatAiLine,
     RiListCheck,
 } from "@remixicon/react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./alert-dialog";
+import { authService } from "@/api/auth-service";
 
 export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
@@ -111,14 +113,35 @@ export function SiderBarDefault({ ...props }: React.ComponentProps<typeof Sideba
                 <hr className="border-t border-border mx-2 -mt-px" />
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton className="font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto">
-                            <RiLogoutBoxLine
-                                className="text-muted-foreground/60 group-data-[active=true]/menu-button:text-primary"
-                                size={22}
-                                aria-hidden="true"
-                            />
-                            <span>Sair da conta</span>
-                        </SidebarMenuButton>
+                        <AlertDialog>
+                            <AlertDialogTrigger
+                                className="w-full p-2 flex items-center gap-2 text-sm font-semibold cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800/95 rounded-md"
+                            >
+                                <RiLogoutBoxLine
+                                    size={16}
+                                    className="opacity-60"
+                                    aria-hidden="true"
+                                />
+                                <span>Sair da conta</span>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Fazer logout</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Você tem certeza que deseja sair da sua conta?
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={() => authService.logout()}
+                                        className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                                    >
+                                        Confirmar
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>

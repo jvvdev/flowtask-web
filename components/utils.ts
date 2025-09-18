@@ -45,8 +45,8 @@ export function getBorderRadiusClasses(
  * Check if an event is a multi-day event
  */
 export function isMultiDayEvent(event: CalendarEvent): boolean {
-  const eventStart = new Date(event.start);
-  const eventEnd = new Date(event.end);
+  const eventStart = new Date(event.initDate);
+  const eventEnd = new Date(event.endDate);
   return event.all_day || eventStart.getDate() !== eventEnd.getDate();
 }
 
@@ -59,10 +59,10 @@ export function getEventsForDay(
 ): CalendarEvent[] {
   return events
     .filter((event) => {
-      const eventStart = new Date(event.start);
+      const eventStart = new Date(event.initDate);
       return isSameDay(day, eventStart);
     })
-    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    .sort((a, b) => new Date(a.initDate).getTime() - new Date(b.initDate).getTime());
 }
 
 /**
@@ -76,7 +76,7 @@ export function sortEvents(events: CalendarEvent[]): CalendarEvent[] {
     if (aIsMultiDay && !bIsMultiDay) return -1;
     if (!aIsMultiDay && bIsMultiDay) return 1;
 
-    return new Date(a.start).getTime() - new Date(b.start).getTime();
+    return new Date(a.initDate).getTime() - new Date(b.initDate).getTime();
   });
 }
 
@@ -90,8 +90,8 @@ export function getSpanningEventsForDay(
   return events.filter((event) => {
     if (!isMultiDayEvent(event)) return false;
 
-    const eventStart = new Date(event.start);
-    const eventEnd = new Date(event.end);
+    const eventStart = new Date(event.initDate);
+    const eventEnd = new Date(event.endDate);
 
     // Only include if it's not the start day but is either the end day or a middle day
     return (
@@ -109,8 +109,8 @@ export function getAllEventsForDay(
   day: Date,
 ): CalendarEvent[] {
   return events.filter((event) => {
-    const eventStart = new Date(event.start);
-    const eventEnd = new Date(event.end);
+    const eventStart = new Date(event.initDate);
+    const eventEnd = new Date(event.endDate);
     return (
       isSameDay(day, eventStart) ||
       isSameDay(day, eventEnd) ||
@@ -128,15 +128,15 @@ export function getAgendaEventsForDay(
 ): CalendarEvent[] {
   return events
     .filter((event) => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
+      const eventStart = new Date(event.initDate);
+      const eventEnd = new Date(event.endDate);
       return (
         isSameDay(day, eventStart) ||
         isSameDay(day, eventEnd) ||
         (day > eventStart && day < eventEnd)
       );
     })
-    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    .sort((a, b) => new Date(a.initDate).getTime() - new Date(b.initDate).getTime());
 }
 
 /**

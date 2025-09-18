@@ -64,15 +64,15 @@ export default function Component() {
   useEffect(() => {
     async function getData() {
       const sessionId = await authService.getToken();
-      // const activeGroup = await teamService.getActiveGroup();
-      const activeGroup = "3f8db29b-d048-42fd-a6ba-59eec3f785a2"
+      let activeGroup = await teamService.getTeamByUser();
 
-      axios.get(routes.getTasksByGroup + activeGroup, {
+      activeGroup = JSON.parse(activeGroup as string)
+
+      axios.get(routes.getTasksByGroup + activeGroup.id_group, {
         headers: {
           authToken: sessionId,
         },
       }).then((response) => {
-        console.log(response.data.data)
         setEvents(response.data.data);
       }).catch((error) => {
         console.error("Error fetching tasks:", error);

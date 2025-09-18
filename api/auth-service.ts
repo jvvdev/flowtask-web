@@ -69,6 +69,22 @@ class AuthService {
     async getUserData() {
         return getCookie('userData');
     }
+
+    async logout() {
+        const sessionId = getCookie("sessionId");
+        await axios.post(routes.logout + sessionId, {
+            headers: {
+                authToken: sessionId
+            }
+        }).then(res => {
+            deleteCookie("sessionId");
+            deleteCookie("userData");
+            deleteCookie("activeTeam");
+            redirect("/auth/login");
+        }).catch(err => {
+            console.error(err)
+        });
+    }
 }
 
 export const authService = new AuthService()

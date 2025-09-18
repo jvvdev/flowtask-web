@@ -9,9 +9,18 @@ class KanbanService {
         const sessionId = getCookie("sessionId");
         await axios.post(routes.createKanban, {
             id_project: projectId,
-            title: data.name,
+            id_task: data.id_task,
+            title: data.title ? data.title : data.name ? data.name : "",
             description: data.description,
             priority: Number(data.priority),
+            status: data.status,
+            attributedAt: data.attributedAt,
+            initDate: data.initDate,
+            endDate: data.endDate,
+            all_day: data.all_day,
+            color: data.color,
+            label: data.label,
+            location: data.location,
             createdBy: sessionId
         }, {
             headers: {

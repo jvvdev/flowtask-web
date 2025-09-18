@@ -41,14 +41,14 @@ export function DraggableEvent({
   } | null>(null);
 
   // Check if this is a multi-day event
-  const eventStart = new Date(event.start);
-  const eventEnd = new Date(event.end);
+  const eventStart = new Date(event.initDate);
+  const eventEnd = new Date(event.endDate);
   const isMultiDayEvent =
     isMultiDay || event.all_day || differenceInDays(eventEnd, eventStart) >= 1;
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
-      id: `${event.id}-${view}`,
+      id: `${event.id_task}-${view}`,
       data: {
         event,
         view,
@@ -74,13 +74,15 @@ export function DraggableEvent({
 
   // Don't render if this event is being dragged
   if (isDragging || activeId === `${event.id}-${view}`) {
-    return (
-      <div
-        ref={setNodeRef}
-        className="opacity-0"
-        style={{ height: height || "auto" }}
-      />
-    );
+    if (isDragging || activeId === `${event.id_task}-${view}`) {
+      return (
+        <div
+          ref={setNodeRef}
+          className="opacity-0"
+          style={{ height: height || "auto" }}
+        />
+      );
+    }
   }
 
   const style = transform

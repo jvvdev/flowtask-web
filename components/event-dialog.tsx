@@ -18,6 +18,7 @@ import {
 } from "@/components/dialog";
 import { Input } from "@/components/input";
 import { Label } from "@/components/label";
+import { ptBR } from "date-fns/locale";
 import {
   Popover,
   PopoverContent,
@@ -53,6 +54,13 @@ interface EventDialogProps {
   onDelete: (eventId: string) => void;
 }
 
+interface userInfo {
+  user_id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}
+
 export function EventDialog({
   event,
   isOpen,
@@ -64,7 +72,7 @@ export function EventDialog({
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<userInfo[]>([]);
   const [startTime, setStartTime] = useState(`${DefaultStartHour}:00`);
   const [endTime, setEndTime] = useState(`${DefaultEndHour}:00`);
   const [all_day, setall_day] = useState(false);
@@ -79,7 +87,6 @@ export function EventDialog({
 
   // Debug log to check what event is being passed
   useEffect(() => {
-    console.log("EventDialog received event:", event);
   }, [event]);
 
   useEffect(() => {
@@ -97,6 +104,9 @@ export function EventDialog({
       setall_day(event.all_day || false);
       setLocation(event.location || "");
       setColor((event.color as EventColor) || "sky");
+      setSelectedOption(event.attributedAt || "");
+      setSelectedPriority(event.priority?.toString() || "");
+      setSelectedStatus(event.status || "");
       setError(null); // Reset error when opening dialog
     } else {
       resetForm();
@@ -115,16 +125,6 @@ export function EventDialog({
 
       if (parsedGroup?.id_group) {
         axios.get(routes.getMembersByTeam + parsedGroup.id_group, {
-          headers: {
-            authToken: sessionId
-          }
-        }).then(res => {
-          console.log(res);
-        }).catch(err => {
-          console.error(err);
-        });
-      } else {
-        axios.get(routes.getMembersByTeam + "3f8db29b-d048-42fd-a6ba-59eec3f785a2", {
           headers: {
             authToken: sessionId
           }
@@ -168,7 +168,7 @@ export function EventDialog({
         const value = `${formattedHour}:${formattedMinute}`;
         // Use a fixed date to avoid unnecessary date object creations
         const date = new Date(2000, 0, 1, hour, minute);
-        const label = format(date, "h:mm a");
+        const label = format(date, "HH:mm", { locale: ptBR });
         options.push({ value, label });
       }
     }
@@ -176,8 +176,8 @@ export function EventDialog({
   }, []); // Empty dependency array ensures this only runs once
 
   const handleSave = () => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const initDate = startDate ? new Date(startDate) : new Date();
+    const endDateValue = endDate ? new Date(endDate) : new Date();
 
     if (!all_day) {
       const [startHours = 0, startMinutes = 0] = startTime
@@ -192,36 +192,51 @@ export function EventDialog({
         endHours > EndHour
       ) {
         setError(
-          `Selected time must be between ${StartHour}:00 and ${EndHour}:00`,
+          `O horário selecionado deve estar entre ${StartHour}:00 e ${EndHour}:00`,
         );
         return;
       }
 
-      start.setHours(startHours, startMinutes, 0);
-      end.setHours(endHours, endMinutes, 0);
+      initDate.setHours(startHours, startMinutes, 0);
+      endDateValue.setHours(endHours, endMinutes, 0);
     } else {
-      start.setHours(0, 0, 0, 0);
-      end.setHours(23, 59, 59, 999);
+      initDate.setHours(0, 0, 0, 0);
+      endDateValue.setHours(23, 59, 59, 999);
     }
 
     // Validate that end date is not before start date
-    if (isBefore(end, start)) {
-      setError("End date cannot be before start date");
+    if (isBefore(endDateValue, initDate)) {
+      setError("A data de término deve ser posterior à data de início.");
+      return;
+    }
+
+    if (!selectedOption) {
+      setError("Selecione um usuário.");
+      return;
+    }
+
+    if (!title) {
+      setError("O título não pode estar vazio.");
+      return;
+    }
+
+    if (!initDate || !endDateValue) {
+      setError("Por favor, selecione datas válidas.");
       return;
     }
 
     // Use generic title if empty
-    const eventTitle = title.trim() ? title : "(no title)";
+    const eventTitle = title.trim() ? title : "(sem título)";
 
     onSave({
-      id: event?.id || "",
+      id_task: event?.id_task || "",
       title: eventTitle,
       status: selectedStatus,
       priority: selectedPriority,
       attributedAt: selectedOption,
       description,
-      start,
-      end,
+      initDate,
+      endDate: endDateValue,
       all_day,
       location,
       color,
@@ -229,8 +244,8 @@ export function EventDialog({
   };
 
   const handleDelete = () => {
-    if (event?.id) {
-      onDelete(event.id);
+    if (event?.id_task) {
+      onDelete(event.id_task);
     }
   };
 
@@ -289,9 +304,9 @@ export function EventDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{event?.id ? "Editar evento" : "Criar tarefa"}</DialogTitle>
+          <DialogTitle>{event?.id_task ? "Editar evento" : "Criar tarefa"}</DialogTitle>
           <DialogDescription className="sr-only">
-            {event?.id
+            {event?.id_task
               ? "Edite as informações da sua tarefa"
               : "Adicione uma nova tarefa ao seu calendário"}
           </DialogDescription>
@@ -323,7 +338,7 @@ export function EventDialog({
 
           <div className="space-y-2">
             <Label htmlFor="attributedAt">Status</Label>
-            <Select onValueChange={handleStatusSelect}>
+            <Select value={selectedStatus} onValueChange={handleStatusSelect}>
               <SelectTrigger className="w-full py-5">
                 <SelectValue placeholder="Selecione um status" />
               </SelectTrigger>
@@ -343,18 +358,18 @@ export function EventDialog({
 
           <div className="space-y-2">
             <Label htmlFor="attributedAt">Prioridade</Label>
-            <Select onValueChange={handlePrioritySelect}>
+            <Select value={selectedPriority} onValueChange={handlePrioritySelect}>
               <SelectTrigger className="w-full py-5">
                 <SelectValue placeholder="Selecione uma prioridade" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">
+                <SelectItem value="0">
                   <span>Baixa</span>
                 </SelectItem>
-                <SelectItem value="2">
+                <SelectItem value="1">
                   <span>Média</span>
                 </SelectItem>
-                <SelectItem value="3">
+                <SelectItem value="2">
                   <span>Alta</span>
                 </SelectItem>
               </SelectContent>
@@ -363,13 +378,13 @@ export function EventDialog({
 
           <div className="space-y-2">
             <Label htmlFor="attributedAt">Atribuido para</Label>
-            <Select onValueChange={handleGroupSelect}>
+            <Select value={selectedOption} onValueChange={handleGroupSelect}>
               <SelectTrigger className="w-full py-5">
-                <SelectValue placeholder="Selecione um grupo" />
+                <SelectValue placeholder="Selecione um usuário" />
               </SelectTrigger>
               <SelectContent>
                 {users.map((user) => (
-                  <SelectItem key={user.id} value={user.email}>
+                  <SelectItem key={user.user_id || user.email} value={user.email}>
                     <div className="flex items-center w-full gap-2">
                       <img src={user.avatar} alt="" className="w-6 h-6 rounded-full" />
                       <span>{user.name}</span>
@@ -399,7 +414,7 @@ export function EventDialog({
                         !startDate && "text-muted-foreground",
                       )}
                     >
-                      {startDate ? format(startDate, "PPP") : "Pick a date"}
+                      {startDate ? format(startDate, "PPP", { locale: ptBR }) : "Escolha uma data"}
                     </span>
                     <RiCalendarLine
                       size={16}
@@ -467,7 +482,7 @@ export function EventDialog({
                         !endDate && "text-muted-foreground",
                       )}
                     >
-                      {endDate ? format(endDate, "PPP") : "Pick a date"}
+                      {endDate ? format(endDate, "PPP", { locale: ptBR }) : "Escolha uma data"}
                     </span>
                     <RiCalendarLine
                       size={16}
@@ -557,7 +572,7 @@ export function EventDialog({
           </fieldset>
         </div>
         <DialogFooter className="flex-row sm:justify-between">
-          {event?.id && (
+          {event?.id_task && (
             <Button
               variant="outline"
               className="text-destructive hover:text-destructive"
@@ -572,7 +587,7 @@ export function EventDialog({
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button onClick={handleSave}>Criar</Button>
+            <Button onClick={handleSave}>{event?.id_task ? "Editar" : "Criar"}</Button>
           </div>
         </DialogFooter>
       </DialogContent>
