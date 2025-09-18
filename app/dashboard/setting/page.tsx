@@ -22,16 +22,17 @@ import { Preferences } from "./components/Preferences";
 import { authService } from "@/api/auth-service";
 import { routes } from "@/api/routes";
 import axios from "axios";
+import { Console } from "console";
 
 interface UserData {
   name: string;
   email: string;
-  picture: string;
+  avatar: string;
 }
 
 export default function Settings() {
   const [currentTab, setCurrentTab] = useState(0)
-  const [data, setData] = useState<UserData>({ name: "", email: "", picture: "" });
+  const [data, setData] = useState<UserData>({ name: "", email: "", avatar: "" });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,13 +50,14 @@ export default function Settings() {
         setData({
           name: response.data.name,
           email: response.data.email,
-          picture: response.data.picture,
+          avatar: response.data.avatar,
         });
         authService.setUserData({
           name: response.data.name,
           email: response.data.email,
-          picture: response.data.picture,
+          avatar: response.data.avatar,
         })
+        console.log("User data fetched successfully");
         setLoading(false)
       }).catch((err) => {
         console.log(err);
@@ -107,7 +109,7 @@ export default function Settings() {
                   ) : (
                     <Avatar className="size-14">
                       <AvatarImage
-                        src={data.picture}
+                        src={data.avatar}
                         width={32}
                         height={32}
                         alt="Profile image"

@@ -32,7 +32,7 @@ class ProjectService {
         }).then(res => {
             ownerInfo.name = res.data.name
             ownerInfo.email = res.data.email
-            ownerInfo.avatar = res.data.picture
+            ownerInfo.avatar = res.data.avatar
 
             axios.post(routes.createProject, {
                 title: data.name,

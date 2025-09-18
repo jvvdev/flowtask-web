@@ -21,11 +21,11 @@ import { useEffect, useState } from "react";
 interface UserData {
   name: string;
   email: string;
-  picture: string;
+  avatar: string;
 }
 
 export default function UserDropdown() {
-  const [data, setData] = useState<UserData>({ name: "", email: "", picture: "" });
+  const [data, setData] = useState<UserData>({ name: "", email: "", avatar: "" });
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -43,12 +43,12 @@ export default function UserDropdown() {
         setData({
           name: response.data.name,
           email: response.data.email,
-          picture: response.data.picture,
+          avatar: response.data.avatar,
         });
         authService.setUserData({
           name: response.data.name,
           email: response.data.email,
-          picture: response.data.picture,
+          avatar: response.data.avatar,
         })
         setLoading(false)
       }).catch((err) => {
@@ -69,7 +69,7 @@ export default function UserDropdown() {
               </div> :
               <Avatar className="size-8">
                 <AvatarImage
-                  src={data.picture}
+                  src={data.avatar}
                   width={32}
                   height={32}
                   alt="Profile image"
