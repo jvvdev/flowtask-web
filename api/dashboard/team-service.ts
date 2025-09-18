@@ -24,9 +24,16 @@ class TeamService {
 
     async createTeam(data: any) {
         const token = await authService.getToken();
+        let userData = await authService.getUserData();
+
+        userData = JSON.parse(userData || '{}');
+
+        if (!userData || !userData.google_id) {
+            return false;
+        }
 
         const api = await axios.post(routes.createTeam, {
-            group_owner: token,
+            group_owner: userData.google_id,
             name: data.name,
             description: data.description
         }, {

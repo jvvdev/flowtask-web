@@ -114,18 +114,18 @@ export function MonthView({
               const spanningEvents = getSpanningEventsForDay(events, day);
               const isCurrentMonth = isSameMonth(day, currentDate);
               const cellId = `month-cell-${day.toISOString()}`;
-              const allDayEvents = [...spanningEvents, ...dayEvents];
+              const all_dayEvents = [...spanningEvents, ...dayEvents];
               const allEvents = getAllEventsForDay(events, day);
 
               const isReferenceCell = weekIndex === 0 && dayIndex === 0;
               const visibleCount = isMounted
-                ? getVisibleEventCount(allDayEvents.length)
+                ? getVisibleEventCount(all_dayEvents.length)
                 : undefined;
               const hasMore =
                 visibleCount !== undefined &&
-                allDayEvents.length > visibleCount;
+                all_dayEvents.length > visibleCount;
               const remainingCount = hasMore
-                ? allDayEvents.length - visibleCount
+                ? all_dayEvents.length - visibleCount
                 : 0;
 
               return (
@@ -151,7 +151,7 @@ export function MonthView({
                       ref={isReferenceCell ? contentRef : null}
                       className="min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]"
                     >
-                      {sortEvents(allDayEvents).map((event, index) => {
+                      {sortEvents(all_dayEvents).map((event, index) => {
                         const eventStart = new Date(event.start);
                         const eventEnd = new Date(event.end);
                         const isFirstDay = isSameDay(day, eventStart);
@@ -177,7 +177,7 @@ export function MonthView({
                                 isLastDay={isLastDay}
                               >
                                 <div className="invisible" aria-hidden={true}>
-                                  {!event.allDay && (
+                                  {!event.all_day && (
                                     <span>
                                       {format(
                                         new Date(event.start),

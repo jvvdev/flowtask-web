@@ -67,12 +67,15 @@ export function EventDialog({
   const [users, setUsers] = useState([])
   const [startTime, setStartTime] = useState(`${DefaultStartHour}:00`);
   const [endTime, setEndTime] = useState(`${DefaultEndHour}:00`);
-  const [allDay, setAllDay] = useState(false);
+  const [all_day, setall_day] = useState(false);
   const [location, setLocation] = useState("");
   const [color, setColor] = useState<EventColor>("blue");
   const [error, setError] = useState<string | null>(null);
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("")
+  const [selectedPriority, setSelectedPriority] = useState("")
+  const [selectedStatus, setSelectedStatus] = useState("")
 
   // Debug log to check what event is being passed
   useEffect(() => {
@@ -84,14 +87,14 @@ export function EventDialog({
       setTitle(event.title || "");
       setDescription(event.description || "");
 
-      const start = new Date(event.start);
-      const end = new Date(event.end);
+      const start = new Date(event.initDate);
+      const end = new Date(event.endDate);
 
       setStartDate(start);
       setEndDate(end);
       setStartTime(formatTimeForInput(start));
       setEndTime(formatTimeForInput(end));
-      setAllDay(event.allDay || false);
+      setall_day(event.all_day || false);
       setLocation(event.location || "");
       setColor((event.color as EventColor) || "sky");
       setError(null); // Reset error when opening dialog
@@ -112,14 +115,24 @@ export function EventDialog({
 
       if (parsedGroup?.id_group) {
         axios.get(routes.getMembersByTeam + parsedGroup.id_group, {
-        headers: {
-          authToken: sessionId
-        }
-      }).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.error(err);
-      });
+          headers: {
+            authToken: sessionId
+          }
+        }).then(res => {
+          console.log(res);
+        }).catch(err => {
+          console.error(err);
+        });
+      } else {
+        axios.get(routes.getMembersByTeam + "3f8db29b-d048-42fd-a6ba-59eec3f785a2", {
+          headers: {
+            authToken: sessionId
+          }
+        }).then(res => {
+          setUsers(res.data.data);
+        }).catch(err => {
+          console.error(err);
+        });
       }
     }
 
@@ -133,7 +146,7 @@ export function EventDialog({
     setEndDate(new Date());
     setStartTime(`${DefaultStartHour}:00`);
     setEndTime(`${DefaultEndHour}:00`);
-    setAllDay(false);
+    setall_day(false);
     setLocation("");
     setColor("blue");
     setError(null);
@@ -166,7 +179,7 @@ export function EventDialog({
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    if (!allDay) {
+    if (!all_day) {
       const [startHours = 0, startMinutes = 0] = startTime
         .split(":")
         .map(Number);
@@ -203,10 +216,13 @@ export function EventDialog({
     onSave({
       id: event?.id || "",
       title: eventTitle,
+      status: selectedStatus,
+      priority: selectedPriority,
+      attributedAt: selectedOption,
       description,
       start,
       end,
-      allDay,
+      all_day,
       location,
       color,
     });
@@ -217,6 +233,18 @@ export function EventDialog({
       onDelete(event.id);
     }
   };
+
+  const handleGroupSelect = (value: any) => {
+    setSelectedOption(value)
+  }
+
+  const handlePrioritySelect = (value: any) => {
+    setSelectedPriority(value)
+  }
+
+  const handleStatusSelect = (value: any) => {
+    setSelectedStatus(value)
+  }
 
   // Updated color options to match types.ts
   const colorOptions: Array<{
@@ -294,46 +322,62 @@ export function EventDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <div className="px-2 py-1.5 border border-border rounded-md bg-background">
-              <select
-                className="w-full bg-background text-sm outline-none"
-                defaultValue="0"
-              >
-                <option value="" disabled>Selecione o status</option>
-                <option value="0">Não iniciado</option>
-                <option value="1">Em andamento</option>
-                <option value="2">Concluído</option>
-              </select>
-            </div>
+            <Label htmlFor="attributedAt">Status</Label>
+            <Select onValueChange={handleStatusSelect}>
+              <SelectTrigger className="w-full py-5">
+                <SelectValue placeholder="Selecione um status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pendente">
+                  <span>Pendente</span>
+                </SelectItem>
+                <SelectItem value="Em andamento">
+                  <span>Em andamento</span>
+                </SelectItem>
+                <SelectItem value="Concluído">
+                  <span>Concluído</span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="priority">Prioridade</Label>
-            <div className="px-2 py-1.5 border border-border rounded-md bg-background">
-              <select
-                className="w-full bg-background text-sm outline-none"
-                defaultValue="0"
-              >
-                <option value="" disabled>Selecione a prioridade</option>
-                <option value="0">Baixa</option>
-                <option value="1">Média</option>
-                <option value="2">Alta</option>
-              </select>
-            </div>
+            <Label htmlFor="attributedAt">Prioridade</Label>
+            <Select onValueChange={handlePrioritySelect}>
+              <SelectTrigger className="w-full py-5">
+                <SelectValue placeholder="Selecione uma prioridade" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">
+                  <span>Baixa</span>
+                </SelectItem>
+                <SelectItem value="2">
+                  <span>Média</span>
+                </SelectItem>
+                <SelectItem value="3">
+                  <span>Alta</span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="attributedAt">Atribuido para</Label>
-            <div className="px-2 py-1.5 border border-border rounded-md bg-background">
-              <select
-                className="w-full bg-background text-sm outline-none"
-                defaultValue=""
-              >
-                <option value="" disabled>Selecione o usuário</option>
-
-              </select>
-            </div>
+            <Select onValueChange={handleGroupSelect}>
+              <SelectTrigger className="w-full py-5">
+                <SelectValue placeholder="Selecione um grupo" />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((user) => (
+                  <SelectItem key={user.id} value={user.email}>
+                    <div className="flex items-center w-full gap-2">
+                      <img src={user.avatar} alt="" className="w-6 h-6 rounded-full" />
+                      <span>{user.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex gap-4">
@@ -385,7 +429,7 @@ export function EventDialog({
               </Popover>
             </div>
 
-            {!allDay && (
+            {!all_day && (
               <div className="min-w-28 *:not-first:mt-1.5">
                 <Label htmlFor="start-time">Hora de início</Label>
                 <Select value={startTime} onValueChange={setStartTime}>
@@ -450,7 +494,7 @@ export function EventDialog({
               </Popover>
             </div>
 
-            {!allDay && (
+            {!all_day && (
               <div className="min-w-28 *:not-first:mt-1.5">
                 <Label htmlFor="end-time">Hora de termino</Label>
                 <Select value={endTime} onValueChange={setEndTime}>
@@ -472,8 +516,8 @@ export function EventDialog({
           <div className="flex items-center gap-2">
             <Checkbox
               id="all-day"
-              checked={allDay}
-              onCheckedChange={(checked) => setAllDay(checked === true)}
+              checked={all_day}
+              onCheckedChange={(checked) => setall_day(checked === true)}
             />
             <Label htmlFor="all-day">Dia todo</Label>
           </div>

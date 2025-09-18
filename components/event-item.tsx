@@ -52,9 +52,9 @@ function EventWrapper({
   const displayEnd = currentTime
     ? new Date(
         new Date(currentTime).getTime() +
-          (new Date(event.end).getTime() - new Date(event.start).getTime()),
+          (new Date(event.endDate).getTime() - new Date(event.initDate).getTime()),
       )
-    : new Date(event.end);
+    : new Date(event.endDate);
 
   const isEventInPast = isPast(displayEnd);
 
@@ -116,17 +116,17 @@ export function EventItem({
 
   // Use the provided currentTime (for dragging) or the event's actual time
   const displayStart = useMemo(() => {
-    return currentTime || new Date(event.start);
-  }, [currentTime, event.start]);
+    return currentTime || new Date(event.initDate);
+  }, [currentTime, event.initDate]);
 
   const displayEnd = useMemo(() => {
     return currentTime
       ? new Date(
           new Date(currentTime).getTime() +
-            (new Date(event.end).getTime() - new Date(event.start).getTime()),
+            (new Date(event.endDate).getTime() - new Date(event.initDate).getTime()),
         )
-      : new Date(event.end);
-  }, [currentTime, event.start, event.end]);
+      : new Date(event.endDate);
+  }, [currentTime, event.initDate, event.endDate]);
 
   // Calculate event duration in minutes
   const durationMinutes = useMemo(() => {
@@ -134,7 +134,7 @@ export function EventItem({
   }, [displayStart, displayEnd]);
 
   const getEventTime = () => {
-    if (event.allDay) return "All day";
+    if (event.all_day) return "All day";
 
     // For short events (less than 45 minutes), only show start time
     if (durationMinutes < 45) {
@@ -165,7 +165,7 @@ export function EventItem({
       >
         {children || (
           <span className="truncate">
-            {!event.allDay && (
+            {!event.all_day && (
               <span className="truncate sm:text-xs font-normal opacity-70 uppercase">
                 {formatTimeWithOptionalMinutes(displayStart)}{" "}
               </span>
@@ -228,7 +228,7 @@ export function EventItem({
         getEventColorClasses(eventColor),
         className,
       )}
-      data-past-event={isPast(new Date(event.end)) || undefined}
+      data-past-event={isPast(new Date(event.endDate)) || undefined}
       onClick={onClick}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
@@ -237,7 +237,7 @@ export function EventItem({
     >
       <div className="text-sm font-medium">{event.title}</div>
       <div className="text-xs opacity-70">
-        {event.allDay ? (
+        {event.all_day ? (
           <span>All day</span>
         ) : (
           <span className="uppercase">

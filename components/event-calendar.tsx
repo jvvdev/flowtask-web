@@ -41,6 +41,7 @@ import { MonthView } from "./month-view";
 import { CalendarEvent, CalendarView } from "./types";
 import { addHoursToDate } from "./utils";
 import { WeekView } from "./week-view";
+import { taskService } from "@/api/dashboard/task-service";
 
 export interface EventCalendarProps {
   events?: CalendarEvent[];
@@ -160,42 +161,41 @@ export function EventCalendar({
     }
 
     const newEvent: CalendarEvent = {
-      id: "",
+      id_task: "",
       title: "",
-      start: startTime,
-      end: addHoursToDate(startTime, 1),
-      allDay: false,
+      attributedAt: "",
+      initDate: startTime,
+      endDate: addHoursToDate(startTime, 1),
+      all_day: false,
     };
     setSelectedEvent(newEvent);
     setIsEventDialogOpen(true);
   };
 
   const handleEventSave = (event: CalendarEvent) => {
-    if (event.id) {
+    if (event.id_task) {
       onEventUpdate?.(event);
       // Show toast notification when an event is updated
-      toast(`Event "${event.title}" updated`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
-        position: "bottom-left",
+      toast(`A tarefa "${event.title}" foi atualizada`, {
+        description: format(new Date(event.initDate), "d 'de' MMM, yyyy"),
       });
     } else {
       onEventAdd?.({
         ...event,
-        id: Math.random().toString(36).substring(2, 11),
+        id_task: Math.random().toString(36).substring(2, 11),
       });
       // Show toast notification when an event is added
-      toast(`Event "${event.title}" added`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
-        position: "bottom-left",
+      toast(`A tarefa "${event.title}" foi criada`, {
+        description: format(new Date(event.initDate), "d 'de' MMM, yyyy"),
       });
     }
-    console.log("Event saved:", event); // Debug log
+    taskService.createTask(event)
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
   };
 
   const handleEventDelete = (eventId: string) => {
-    const deletedEvent = events.find((e) => e.id === eventId);
+    const deletedEvent = events.find((e) => e.id_task === eventId);
     onEventDelete?.(eventId);
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
@@ -203,7 +203,7 @@ export function EventCalendar({
     // Show toast notification when an event is deleted
     if (deletedEvent) {
       toast(`Event "${deletedEvent.title}" deleted`, {
-        description: format(new Date(deletedEvent.start), "MMM d, yyyy"),
+        description: format(new Date(deletedEvent.initDate), "MMM d, yyyy"),
         position: "bottom-left",
       });
     }
@@ -214,7 +214,7 @@ export function EventCalendar({
 
     // Show toast notification when an event is updated via drag and drop
     toast(`Event "${updatedEvent.title}" moved`, {
-      description: format(new Date(updatedEvent.start), "MMM d, yyyy"),
+      description: format(new Date(updatedEvent.initDate), "MMM d, yyyy"),
       position: "bottom-left",
     });
   };

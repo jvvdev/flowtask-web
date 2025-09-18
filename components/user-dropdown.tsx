@@ -49,6 +49,7 @@ export default function UserDropdown() {
           name: response.data.name,
           email: response.data.email,
           avatar: response.data.avatar,
+          google_id: response.data.google_id,
         })
         setLoading(false)
       }).catch((err) => {

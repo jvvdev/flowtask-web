@@ -63,7 +63,6 @@ class AuthService {
     }
 
     async setUserData(data: any) {
-        console.log("Setting user data in cookie:", data);
         setCookie('userData', data, { maxAge: 120 });
     }
 

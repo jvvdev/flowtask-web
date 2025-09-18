@@ -56,6 +56,7 @@ export default function Settings() {
           name: response.data.name,
           email: response.data.email,
           avatar: response.data.avatar,
+          google_id: response.data.google_id,
         })
         console.log("User data fetched successfully");
         setLoading(false)

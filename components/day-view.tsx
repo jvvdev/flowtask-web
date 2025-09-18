@@ -71,10 +71,10 @@ export function DayView({
   }, [currentDate, events]);
 
   // Filter all-day events
-  const allDayEvents = useMemo(() => {
+  const all_dayEvents = useMemo(() => {
     return dayEvents.filter((event) => {
       // Include explicitly marked all-day events or multi-day events
-      return event.allDay || isMultiDayEvent(event);
+      return event.all_day || isMultiDayEvent(event);
     });
   }, [dayEvents]);
 
@@ -82,7 +82,7 @@ export function DayView({
   const timeEvents = useMemo(() => {
     return dayEvents.filter((event) => {
       // Exclude all-day events and multi-day events
-      return !event.allDay && !isMultiDayEvent(event);
+      return !event.all_day && !isMultiDayEvent(event);
     });
   }, [dayEvents]);
 
@@ -181,7 +181,7 @@ export function DayView({
     onEventSelect(event);
   };
 
-  const showAllDaySection = allDayEvents.length > 0;
+  const showall_daySection = all_dayEvents.length > 0;
   const { currentTimePosition, currentTimeVisible } = useCurrentTimeIndicator(
     currentDate,
     "day",
@@ -189,7 +189,7 @@ export function DayView({
 
   return (
     <div data-slot="day-view" className="contents">
-      {showAllDaySection && (
+      {showall_daySection && (
         <div className="border-border/70 bg-muted/50 border-t">
           <div className="grid grid-cols-[3rem_1fr] sm:grid-cols-[4rem_1fr]">
             <div className="relative">
@@ -198,7 +198,7 @@ export function DayView({
               </span>
             </div>
             <div className="border-border/70 relative border-r p-1 last:border-r-0">
-              {allDayEvents.map((event) => {
+              {all_dayEvents.map((event) => {
                 const eventStart = new Date(event.start);
                 const eventEnd = new Date(event.end);
                 const isFirstDay = isSameDay(currentDate, eventStart);
