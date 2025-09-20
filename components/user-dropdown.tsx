@@ -44,17 +44,8 @@ export default function UserDropdown() {
       }
 
       await axios.get(routes.getUser + token).then((response) => {
-        setData({
-          name: response.data.name,
-          email: response.data.email,
-          avatar: response.data.avatar,
-        });
-        authService.setUserData({
-          name: response.data.name,
-          email: response.data.email,
-          avatar: response.data.avatar,
-          google_id: response.data.google_id,
-        })
+        setData(response.data);
+        authService.setUserData(response.data);
         setLoading(false)
       }).catch((err) => {
         console.log(err);

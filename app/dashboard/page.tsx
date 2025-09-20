@@ -66,21 +66,22 @@ export default function Page() {
               <InfoCardToTasks />
 
               <div className="flex flex-col gap-4 w-full">
-                <div className="flex flex-col 2xl:flex-row justify-between gap-4 h-[48%]">
-                  <div className="flex flex-col xl:flex-row w-full justify-between gap-4">
-                    {/* graph tasks */}
-                    <ChartOverHeat />
-                    {/* list overheat members */}
-                    <MemberOverHeat />
-                  </div>
+                <div className="flex flex-col xl:flex-row justify-between gap-4 h-[48%]">
                   {/* shortCuts */}
                   <ShortCutsWidget />
+                  {/* graph tasks */}
+                  <ChartOverHeat />
                 </div>
               </div>
               {/* logs screen */}
               <ListLogs />
             </div>
-            <ListProductivity />
+
+
+            <div className="w-full sm:w-[30%] space-y-4">
+              <MemberOverHeat />
+              <ListProductivity />
+            </div>
           </div>
         </div>
       </SidebarInset>

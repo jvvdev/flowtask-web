@@ -1,8 +1,36 @@
-import { Bell, Check, X } from "lucide-react";
+'use client';
+
+import { Bell, Check, UserRoundPlus, X } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
 import { Button } from "./button";
+import { useEffect, useState } from "react";
+import { authService } from "@/api/auth-service";
 
 export function NotifyDropdown() {
+    const [notifys, setNotifys] = useState<any[]>([])
+
+    useEffect(() => {
+        async function getData() {
+            await authService.getToken();
+
+            let userData = await authService.getUserData();
+            if (!userData) return
+
+            userData = JSON.parse(userData);
+            setNotifys(userData?.notifys ?? [])
+        }
+
+        getData()
+    }, [])
+
+    function declineInvite(id: number) {
+        console.log(id)
+    }
+
+    function acceptInvite(id: number) {
+        console.log(id)
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -20,17 +48,27 @@ export function NotifyDropdown() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem className="flex items-center justify-between hover:bg-zinc-50/0">
-                        <img src="https://lh3.googleusercontent.com/a/ACg8ocKTm2agX6z8LVasXnQcAmSCEbjD1Vt45aKhoEDuuFwM6l9WExLqMw=s96-c" alt="" className="h-10 w-10 rounded-full object-cover" />
-                        <div>
-                            <h1 className="text-[16px] font-medium text-foreground">Nova solicitação</h1>
-                            <p className="text-[14px] font-normal text-muted-foreground">Adriel Lucas quer entrar no seu grupo</p>
-                        </div>
-                        <div className="flex gap-2 ml-4">
-                            <Button variant="default" size="sm" className="rounded-md w-9 h-9 cursor-pointer"><Check /></Button>
-                            <Button variant="outline" size="sm" className="rounded-md w-9 h-9 cursor-pointer"><X /></Button>
-                        </div>
-                    </DropdownMenuItem>
+                    {
+                        notifys.length === 0 ?
+                            <p>Nenhuma notificação encontrada</p> : notifys.map((item: any) => (
+                                <DropdownMenuItem key={item.id} className="flex items-center justify-between hover:bg-zinc-50/0 max-w-110">
+                                    <div className="rounded-md w-12 h-9 bg-purple-500 flex items-center justify-center">
+                                        <UserRoundPlus size={20} className="ml-0.5" />
+                                    </div>
+                                    {/* <img src="https://lh3.googleusercontent.com/a/ACg8ocKTm2agX6z8LVasXnQcAmSCEbjD1Vt45aKhoEDuuFwM6l9WExLqMw=s96-c" alt="" className="h-10 w-10 rounded-full object-cover" /> */}
+                                    <div>
+                                        <h1 className="text-[15px] font-medium text-foreground">{item.title}</h1>
+                                        <p className="text-[14px] font-normal text-muted-foreground">{item.content}</p>
+                                    </div>
+                                    {
+                                        item.type === "invite" ? <div className="flex gap-2 ml-4">
+                                            <Button variant="default" size="sm" className="rounded-md w-9 h-9 cursor-pointer" onClick={() => acceptInvite(item.id)}><Check /></Button>
+                                            <Button variant="outline" size="sm" className="rounded-md w-9 h-9 cursor-pointer" onClick={() => declineInvite(item.id)}><X /></Button>
+                                        </div> : null
+                                    }
+                                </DropdownMenuItem>
+                            ))
+                    }
                 </DropdownMenuGroup>
             </DropdownMenuContent>
         </DropdownMenu>

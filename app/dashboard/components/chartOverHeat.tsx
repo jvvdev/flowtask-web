@@ -26,11 +26,12 @@ const chartConfig = {
 
 export function ChartOverHeat() {
   return (
-    <div className="relative p-4 pb-0 w-full 2xl:w-[50%] h-62 space-y-2 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
+    <div className="relative p-4 pb-0 w-full xl:w-[50%] h-62 space-y-2 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
       <div>
         <h2 className="text-xl font-semibold">Tarefas concluídas</h2>
+        <p className="text-muted-foreground overflow-hidden whitespace-nowrap text-ellipsis truncate">Visualize aqui as tarefas concluídas.</p>
       </div>
-      <ChartContainer config={chartConfig} className="absolute aspect-auto h-49 w-full pr-8">
+      <ChartContainer config={chartConfig} className="absolute aspect-auto h-44 w-full pr-8">
         <AreaChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={true} />
           <XAxis

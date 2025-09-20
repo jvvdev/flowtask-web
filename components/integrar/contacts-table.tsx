@@ -48,6 +48,7 @@ export function ContactsTables() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<typeof Projects>([]);
   const [selectedMember, setSelectedMember] = useState("");
+  const [selectedMemberData, setSelectedMemberData] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -115,9 +116,9 @@ export function ContactsTables() {
               <div className="flex gap-2">
                 <AlertDialog>
                   <AlertDialogTrigger
-                    className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-600/80 dark:bg-yellow-500/20 hover:bg-yellow-700/90 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-white dark:text-yellow-500 cursor-pointer"
+                    className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-yellow-300/30 border border-zinc-500/30 dark:hover:border-yellow-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
                   >
-                    <Pencil className="size-5" />
+                    <Pencil className="size-5 text-yellow-600" />
                     <span className="hidden sm:block">Modificar</span>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
@@ -187,12 +188,12 @@ export function ContactsTables() {
                   </AlertDialogContent>
                 </AlertDialog>
 
-                <Button className="bg-red-700/80 dark:bg-red-500/20 hover:bg-red-700/90 dark:hover:bg-red-500/30 border border-red-500/20 text-white dark:text-red-500 cursor-pointer"
+                <Button className="group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer"
                   onClick={() => {
-                    memberService.DeleteMember(selectedMember);
+                    memberService.DeleteMember(selectedMemberData);
                   }}
                 >
-                  <Trash2 className="size-5" />
+                  <Trash2 className="size-5 text-red-500" />
                   <span className="hidden sm:block">Excluir</span>
                 </Button>
               </div>
@@ -260,8 +261,8 @@ export function ContactsTables() {
                       <button
                         className={`border rounded-sm ${selectedMember === item.user_id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
                         onClick={() => {
-                          if (selectedMember === item.user_id) setSelectedMember("");
-                          else setSelectedMember(item.user_id);
+                          if (selectedMember === item.user_id) setSelectedMember(""), setSelectedMemberData(null);
+                          else setSelectedMember(item.user_id), setSelectedMemberData(item.email);
                         }}
                       >
                         <Check className={`${selectedMember === item.user_id ? "block" : "hidden"}`} size={12} />

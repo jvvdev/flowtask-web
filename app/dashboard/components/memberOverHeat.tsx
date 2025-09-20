@@ -22,9 +22,10 @@ const memberOverHeat = [
 
 export function MemberOverHeat() {
     return (
-        <div className="p-4 space-y-2 w-full xl:w-[50%] h-62 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
+        <div className="p-4 space-y-2 w-full h-62 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
             <div>
                 <h2 className="text-xl font-semibold">Membros com sobrecarga</h2>
+                <p className="text-muted-foreground text-md">Visualize aqui os membros com sobrecarga.</p>
             </div>
             <div className="overflow-auto min-w-[140px] max-h-[320px] pr-1 
             [&::-webkit-scrollbar]:w-1.5
@@ -35,13 +36,13 @@ export function MemberOverHeat() {
                         [&::-webkit-scrollbar-thumb]:bg-zinc-400
                         dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700"
             >
-                <div className="w-full flex justify-between px-2 py-1 bg-sidebar border border-border rounded-lg mb-2">
+                <div className="w-full flex justify-between p-2 bg-sidebar border border-border rounded-lg mb-2">
                     <p className="w-full text-zinc-600 dark:text-zinc-500 text-sm flex items-center gap-1"><User size={16} />Nome</p>
                     <p className="w-[60%] text-zinc-600 dark:text-zinc-500 text-sm flex items-center gap-1"><Asterisk size={16} />Sobrecarga</p>
                 </div>
                 {
                     memberOverHeat.map(member => (
-                        <div key={member.id} className="min-w-[140px] w-full flex justify-between py-1 px-2 border-b hover:bg-muted">
+                        <div key={member.id} className="min-w-[140px] w-full flex justify-between py-2 px-2 border-b hover:bg-muted">
                             <span className="w-full font-bold text-sm">{member.name}</span>
                             <p className="w-[60%] font-semibold text-sm">{member.OverLoad} <span className="font-normal">Tarefas</span></p>
                         </div>

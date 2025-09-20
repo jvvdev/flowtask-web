@@ -28,8 +28,26 @@ class MemberService {
         console.log(data)
     }
 
-    async DeleteMember(memberId: string) {
-        // Logic to delete a member
+    async DeleteMember(email: string) {
+        const session_id = getCookie("sessionId");
+        let actualProject = getCookie("activeTeam");
+        actualProject = JSON.parse(actualProject as string);
+        if (!actualProject) return;
+
+        axios.delete(routes.removeMember, {
+            headers: {
+                authToken: session_id
+            },
+            data: {
+                email: email,
+                id_group: actualProject.id_group
+            }
+        }).then(res => {
+            console.log(res)
+            window.location.reload();
+        }).catch(err => {
+            console.error(err)
+        });
     }
 }
 

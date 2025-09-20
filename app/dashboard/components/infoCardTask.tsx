@@ -45,7 +45,7 @@ export function InfoCardToTasks() {
                             {/* Content */}
                             <div>
                                 <h1
-                                    className="font-medium tracking-widest text-xs uppercase text-muted-foreground/60"
+                                    className="font-medium tracking-widest text-xs uppercase text-muted-foreground/60 overflow-hidden whitespace-nowrap text-ellipsis truncate"
                                 >
                                     {item.Name}
                                 </h1>

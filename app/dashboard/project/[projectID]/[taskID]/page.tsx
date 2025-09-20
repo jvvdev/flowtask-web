@@ -194,9 +194,9 @@ export default function Page() {
             <div className="flex gap-2">
               <AlertDialog>
                 <AlertDialogTrigger
-                  className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-500/15 dark:bg-yellow-500/20 hover:bg-yellow-500/20 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-yellow-500 cursor-pointer"
+                  className="px-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer"
                 >
-                  <Pencil className="size-5" />
+                  <Pencil className="size-5 text-yellow-600" />
                   <span className="hidden lg:block">Modificar tarefa</span>
                 </AlertDialogTrigger>
                 <AlertDialogContent>

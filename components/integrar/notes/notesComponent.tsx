@@ -322,6 +322,7 @@ export function NotesComponent() {
                                     <ContextMenuContent className="p-0 border-0">
                                         <EditAlert data={item} />
                                         <ContextMenuItem
+                                            onClick={() => relatoryService.deleteRelatory(item.id_relatory)}
                                             className="px-2 flex items-center justify-center gap-2 rounded-md rounded-t-none text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
                                         >
                                             <Trash2 className="size-5 text-red-500" />

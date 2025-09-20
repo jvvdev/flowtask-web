@@ -10,7 +10,7 @@ export const routes = {
     authAccount: apiRoute + "/auth-account",
     authGoogle: apiRoute + "/auth/google",
     getUser: apiRoute + "/auth/get-account?session_id=",
-    logout: apiRoute + "/auth/logout",
+    logout: apiRoute + "/auth/logout?session_id=",
 
     // Team Routes
     createTeam: apiRoute + "/create-group",
@@ -21,6 +21,7 @@ export const routes = {
     getTeamByUser: apiRoute + "/get-groups-by-user",
     getMembersByTeam: apiRoute + "/get-users-by-group/",
     inviteMember: apiRoute + "/groups/invite",
+    removeMember: apiRoute + "/groups/remove-member",
 
     // Project Routes
     createProject: apiRoute + "/create-project",

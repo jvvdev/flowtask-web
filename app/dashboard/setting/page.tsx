@@ -41,11 +41,11 @@ export default function Settings() {
       const token = await authService.getToken();
 
       const userData = await authService.getUserData();
-      // if (userData) {
-      //   setData(JSON.parse(userData) as UserData);
-      //   setLoading(false)
-      //   return;
-      // }
+      if (userData) {
+        setData(JSON.parse(userData) as UserData);
+        setLoading(false)
+        return;
+      }
 
       await axios.get(routes.getUser + token).then((response) => {
         setData(response.data);

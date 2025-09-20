@@ -11,7 +11,7 @@ export function ListProductivity() {
     const [filter, setFilter] = useState("Membro");
 
     return (
-        <div className="p-4 w-full sm:w-[30%] space-y-2 h-full border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
+        <div className="p-4 w-full space-y-2 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
             <div className="flex justify-between items-center">
                 <div>
                     <h2 className="text-xl font-semibold">Produtividade</h2>

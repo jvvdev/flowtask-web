@@ -80,7 +80,7 @@ class AuthService {
             deleteCookie("sessionId");
             deleteCookie("userData");
             deleteCookie("activeTeam");
-            redirect("/auth/login");
+            window.location.reload();
         }).catch(err => {
             console.error(err)
         });

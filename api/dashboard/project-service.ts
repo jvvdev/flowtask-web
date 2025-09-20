@@ -47,7 +47,7 @@ class ProjectService {
                     authToken: sessionId
                 }
             }).then(res => {
-                window.location.reload();
+                
             }).catch(err => {
                 console.error(err)
             })

@@ -41,7 +41,7 @@ export function ListProductivityProjects() {
     const [isLoading, setIsLoading] = useState(false);
 
     return (
-        <div className="flex flex-col justify-between h-100 sm:h-321 md:h-320 lg:h-304 xl:h-237 2xl:h-153">
+        <div className="flex flex-col justify-between h-100 sm:h-321 md:h-195 lg:h-177.5 xl:h-[445px] 2xl:h-87">
             {
                 isLoading ?
                     <div className="flex justify-center items-center h-full">
@@ -58,10 +58,10 @@ export function ListProductivityProjects() {
                                 [&::-webkit-scrollbar-thumb]:bg-zinc-400
                                 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700"
                         >
-                            <Table className="table-fixed border-separate min-w-95 border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+                            <Table className="table-fixed border-separate min-w-106 border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                                 <TableHeader>
                                     <TableRow className="hover:bg-transparent">
-                                        <TableHead className="relative w-63 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                        <TableHead className="relative w-[60%] h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                             <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500 overflow-hidden whitespace-nowrap text-ellipsis"><ALargeSmall size={18} /> Nome</p>
                                         </TableHead>
                                         <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">

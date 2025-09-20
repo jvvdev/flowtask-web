@@ -294,8 +294,8 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                             <CommentView taskID={selectedTask} taskData={selectedTaskData}/>
 
                             <AlertDialog>
-                                <AlertDialogTrigger className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-yellow-600/80 dark:bg-yellow-500/20 hover:bg-yellow-700/90 dark:hover:bg-yellow-500/30 border border-yellow-500/20 text-white dark:text-yellow-500 cursor-pointer">
-                                    <Pencil className="size-5" />
+                                <AlertDialogTrigger className="p-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-yellow-500/30 border border-zinc-500/30 dark:hover:border-yellow-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
+                                    <Pencil className="size-5 text-yellow-600" />
                                     <span className="hidden sm:block">Modificar tarefa</span>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
@@ -377,8 +377,8 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                             </AlertDialog>
 
                             <AlertDialog>
-                                <AlertDialogTrigger className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-700/80 dark:bg-red-500/20 hover:bg-red-700/90 dark:hover:bg-red-500/30 border border-red-500/20 text-white dark:text-red-500 cursor-pointer">
-                                    <Trash2 className="size-5" />
+                                <AlertDialogTrigger className="p-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
+                                    <Trash2 className="size-5 text-red-500" />
                                     <span className="hidden sm:block">Deletar</span>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
@@ -402,8 +402,8 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                     {paginatedData.length > 0 && (
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" className="cursor-pointer bg-zinc-400/40 hover:bg-zinc-400/30">
-                                    <RiFilter3Line className="size-5 -ms-1.5 text-muted-foreground/60" size={20} aria-hidden="true" />
+                                <Button variant="default" className="cursor-pointer group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-zinc-500/30 border border-zinc-500/30 dark:hover:border-zinc-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 duration-200">
+                                    <RiFilter3Line className="size-5 -ms-1.5 text-black dark:text-white" size={20} aria-hidden="true" />
                                     <span className="hidden sm:block">Exibição </span>
                                 </Button>
                             </PopoverTrigger>

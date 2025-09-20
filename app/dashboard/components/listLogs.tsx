@@ -51,10 +51,10 @@ export function ListLogs() {
                         <div className="flex justify-center items-center h-full">
                             <LoaderCircle className="animate-spin" />
                         </div>
-                        : <Table className="table-fixed min-w-140 border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+                        : <Table className="table-fixed min-w-223 border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
-                                    <TableHead className="relative h-9 w-[84%] select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                                    <TableHead className="relative h-9 w-[80%] select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                         <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ShieldAlert size={18} /> Atividade</p>
                                     </TableHead>
                                     <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
@@ -94,6 +94,7 @@ export function ListLogs() {
                                     variant="outline"
                                     disabled={currentPage === 1}
                                     onClick={() => setCurrentPage(currentPage - 1)}
+                                    className={`${currentPage === 1 ? '' : 'cursor-pointer'}`}
                                 >
                                     Anterior
                                 </Button>
@@ -101,6 +102,7 @@ export function ListLogs() {
                                     variant="outline"
                                     disabled={currentPage === totalPages}
                                     onClick={() => setCurrentPage(currentPage + 1)}
+                                    className={`${currentPage === totalPages ? '' : 'cursor-pointer'}`}
                                 >
                                     Próxima
                                 </Button>
