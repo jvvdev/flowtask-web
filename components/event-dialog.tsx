@@ -584,10 +584,10 @@ export function EventDialog({
             </Button>
           )}
           <div className="flex flex-1 justify-end gap-2">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose} className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
               Cancelar
             </Button>
-            <Button onClick={handleSave}>{event?.id_task ? "Editar" : "Criar"}</Button>
+            <Button onClick={handleSave} className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">{event?.id_task ? "Editar" : "Criar"}</Button>
           </div>
         </DialogFooter>
       </DialogContent>

@@ -35,10 +35,12 @@ export function NotifyDropdown() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="relative">
-                    <div>
-                        <div className="absolute right-0 -top-0.5 h-2 w-2 rounded-full bg-red-600 z-10"></div>
-                        <div className="absolute right-0 -top-0.5 h-2 w-2 rounded-full bg-red-600 z-10 animate-ping"></div>
-                    </div>
+                    {
+                        notifys.length > 0 ? <div>
+                            <div className="absolute right-0 -top-0.5 h-2 w-2 rounded-full bg-red-600 z-10"></div>
+                            <div className="absolute right-0 -top-0.5 h-2 w-2 rounded-full bg-red-600 z-10 animate-ping"></div>
+                        </div> : null
+                    }
                     <Bell size={18} className="opacity-60 hover:opacity-100 cursor-pointer" />
                 </div>
             </DropdownMenuTrigger>
@@ -50,7 +52,8 @@ export function NotifyDropdown() {
                 <DropdownMenuGroup>
                     {
                         notifys.length === 0 ?
-                            <p>Nenhuma notificação encontrada</p> : notifys.map((item: any) => (
+                            <p className="p-2 text-sm text-muted-foreground">Nenhuma notificação encontrada</p>
+                            : notifys.map((item: any) => (
                                 <DropdownMenuItem key={item.id} className="flex items-center justify-between hover:bg-zinc-50/0 max-w-110">
                                     <div className="rounded-md w-12 h-9 bg-purple-500 flex items-center justify-center">
                                         <UserRoundPlus size={20} className="ml-0.5" />

@@ -62,7 +62,7 @@ export default function Page() {
             </div>
           </div>
           <div className="w-full flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-[70%] h-full space-y-4">
+            <div className="w-full sm:w-[55%] xl:w-[70%] h-full space-y-4">
               <InfoCardToTasks />
 
               <div className="flex flex-col gap-4 w-full">
@@ -78,7 +78,7 @@ export default function Page() {
             </div>
 
 
-            <div className="w-full sm:w-[30%] space-y-4">
+            <div className="w-full sm:w-[44%] xl:w-[30%] space-y-4">
               <MemberOverHeat />
               <ListProductivity />
             </div>

@@ -79,6 +79,7 @@ class AuthService {
         }).then(res => {
             deleteCookie("sessionId");
             deleteCookie("userData");
+            deleteCookie("allTeams");
             deleteCookie("activeTeam");
             window.location.reload();
         }).catch(err => {

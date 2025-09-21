@@ -96,22 +96,22 @@ export default function UserDropdown() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <a href="/dashboard/setting" className="px-2 py-1.5 w-full flex items-center gap-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md">
               <RiSettingsLine
                 size={16}
                 className="opacity-60"
                 aria-hidden="true"
               />
-              <a href="/dashboard/setting">Configurações da conta</a>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <HandCoins size={16} className="opacity-60 cursor-pointer" aria-hidden="true" />
+              <span>Configurações da conta</span>
+            </a>
+            <a href="/dashboard/payments" className="px-2 py-1.5 w-full flex items-center gap-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md">
+              <HandCoins size={16} className="opacity-60" aria-hidden="true" />
               <span>Área de pagamentos</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            </a>
+            <a href="/dashboard/notGroup" className="px-2 py-1.5 w-full flex items-center gap-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md">
               <RiTeamLine size={16} className="opacity-60 cursor-pointer" aria-hidden="true" />
-              <span>Página de seleção de grupos</span>
-            </DropdownMenuItem>
+              <span>Seleção de grupos</span>
+            </a>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <AlertDialog>
@@ -133,10 +133,10 @@ export default function UserDropdown() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => authService.logout()}
-                  className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                  className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
                 >
                   Confirmar
                 </AlertDialogAction>

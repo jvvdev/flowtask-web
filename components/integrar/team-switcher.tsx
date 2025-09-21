@@ -32,13 +32,13 @@ type Team = {
   // Adicione outros campos se necessário
 };
 
-type CreateTeamForm = {
+interface CreateTeamForm {
   name: string;
   description: string;
 };
 
 export function TeamSwitcher() {
-  const [activeTeam, setActiveTeam] = React.useState<string | undefined>();
+  const [activeTeam, setActiveTeam] = React.useState<Team | undefined>();
   const [team, setTeam] = React.useState<Team[]>([]);
 
   const [loading, setLoading] = React.useState(true);
@@ -78,9 +78,9 @@ export function TeamSwitcher() {
     async function getActiveTeam() {
       if (!activeTeam) {
         setTimeout(async () => {
-          const activeTeam = await teamService.getTeamByUser();
-          if (typeof activeTeam === "string") {
-            setActiveTeam(JSON.parse(activeTeam).name);
+          const activeTeamRaw = await teamService.getTeamByUser();
+          if (typeof activeTeamRaw === "string") {
+            setActiveTeam(JSON.parse(activeTeamRaw));
           }
         }, 500);
       }
@@ -94,7 +94,7 @@ export function TeamSwitcher() {
   };
 
   const handleTeamChange = (team: Team) => {
-    setActiveTeam(team.name);
+    setActiveTeam(team);
     teamService.setTeamByUser(team);
   };
 
@@ -120,7 +120,7 @@ export function TeamSwitcher() {
               </div>
               <div className="grid flex-1 text-left text-base leading-tight">
                 <span className="truncate font-medium">
-                  {activeTeam ?? "Selecione um time"}
+                  {activeTeam ? activeTeam.name : "Selecione um time"}
                 </span>
               </div>
               <RiExpandUpDownLine
@@ -146,7 +146,7 @@ export function TeamSwitcher() {
               <div
                 key={team.id_group}
                 onClick={() => handleTeamChange(team)}
-                className={`rounded-md gap-2 py-1 px-2 flex justify-between items-center ${activeTeam === team.name ? 'bg-muted-foreground/10' : 'cursor-pointer hover:bg-muted-foreground/5'}`}
+                className={`rounded-md gap-2 py-1 px-2 flex justify-between items-center ${activeTeam && activeTeam.id_group === team.id_group ? 'bg-muted-foreground/10' : 'cursor-pointer hover:bg-muted-foreground/5'}`}
               >
                 {/* <div className="flex size-6 items-center justify-center rounded-md overflow-hidden">
                   <img src={team.logo} width={36} height={36} alt={team.name} />

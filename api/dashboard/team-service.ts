@@ -14,6 +14,7 @@ import {
 import axios from "axios";
 import { authService } from "../auth-service";
 import { routes } from "../routes";
+import { toast } from 'sonner';
 
 class TeamService {
     async deleteAllTeams() {
@@ -41,6 +42,8 @@ class TeamService {
                 "authToken": token
             }
         }).then((response) => {
+            deleteCookie("allTeams");
+            window.location.reload();
             return true
         }).catch((error) => {
             console.error(error);
@@ -49,6 +52,28 @@ class TeamService {
 
     async getTeams() {
 
+    }
+
+    async requestJoin(data: any) {
+        const token = await authService.getToken();
+        
+        const api = await axios.post(routes.inviteMember, {
+            email: data.email,
+            id_group: data.id_group,
+            type: "request"
+        }, {
+            headers: {
+                "authToken": token
+            }
+        }).then((res) => {
+            const message = res.data.message;
+
+            toast(message)
+        }).catch((error) => {
+            const message = error.data.message;
+            toast('Não foi possivel enviar seu pedido de convite');
+            console.error(error);
+        })
     }
 
     async updateTeam(id: string, data: any) {
@@ -103,7 +128,7 @@ class TeamService {
         setCookie('activeTeam', team);
     }
 
-    deleteActiveTeam() {
+    async deleteActiveTeam() {
         deleteCookie('activeTeam');
         window.location.reload();
     }

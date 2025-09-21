@@ -27,7 +27,7 @@ class RelatoryService {
         console.log(data)
 
         axios.post(routes.updateRelatory, {
-            id_task: data.id_task,
+            id: data.id_relatory,
             relatory_owner: data.relatory_owner ,
             title: data.title,
             content: modifiedText ? modifiedText : data.content,
@@ -45,8 +45,10 @@ class RelatoryService {
     async updateRelatoryTitle(data: any, modifiedTitle: string) {
         const sessionId = getCookie("sessionId");
 
+        console.log(data)
+
         axios.post(routes.updateRelatory, {
-            id_task: data.id_task,
+            id: data.id_relatory,
             relatory_owner: data.relatory_owner ,
             title: modifiedTitle ? modifiedTitle : data.title,
             content: data.content,

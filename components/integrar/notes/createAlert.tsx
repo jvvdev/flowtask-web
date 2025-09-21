@@ -9,7 +9,7 @@ interface NoteForm {
     content: string;
 };
 
-export function CreateForm() {
+export function CreateForm({ bigButton }: { bigButton?: boolean }) {
     const { register, handleSubmit } = useForm<NoteForm>();
 
     function handleCreateNote(data: NoteForm) {
@@ -19,16 +19,16 @@ export function CreateForm() {
     return (
         <AlertDialog>
             <AlertDialogTrigger
-                className="absolute bottom-0 w-full px-2 py-4 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 duration-200 cursor-pointer"
+                className={`${bigButton ? "absolute bottom-0 w-full px-2 py-4" : "py-2 px-4 mt-4"} flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 duration-200 cursor-pointer`}
             >
                 <Plus className="size-5" />
                 <span className="">Adicionar documento</span>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Adicionar nota</AlertDialogTitle>
+                    <AlertDialogTitle>Adicionar documento</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Aqui você pode adicionar novas notas para gerenciar.
+                        Aqui você pode adicionar novos documentos para gerenciar.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
@@ -53,10 +53,14 @@ export function CreateForm() {
                     </div>
 
                     <AlertDialogFooter className="mt-6">
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogCancel
+                            className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                        >
+                            Cancelar
+                        </AlertDialogCancel>
                         <AlertDialogAction
                             type="submit"
-                            className="font-semibold bg-green-500/15 dark:bg-green-500/20 hover:bg-green-500/20 dark:hover:bg-green-500/30 border border-green-500/20 text-green-500 cursor-pointer"
+                            className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
                         >
                             Confirmar
                         </AlertDialogAction>

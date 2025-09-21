@@ -4,7 +4,7 @@ import { RiSearch2Line } from "@remixicon/react";
 import { Button } from "../../button";
 import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
 import { Input } from "../../input";
-import { AlignCenter, Bold, CaseSensitive, Check, Info, Italic, LogIn, NotebookPen, Pencil, Trash2, Underline, Undo2 } from "lucide-react";
+import { AlignCenter, Bold, CaseSensitive, Check, Info, Italic, Loader2, LogIn, NotebookPen, Pencil, Trash2, Underline, Undo2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 
@@ -164,6 +164,7 @@ interface Note {
 export function NotesComponent() {
     const [currentNote, setCurrentNote] = useState(null as null | Note)
     const [isEditing, setIsEditing] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [noteText, setNoteText] = useState("");
     const [data, setData] = useState<Note[]>([])
 
@@ -189,6 +190,7 @@ export function NotesComponent() {
                 }
             }).then(res => {
                 setData(res.data.data)
+                setIsLoading(false)
             }).catch(err => {
                 console.error(err)
             });
@@ -257,18 +259,29 @@ export function NotesComponent() {
     return (
         <div className="flex justify-between max-h-[75vh] gap-5">
             <div className={`relative w-full ${currentNote === null as null | Note ? 'block h-screen max-h-[100%]' : 'hidden md:block md:max-w-80'}`}>
-                <div className="flex justify-between items-center gap-2">
-                    <div className="relative w-full">
-                        <Input
-                            placeholder="Pesquisar pelo nome"
-                            className="peer min-w-40 max-w-78.5 ps-9 bg-zinc-200/70 hover:bg-zinc-200 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 duration-200"
-                        />
-                        <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
-                            <RiSearch2Line size={20} aria-hidden="true" />
-                        </div>
-                    </div>
+                {
+                    isLoading ? <div className="flex items-center justify-center h-full text-muted-foreground gap-1">
+                        <Loader2 className="animate-spin"/>
+                        <p>Carregando...</p>
+                    </div> : data.length === 0 ? <div className="flex flex-col items-center justify-center h-full text-center">
+                        <NotebookPen size={40} className="text-muted-foreground mb-2" />
+                        <h3 className="text-lg font-medium">Nenhum documento encontrado</h3>
+                        <p className="text-muted-foreground">Crie um novo documento clicando no botão abaixo.</p>
+                        <CreateForm bigButton={false} />
+                    </div> :
+                        <div>
+                            <div className="flex justify-between items-center gap-2">
+                                <div className="relative w-full">
+                                    <Input
+                                        placeholder="Pesquisar pelo nome"
+                                        className="peer min-w-40 max-w-78.5 ps-9 bg-zinc-200/70 hover:bg-zinc-200 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 duration-200"
+                                    />
+                                    <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
+                                        <RiSearch2Line size={20} aria-hidden="true" />
+                                    </div>
+                                </div>
 
-                    {/* <Popover>
+                                {/* <Popover>
                         <PopoverTrigger asChild>
                             <Button variant="outline" className="cursor-pointer bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700">
                                 <AlignCenter className="opacity-50" />
@@ -285,9 +298,9 @@ export function NotesComponent() {
                             </div>
                         </PopoverContent>
                     </Popover> */}
-                </div>
+                            </div>
 
-                <div className={`${currentNote === null as null | Note ? 'grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 max-h-[83%]' : 'hidden md:max-w-80 md:flex flex-col max-h-[85%] space-y-2'} mt-2 overflow-y-auto pr-1.5
+                            <div className={`${currentNote === null as null | Note ? 'grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 max-h-[83%]' : 'hidden md:max-w-80 md:flex flex-col max-h-[85%] space-y-2'} mt-2 overflow-y-auto pr-1.5
                         [&::-webkit-scrollbar]:w-1.5
                         [&::-webkit-scrollbar-track]:rounded-md
                         [&::-webkit-scrollbar-thumb]:rounded-md
@@ -295,47 +308,49 @@ export function NotesComponent() {
                         dark:[&::-webkit-scrollbar-track]:bg-zinc-800/30
                         [&::-webkit-scrollbar-thumb]:bg-zinc-400
                         dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700`}>
-                    {
-                        data.map((item) => (
-                            <div key={item.id_relatory}>
-                                <ContextMenu>
-                                    <ContextMenuTrigger className="w-full" onClick={() => { setCurrentNote(item), setNoteText(item.content) }}>
-                                        <div className={`flex flex-col justify-start items-start p-2 ${currentNote && currentNote.id_relatory === item.id_relatory ? 'bg-gradient-to-l from-green-700 to-green-600' : 'bg-zinc-200/70 hover:bg-zinc-200 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
-                                            <div className="flex items-center justify-between w-full">
-                                                <h3
-                                                    className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote && currentNote.id_relatory === item.id_relatory ? 'text-zinc-100' : ''}`}>
-                                                    {item.title}
-                                                </h3>
-                                                <h3
-                                                    className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote && currentNote.id_relatory === item.id_relatory ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
-                                                    {item.relatory_owner}
-                                                </h3>
-                                            </div>
-                                            <p
-                                                className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote?.id_relatory === item.id_relatory ? 'text-zinc-100' : 'text-muted-foreground'}`}>
-                                                {
-                                                    currentNote && item.id_relatory === currentNote.id_relatory ? noteText : item.content
-                                                }
-                                            </p>
+                                {
+                                    data.map((item) => (
+                                        <div key={item.id_relatory}>
+                                            <ContextMenu>
+                                                <ContextMenuTrigger className="w-full" onClick={() => { setCurrentNote(item), setNoteText(item.content) }}>
+                                                    <div className={`flex flex-col justify-start items-start p-2 ${currentNote && currentNote.id_relatory === item.id_relatory ? 'bg-gradient-to-l from-green-700 to-green-600' : 'bg-zinc-200/70 hover:bg-zinc-200 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/70 cursor-pointer'} rounded-md border duration-200`}>
+                                                        <div className="flex items-center justify-between w-full">
+                                                            <h3
+                                                                className={`font-semibold w-full text-left overflow-hidden whitespace-nowrap text-ellipsis text-lg truncate ${currentNote && currentNote.id_relatory === item.id_relatory ? 'text-zinc-100' : ''}`}>
+                                                                {item.title}
+                                                            </h3>
+                                                            <h3
+                                                                className={`font-semibold w-full text-right text-sm overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote && currentNote.id_relatory === item.id_relatory ? 'text-zinc-100/90' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                                                {item.relatory_owner}
+                                                            </h3>
+                                                        </div>
+                                                        <p
+                                                            className={`text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis truncate ${currentNote?.id_relatory === item.id_relatory ? 'text-zinc-100' : 'text-muted-foreground'}`}>
+                                                            {
+                                                                currentNote && item.id_relatory === currentNote.id_relatory ? noteText : item.content
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </ContextMenuTrigger>
+                                                <ContextMenuContent className="p-0 border-0">
+                                                    <EditAlert data={item} />
+                                                    <ContextMenuItem
+                                                        onClick={() => relatoryService.deleteRelatory(item.id_relatory)}
+                                                        className="px-2 flex items-center justify-center gap-2 rounded-md rounded-t-none text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
+                                                    >
+                                                        <Trash2 className="size-5 text-red-500" />
+                                                        <p className="text-red-500">Deletar</p>
+                                                    </ContextMenuItem>
+                                                </ContextMenuContent>
+                                            </ContextMenu>
                                         </div>
-                                    </ContextMenuTrigger>
-                                    <ContextMenuContent className="p-0 border-0">
-                                        <EditAlert data={item} />
-                                        <ContextMenuItem
-                                            onClick={() => relatoryService.deleteRelatory(item.id_relatory)}
-                                            className="px-2 flex items-center justify-center gap-2 rounded-md rounded-t-none text-sm font-semibold bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border border-red-500/20 text-red-500 cursor-pointer duration-200"
-                                        >
-                                            <Trash2 className="size-5 text-red-500" />
-                                            <p className="text-red-500">Deletar</p>
-                                        </ContextMenuItem>
-                                    </ContextMenuContent>
-                                </ContextMenu>
+                                    ))
+                                }
                             </div>
-                        ))
-                    }
-                </div>
 
-                <CreateForm />
+                            <CreateForm bigButton={true}/>
+                        </div>
+                }
             </div>
 
             <div className={`md:w-[80%] bg-zinc-200/70 dark:bg-zinc-800/30 border rounded-md ${currentNote !== null as null | Note ? 'w-full' : 'hidden'}`}>
@@ -378,7 +393,7 @@ export function NotesComponent() {
                                                     </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
-                                                    <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+                                                    <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
                                                     <AlertDialogAction className="bg-red-800 hover:bg-red-700 cursor-pointer" onClick={() => currentNote && relatoryService.deleteRelatory(currentNote.id_relatory)}>Deletar</AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
