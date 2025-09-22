@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form"
 import { se } from "date-fns/locale"
 import { planService } from "@/api/payment/plan-service"
 import { toast } from "sonner"
+import { useParams } from "next/navigation"
 
 interface UserData {
     name: string
@@ -31,14 +32,26 @@ export default function Settings() {
     const [currentTab, setCurrentTab] = useState(0)
     const [customer_id, setCustomer_id] = useState("")
     const [cpf_cnpj, setCpf_cnpj] = useState("")
+    const [phone, setPhone] = useState("")
     const [data, setData] = useState<UserData>({ name: "", email: "", avatar: "" })
     const [loading, setLoading] = useState(true)
     const [cepLoading, setCepLoading] = useState(false);
     const [cepError, setCepError] = useState<string | null>(null);
+    const [planID, setPlanID] = useState("")
+
+    const params = useParams();
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
     useEffect(() => {
+        if (params.plan === "0") {
+            setPlanID("Plano 0")
+        } else if (params.plan === "1") {
+            setPlanID("Plano 1")
+        } else if (params.plan === "2") {
+            setPlanID("Plano 2")
+        }
+
         async function getData() {
             const token = await authService.getToken()
 
@@ -60,6 +73,7 @@ export default function Settings() {
                     console.log(err)
                 })
         }
+
         getData()
     }, [])
 
@@ -71,6 +85,7 @@ export default function Settings() {
             if (res.message == "Cliente criado com sucesso") {
                 setCustomer_id(res.data.id)
                 setCpf_cnpj(res.data.cpfCnpj)
+                setPhone(res.data.phone)
                 reset()
                 setCurrentTab(1)
                 toast.success("Cliente cadastrado com sucesso")
@@ -79,7 +94,7 @@ export default function Settings() {
             }
             return
         } else if (currentTab === 1) {
-            planService.createSubscription(data, cpf_cnpj, customer_id)
+            planService.createSubscription(planID, data, cpf_cnpj, customer_id, phone)
             return
         }
     }
@@ -175,7 +190,7 @@ export default function Settings() {
                     <UserDropdown />
                 </header>
 
-                <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
+                <div className="flex flex-col gap-4 lg:gap-6 py-4 lg:py-6">
                     <div className="max-w-7xl mx-auto px-4 py-8">
                         <div className="flex flex-col lg:flex-row lg:gap-8">
                             {/* Left Column - Form */}
@@ -589,7 +604,7 @@ export default function Settings() {
                             </div>
 
                             {/* Right Column - Order Summary */}
-                            <div className="lg:col-span-1 lg:mt-17">
+                            <div className="mt-6 lg:col-span-1 lg:mt-17">
                                 <Card className="sticky top-8">
                                     <CardContent className="p-6">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Detalhes da sua compra</h3>
@@ -603,14 +618,14 @@ export default function Settings() {
                                             <div className="bg-gray-50 rounded-lg p-4">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div>
-                                                        <h5 className="font-medium text-gray-900">Recarga Real Oficial 5R$</h5>
-                                                        <p className="text-sm text-gray-600">Quantidade</p>
+                                                        <h5 className="font-medium text-gray-900">{planID === "Plano 0" ? "Plano básico" : planID === "Plano 1" ? "Plano MEI" : planID === "Plano 2" ? "Plano LTDA" : "Não selecionado"}</h5>
+                                                        <p className="text-sm text-gray-600">Tipo</p>
                                                         <p className="text-sm text-gray-600">Valor Total</p>
                                                     </div>
                                                     <div className="text-right">
                                                         <div className="h-6"></div>
-                                                        <p className="text-sm text-gray-900">1</p>
-                                                        <p className="text-sm text-gray-900 font-medium">R$ 5,00</p>
+                                                        <p className="text-sm text-gray-900">Mensalidade</p>
+                                                        <p className="text-sm text-gray-900 font-medium">{planID === "Plano 0" ? "Gratuito" : planID === "Plano 1" ? "RS$ 19,99" : planID === "Plano 2" ? "R$ 29,99" : "Não selecionado"}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -618,12 +633,10 @@ export default function Settings() {
 
                                         <div className="space-y-3 border-t pt-4">
                                             <div className="flex justify-between">
-                                                <span className="text-gray-600">Subtotal</span>
-                                                <span className="font-medium">R$ 5,00</span>
                                             </div>
                                             <div className="flex justify-between text-lg font-semibold">
                                                 <span>Total</span>
-                                                <span>R$ 5,00</span>
+                                                <span>{planID === "Plano 0" ? "Gratuito" : planID === "Plano 1" ? "RS$ 19,99" : planID === "Plano 2" ? "R$ 29,99" : "Não selecionado"}</span>
                                             </div>
                                         </div>
                                     </CardContent>
