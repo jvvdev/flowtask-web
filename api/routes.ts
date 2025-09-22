@@ -54,4 +54,8 @@ export const routes = {
     createComment: apiRoute + "/kanban/comment",
     getCommentsByTask: apiRoute + "/kanban/",
     deleteComment: apiRoute + "/comment/",
+
+    // Plan Routes
+    createCustomer: apiRoute + "/create-customer",
+    buyPlan: apiRoute + "/buy-plan"
 }
