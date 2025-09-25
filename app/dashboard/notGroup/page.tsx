@@ -36,16 +36,13 @@ export default function NotGroupPage() {
   const [actualSelect, setActualSelect] = useState('')
   const [activeTeam, setActiveTeam] = useState<string | undefined>();
   const [team, setTeam] = useState<Team[]>([]);
+  const [data, setData] = useState()
 
   const [loading, setLoading] = useState(true);
 
   const { register, handleSubmit } = useForm<CreateTeamForm>();
 
   const router = useRouter();
-
-  const onSubmit = (data: CreateTeamForm) => {
-    teamService.createTeam(data);
-  };
 
   useEffect(() => {
     async function getData() {
@@ -91,11 +88,37 @@ export default function NotGroupPage() {
     getActiveTeam()
   }, [])
 
+  useEffect(() => {
+    async function getData() {
+      const token = await authService.getToken()
+
+      await axios.get(routes.getUser + token)
+        .then((response) => {
+          setData(response.data)
+          authService.setUserData(response.data)
+          setLoading(false)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
+
+    getData()
+  }, [])
+
   const handleTeamChange = (team: Team) => {
     setActiveTeam(team.name);
     teamService.setTeamByUser(team);
     router.push("/dashboard");
   };
+
+  const onSubmit = (data: CreateTeamForm) => {
+    teamService.createTeam(data);
+  };
+
+  const redirectToPlans = () => {
+    router.push("/dashboard/setting/billing");
+  }
 
   return (
     <div className={`min-h-dvh bg-background flex flex-col items-center justify-center ${team.length >= 1 ? '' : 'p-6'}`}>
@@ -316,7 +339,7 @@ export default function NotGroupPage() {
 
                 {
                   actualSelect === 'join' ?
-                    <JoinGroupDialog /> : actualSelect === 'create' ?
+                    <JoinGroupDialog /> : actualSelect === 'create' ? data.plan != "Sem plano" ?
                       <AlertDialog>
                         <AlertDialogTrigger
                           className="px-8 py-2 bg-primary flex items-center justify-center gap-2 text-white dark:text-black rounded-md text-sm hover:bg-primary/90 cursor-pointer"
@@ -364,7 +387,32 @@ export default function NotGroupPage() {
                           </form>
                         </AlertDialogContent>
                       </AlertDialog> :
-                      <Button variant="default" className="px-8 bg-zinc-900/10 hover:bg-zinc-900/10 dark:bg-background dark:hover:bg-background text-black/70 dark:text-white/80 cursor-not-allowed">Continuar</Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger
+                          className="px-8 py-2 bg-primary flex items-center justify-center gap-2 text-white dark:text-black rounded-md text-sm hover:bg-primary/90 cursor-pointer"
+                        >
+                          Continuar
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Não autorizado</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Você não possui um plano ativo, e por isso você não pode criar grupos. Assine um plano para continuar.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+
+                          <AlertDialogFooter className="mt-6">
+                            <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              type="submit"
+                              className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                            >
+                              Assinar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog> :
+                      <Button variant="default" className="px-8 bg-zinc-900/10 hover:bg-zinc-900/10 dark:bg-zinc-800/40 dark:hover:bg-zinc-800/4*0 text-black/70 dark:text-white/80 cursor-not-allowed">Continuar</Button>
                 }
               </div>
 

@@ -18,16 +18,17 @@ import { Button } from "@/components/button";
 import ThemeToggle from "@/components/theme-toggle";
 import { KanbanProject } from "@/components/integrar/kanbanProject";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
-import { ALargeSmall, CalendarCheck2, ChartPie, LoaderCircle, MessageCircle, Plus, TriangleAlert, UserCog } from "lucide-react";
+import { ALargeSmall, CalendarCheck2, ChartPie, Loader2, LoaderCircle, MessageCircle, Plus, TriangleAlert, UserCog, Users } from "lucide-react";
 import { Input } from "@/components/input";
 import { routes } from "@/api/routes";
 import axios from "axios";
 import { authService } from "@/api/auth-service";
 import { useForm } from "react-hook-form";
 import { kanbanService } from "@/api/dashboard/kanban-service";
+import { teamService } from "@/api/dashboard/team-service";
 
 interface KanbanComment {
   id: string;
@@ -66,18 +67,42 @@ export default function Page() {
   const [data, setData] = useState<KanbanTask[]>([]);
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>({ title: "", resume: "" });
   const { register, handleSubmit } = useForm<TaskForm>();
+  const [notActiveGroup, setNotActiveGroup] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function getData() {
       const sessionId = await authService.getToken();
+      const actualGroupRaw = await teamService.getTeamByUser();
+      let actualGroup: { id_group: string } | null = null;
+      if (actualGroupRaw) {
+        try {
+          actualGroup = JSON.parse(actualGroupRaw);
+          setLoading(false)
+        } catch {
+          actualGroup = null;
+          setLoading(false)
+        }
+      } else {
+        setNotActiveGroup(true);
+        setLoading(false)
+        redirect('/dashboard/project')
+      }
+      if (!actualGroup) return;
+
+      setLoading(true)
+
       await axios.get(routes.getKanbanByProject + params.projectID, {
         headers: {
           AuthToken: sessionId
         }
       }).then(res => {
         setData(res.data.data)
+        setLoading(false)
       }).catch(err => {
-        console.error(err)
+        if (err.response.data.message == "No kanbans found for this project") {
+          setLoading(false)
+        }
       });
     }
     getData()
@@ -136,81 +161,89 @@ export default function Page() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-3 lg:gap-3 py-4 lg:px-8 lg:py-6">
-          {/* Page intro */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex flex-col">
-              <h1 className="text-2xl font-semibold">{projectInfo.title}</h1>
-              <p className="text-sm text-zinc-400">{projectInfo.resume}</p>
-            </div>
-            <div>
-              <AlertDialog>
-                <AlertDialogTrigger
-                  className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
-                >
-                  <Plus className="size-5" />
-                  <span className="hidden sm:block">Criar tarefa</span>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Criar tarefa</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Aqui você pode criar novas tarefas para gerenciar.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
+        {loading ? <div className="w-full h-full flex items-center justify-center opacity-50 gap-1">
+          <Loader2 className="animate-spin" />
+          Carregando...
+        </div> : notActiveGroup ?
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <Users size={40} className="text-muted-foreground mb-2" />
+            <h3 className="text-lg font-medium">Nenhum grupo ativo encontrado</h3>
+            <p className="text-muted-foreground">Selecione um grupo para acessar essa página.</p>
+          </div> : <div className="flex flex-1 flex-col gap-3 lg:gap-3 py-4 lg:px-8 lg:py-6">
+            {/* Page intro */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col">
+                <h1 className="text-2xl font-semibold">{projectInfo.title}</h1>
+                <p className="text-sm text-zinc-400">{projectInfo.resume}</p>
+              </div>
+              <div>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
+                  >
+                    <Plus className="size-5" />
+                    <span className="hidden sm:block">Criar tarefa</span>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Criar tarefa</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Aqui você pode criar novas tarefas para gerenciar.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
 
-                  <form onSubmit={handleSubmit(handleCreateTask)}>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
-                        <Input
-                          placeholder="Digite aqui"
-                          className="mb-2"
-                          {...register("name", { required: true })}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80">Descrição</p>
-                        <Input
-                          placeholder="Digite aqui"
-                          className="mb-2"
-                          {...register("description", { required: true })}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-2 dark:text-zinc-200/80">Prioridade</p>
-                        <div className="px-2 border border-border bg-background outline-none rounded-md">
-                          <select
-                            className="w-full bg-background border-border py-2 text-sm outline-none"
-                            defaultValue="0"
-                            {...register("priority", { required: true })}
-                          >
-                            <option value="" disabled>Selecione a prioridade</option>
-                            <option value="0">Baixa</option>
-                            <option value="1">Média</option>
-                            <option value="2">Alta</option>
-                          </select>
+                    <form onSubmit={handleSubmit(handleCreateTask)}>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <p className="flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
+                          <Input
+                            placeholder="Digite aqui"
+                            className="mb-2"
+                            {...register("name", { required: true })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="flex items-center gap-2 dark:text-zinc-200/80">Descrição</p>
+                          <Input
+                            placeholder="Digite aqui"
+                            className="mb-2"
+                            {...register("description", { required: true })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="flex items-center gap-2 dark:text-zinc-200/80">Prioridade</p>
+                          <div className="px-2 border border-border bg-background outline-none rounded-md">
+                            <select
+                              className="w-full bg-background border-border py-2 text-sm outline-none"
+                              defaultValue="0"
+                              {...register("priority", { required: true })}
+                            >
+                              <option value="" disabled>Selecione a prioridade</option>
+                              <option value="0">Baixa</option>
+                              <option value="1">Média</option>
+                              <option value="2">Alta</option>
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <AlertDialogFooter className="mt-6">
-                      <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        type="submit"
-                        className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
-                      >
-                        Confirmar
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </form>
-                </AlertDialogContent>
-              </AlertDialog>
+                      <AlertDialogFooter className="mt-6">
+                        <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          type="submit"
+                          className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                        >
+                          Confirmar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </form>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
-          </div>
 
-          <KanbanProject kanbanList={data} setKanbanList={setData} />
-        </div>
+            <KanbanProject kanbanList={data} setKanbanList={setData} />
+          </div>}
       </SidebarInset>
     </SidebarProvider>
   );

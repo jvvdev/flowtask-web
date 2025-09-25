@@ -1,9 +1,11 @@
 'use client'
 
-import { Inbox, KeyRound, Pencil, Trash2, User } from "lucide-react";
+import { authService } from "@/api/auth-service";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
+import { Inbox, KeyRound, Pencil, Trash2, User, UserMinus } from "lucide-react";
 import { useState } from "react";
 
-export function AccountSettings() {
+export function AccountSettings({ name, email }: { name: string, email: string }) {
     const [isEdited, setIsEdited] = useState(false);
 
     return (
@@ -19,8 +21,7 @@ export function AccountSettings() {
                     </div>
 
                     <div className="w-full flex justify-end items-center gap-2 pr-1 text-zinc-600 dark:text-zinc-400">
-                        <p className="text-right font-semibold">Adriel Lucas</p>
-                        <Pencil className="cursor-pointer text-zinc-700 hover:text-zinc-800 dark:text-zinc-50/80 dark:hover:text-zinc-50 duration-200" size={20} />
+                        <p className="text-right font-semibold">{name}</p>
                     </div>
                 </div>
 
@@ -31,35 +32,31 @@ export function AccountSettings() {
                     </div>
 
                     <div className="w-full flex justify-end items-center gap-2 pr-1 text-zinc-600 dark:text-zinc-400">
-                        <p className="text-right font-semibold">a.lucas@example.com</p>
-                        <Pencil className="cursor-pointer text-zinc-700 hover:text-zinc-800 dark:text-zinc-50/80 dark:hover:text-zinc-50 duration-200" size={20} />
+                        <p className="text-right font-semibold">{email}</p>
                     </div>
                 </div>
 
-                <div className={`w-full p-2 flex justify-between items-center gap-2 rounded-lg border border-b-0 bg-zinc-200/40 dark:bg-zinc-800/70 dark:border-zinc-200/5 duration-200`}>
-                    <div className="flex items-center gap-2 w-full">
-                        <KeyRound className="p-[5px] text-zinc-700 dark:text-zinc-50/80 rounded-md" size={32} />
-                        <p className="text-md font-semibold text-zinc-700 dark:text-zinc-50/80">Senha</p>
-                    </div>
-
-                    <div className="w-full flex justify-end items-center gap-2 pr-1 text-zinc-600 dark:text-zinc-400">
-                        <p className="text-right font-semibold">**********</p>
-                        <Pencil className="cursor-pointer text-zinc-700 hover:text-zinc-800 dark:text-zinc-50/80 dark:hover:text-zinc-50 duration-200" size={20} />
-                    </div>
-                </div>
-
-                <div className="flex justify-between gap-2">
-                    <button className="w-full p-2 flex items-center gap-1.5 rounded-lg border bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border-red-500/20 text-red-500 cursor-pointer duration-200">
-                        <Trash2 className="p-[5px] rounded-md" size={32} />
-                        <p className="text-md font-semibold">Excluir conta</p>
-                    </button>
-
-                    {
-                        isEdited ? <button className="w-full p-2 flex items-center gap-2 rounded-lg border bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 cursor-pointer duration-200">
-                            <p className="text-md font-semibold">Salvar alterações</p>
-                        </button> : ""
-                    }
-                </div>
+                <AlertDialog>
+                    <AlertDialogTrigger className="w-full p-2 flex items-center gap-1.5 rounded-lg border bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500/20 dark:hover:bg-red-500/30 border-red-500/20 text-red-500 cursor-pointer duration-200">
+                        <UserMinus className="p-[5px] rounded-md" size={32} />
+                        <p className="text-md font-semibold">Fazer logout da conta</p>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmar</AlertDialogTitle>
+                            <AlertDialogDescription>Você tem certeza de que deseja sair da sua conta?</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                                className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                                onClick={() => authService.logout()}
+                            >
+                                Sair
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </div>
     );

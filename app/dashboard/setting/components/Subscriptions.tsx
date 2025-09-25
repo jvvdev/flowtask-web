@@ -6,7 +6,10 @@ export default function Subscriptions() {
   const router = useRouter();
 
   function redirectToPlan(planID: number) {
-    if (planID) {
+    if (planID === 0) {
+      router.push(`/dashboard/setting/billing/${planID}`);
+    } else if (planID >= 1) {
+      console.log(planID)
       router.push(`/dashboard/setting/billing/${planID}`);
     }
   }
@@ -19,10 +22,10 @@ export default function Subscriptions() {
       <div className="grid xl:grid-cols-2 2xl:grid-cols-3 mt-2 gap-4">
 
         <div className="p-4 w-full border bg-zinc-200/70 dark:bg-zinc-800/70 rounded-lg">
-          <h1 className="text-xl font-semibold">Plano básico</h1>
-          <p className="text-black/70 dark:text-zinc-200/80">Este plano ele foi desenvolvido somente para testar o sistema</p>
-          <h2 className="font-bold font-mono text-xl my-1.5">GRATUITO</h2>
-          <p className="text-black/70 dark:text-zinc-200/80 mb-1">Recursos do plano gratuito:</p>
+          <h1 className="text-xl font-semibold">Plano Individual</h1>
+          <p className="text-black/70 dark:text-zinc-200/80">Este plano ele foi desenvolvido pensando em micro-empreendedores</p>
+          <h2 className="font-bold font-mono text-xl my-1.5">R$ 49,00<span className="font-normal text-[16px]">/mês</span></h2>
+          <p className="text-black/70 dark:text-zinc-200/80 mb-1">Recursos do plano individual:</p>
 
           <div className="space-y-1">
             <p className="flex font-semibold gap-1"><Check />Controle de membros</p>
@@ -39,10 +42,10 @@ export default function Subscriptions() {
         </div>
 
         <div className="p-4 w-full border bg-zinc-200/70 dark:bg-zinc-800/70 rounded-lg">
-          <h1 className="text-xl font-semibold">Plano MEI</h1>
+          <h1 className="text-xl font-semibold">Plano Profissional</h1>
           <p className="text-black/70 dark:text-zinc-200/80">Este plano é recomendado para empresas em desenvolvimento</p>
-          <h2 className="font-bold font-mono text-xl my-1.5">R$ 19,99<span className="font-normal text-[16px]">/mês</span></h2>
-          <p className="text-black/70 dark:text-zinc-200/80 mb-1">Recursos do plano gratuito:</p>
+          <h2 className="font-bold font-mono text-xl my-1.5">R$ 99,00<span className="font-normal text-[16px]">/mês</span></h2>
+          <p className="text-black/70 dark:text-zinc-200/80 mb-1">Recursos do plano profissional:</p>
 
           <div className="space-y-1">
             <p className="flex font-semibold gap-1"><Check />Controle de membros</p>
@@ -60,7 +63,7 @@ export default function Subscriptions() {
 
         <div className="p-4 w-full border bg-zinc-200/70 dark:bg-zinc-800/70 rounded-lg">
           <div className="flex gap-2">
-            <h1 className="text-xl font-semibold">Plano LTDA</h1>
+            <h1 className="text-xl font-semibold">Plano Escala</h1>
             <div className="flex items-center gap-1 p-1 px-2 text-[13px] font-semibold border border-zinc-600/50 bg-zinc-400/20 rounded-md">
               <Star size={14} fill="" className="dark:hidden" />
               <Star size={14} fill="white" className="hidden dark:block" />
@@ -69,8 +72,8 @@ export default function Subscriptions() {
           </div>
 
           <p className="text-black/70 dark:text-zinc-200/80">Este plano é recomendado para empresas maiores</p>
-          <h2 className="font-bold font-mono text-xl my-1.5">R$ 29,99<span className="font-normal text-[16px]">/mês</span></h2>
-          <p className="text-black/70 dark:text-zinc-200/80 mb-1">Recursos do plano gratuito:</p>
+          <h2 className="font-bold font-mono text-xl my-1.5">R$ 199,00<span className="font-normal text-[16px]">/mês</span></h2>
+          <p className="text-black/70 dark:text-zinc-200/80 mb-1">Recursos do plano escala:</p>
 
           <div className="space-y-1">
             <p className="flex font-semibold gap-1"><Check />Controle de membros</p>

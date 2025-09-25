@@ -17,7 +17,7 @@ import {
 } from "@/components/popover";
 import { Input } from "../input";
 import { RiFilter3Line, RiSearch2Line } from "@remixicon/react";
-import { ALargeSmall, ArchiveRestore, CalendarCheck2, ChartPie, Check, ClipboardCheck, ClipboardClock, LoaderCircle, MailSearch, Pencil, Trash2, TriangleAlert, UserCog } from "lucide-react";
+import { ALargeSmall, ArchiveRestore, Briefcase, CalendarCheck2, ChartPie, Check, ClipboardCheck, ClipboardClock, LoaderCircle, MailSearch, Pencil, Trash2, TriangleAlert, UserCog } from "lucide-react";
 import { CircularProgress } from "../circularProgress";
 import { useRouter } from "next/navigation";
 import {
@@ -39,7 +39,7 @@ import { teamService } from "@/api/dashboard/team-service";
 import { authService } from "@/api/auth-service";
 
 const Projects = [
-  { user_id: "", name: "Ana Paula Souza", email: "ana.souza@empresa.com", PendingTasks: 4, TotalTasks: 20 },
+  { user_id: "", name: "Ana Paula Souza", role: "owner", email: "ana.souza@empresa.com", PendingTasks: 4, TotalTasks: 20 },
 ];
 
 const ITEMS_PER_PAGE = 9;
@@ -60,7 +60,7 @@ export function ContactsTables() {
       let actualTeam = await teamService.getTeamByUser();
       if (!actualTeam) return;
       actualTeam = JSON.parse(actualTeam as string);
-      
+
       await axios.get(routes.getMembersByTeam + actualTeam.id_group, {
         headers: {
           AuthToken: sessionId
@@ -103,7 +103,7 @@ export function ContactsTables() {
           <Input
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Pesquisar pelo nome"
-            className="peer min-w-40 ps-9 bg-background bg-gradient-to-br from-accent/60 to-accent"
+            className="peer min-w-40 ps-9 bg-zinc-500/20 dark:bg-zinc-500/10 border border-zinc-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200"
           />
           <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
             <RiSearch2Line size={20} aria-hidden="true" />
@@ -155,7 +155,7 @@ export function ContactsTables() {
                             {...register("email")}
                           />
                         </div>
-                        <div className="space-y-2">
+                        {/* <div className="space-y-2">
                           <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Tarefas pendentes</p>
                           <Input
                             placeholder="Ex: 15"
@@ -172,7 +172,7 @@ export function ContactsTables() {
                             defaultValue={data.find(item => item.user_id === selectedMember)?.TotalTasks || ""}
                             {...register("totalTasks")}
                           />
-                        </div>
+                        </div> */}
                       </div>
 
                       <AlertDialogFooter className="mt-6">
@@ -229,13 +229,16 @@ export function ContactsTables() {
         <Table className="min-w-[1565px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+              <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
               </TableHead>
-              <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+              <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><Briefcase size={18} /> Cargo</p>
+              </TableHead>
+              <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><MailSearch size={18} /> Email</p>
               </TableHead>
-              <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+              {/* <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ClipboardClock size={18} /> Tarefas pendentes</p>
               </TableHead>
               <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
@@ -243,7 +246,7 @@ export function ContactsTables() {
               </TableHead>
               <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><LoaderCircle size={18} /> Porcentual de tarefas</p>
-              </TableHead>
+              </TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -270,19 +273,21 @@ export function ContactsTables() {
                       <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.name}</p>
                     </TableCell>
                     <TableCell>
-                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.email}</p>
+                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.role === "owner" ? "Dono" : "Membro"}</p>
                     </TableCell>
                     <TableCell>
+                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.email}</p>
+                    </TableCell>
+                    {/* <TableCell>
                       <p className="font-semibold">{item.PendingTasks}</p>
                     </TableCell>
                     <TableCell>
                       <p className="font-semibold">{completed}</p>
                     </TableCell>
                     <TableCell className="flex items-center gap-2">
-                      {/* Porcentagem de tarefas concluídas */}
                       <CircularProgress progress={taskProgress} />
                       <span className="text-sm flex">{taskProgress}<span className="text-zinc-600 dark:text-zinc-400 ms-0.5">%</span></span>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 );
               })
@@ -294,7 +299,7 @@ export function ContactsTables() {
       {
         isLoading ? <div className="w-full flex justify-center items-center mt-5">
           <p className="text-center text-zinc-500 font-semibold dark:text-zinc-400">Carregando...</p>
-        </div> : filteredData.length > 0 ?
+        </div> : totalPages === 1 ? "" : filteredData.length > 0 ?
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
             <p
               className="flex-1 whitespace-nowrap text-sm text-muted-foreground"

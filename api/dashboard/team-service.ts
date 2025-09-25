@@ -126,6 +126,7 @@ class TeamService {
 
     async setTeamByUser(team: any) {
         setCookie('activeTeam', team);
+        window.location.reload();
     }
 
     async deleteActiveTeam() {

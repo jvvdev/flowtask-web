@@ -13,14 +13,14 @@ import ThemeToggle from "@/components/theme-toggle"
 import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group"
 import { Label } from "@radix-ui/react-label"
-import { ChevronDown, ChevronUp, CreditCard } from "lucide-react"
+import { ChevronDown, ChevronUp, CreditCard, Loader2 } from "lucide-react"
 import { Input } from "@/components/input"
 import { Button } from "@/components/button"
 import { useForm } from "react-hook-form"
 import { se } from "date-fns/locale"
 import { planService } from "@/api/payment/plan-service"
 import { toast } from "sonner"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 
 interface UserData {
     name: string
@@ -38,18 +38,20 @@ export default function Settings() {
     const [cepLoading, setCepLoading] = useState(false);
     const [cepError, setCepError] = useState<string | null>(null);
     const [planID, setPlanID] = useState("")
+    const [cepInfo, setCepInfo] = useState({ city: "", state: "", street: "" })
 
     const params = useParams();
+    const router = useRouter()
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
     useEffect(() => {
         if (params.plan === "0") {
-            setPlanID("Plano 0")
-        } else if (params.plan === "1") {
             setPlanID("Plano 1")
-        } else if (params.plan === "2") {
+        } else if (params.plan === "1") {
             setPlanID("Plano 2")
+        } else if (params.plan === "2") {
+            setPlanID("Plano 3")
         }
 
         async function getData() {
@@ -62,8 +64,7 @@ export default function Settings() {
                 return
             }
 
-            await axios
-                .get(routes.getUser + token)
+            await axios.get(routes.getUser + token)
                 .then((response) => {
                     setData(response.data)
                     authService.setUserData(response.data)
@@ -78,14 +79,14 @@ export default function Settings() {
     }, [])
 
     async function onSubmit(data: any) {
-        console.log(data)
         if (currentTab === 0) {
+            setLoading(true)
             const res = await planService.createCustomer(data)
-            console.log(res)
             if (res.message == "Cliente criado com sucesso") {
                 setCustomer_id(res.data.id)
                 setCpf_cnpj(res.data.cpfCnpj)
                 setPhone(res.data.phone)
+                setLoading(false)
                 reset()
                 setCurrentTab(1)
                 toast.success("Cliente cadastrado com sucesso")
@@ -94,7 +95,18 @@ export default function Settings() {
             }
             return
         } else if (currentTab === 1) {
-            planService.createSubscription(planID, data, cpf_cnpj, customer_id, phone)
+            setLoading(true)
+            const res = await planService.createSubscription(planID, data, cpf_cnpj, customer_id, phone)
+            if (res.message == "Assinatura concluída com sucesso") {
+                toast.success("Plano assinado com sucesso")
+                setTimeout(() => {
+                    router.push("/dashboard")
+                }, 2500);
+                return
+            } else {
+                toast.error("Erro ao assinar plano")
+                setLoading(false)
+            }
             return
         }
     }
@@ -195,10 +207,10 @@ export default function Settings() {
                         <div className="flex flex-col lg:flex-row lg:gap-8">
                             {/* Left Column - Form */}
                             <div className="lg:col-span-2 w-full">
-                                <h1 className="text-3xl font-bold text-gray-900 mb-8">Pagamento</h1>
+                                <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-200 mb-8">Pagamento</h1>
 
                                 {/* Personal Data Section */}
-                                <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg border p-6">
+                                <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-background rounded-lg border p-6">
                                     {
                                         currentTab === 0 ?
                                             <div className="space-y-6 2xl:w-200">
@@ -206,14 +218,14 @@ export default function Settings() {
                                                     className="flex items-center justify-between "
                                                 >
                                                     <div>
-                                                        <h2 className="text-lg font-semibold text-gray-900">Dados pessoais</h2>
-                                                        <p className="text-sm text-gray-500">Para continuar sua compra preencha os campos abaixo</p>
+                                                        <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-200">Dados pessoais</h2>
+                                                        <p className="text-sm text-gray-600 dark:text-zinc-400">Para continuar sua compra preencha os campos abaixo</p>
                                                     </div>
                                                 </div>
 
                                                 <div className="space-y-4">
                                                     <div>
-                                                        <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+                                                        <Label htmlFor="fullName" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                             Nome completo{" "}
                                                             {errors.name && (
                                                                 <span className="text-red-500 text-xs">({errors.name.message as string})</span>
@@ -222,7 +234,7 @@ export default function Settings() {
                                                         <Input
                                                             id="fullName"
                                                             placeholder="Nome completo"
-                                                            className={`mt-1 ${errors.name ? "border-red-500" : ""}`}
+                                                            className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.name ? "border-red-500" : ""}`}
                                                             {...register("name", {
                                                                 required: "Nome é obrigatório",
                                                                 minLength: { value: 3, message: "Mínimo 3 caracteres" },
@@ -235,7 +247,7 @@ export default function Settings() {
                                                     </div>
 
                                                     <div>
-                                                        <Label htmlFor="document" className="text-sm font-medium text-gray-700">
+                                                        <Label htmlFor="document" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                             CPF ou CNPJ{" "}
                                                             {errors.cpf_cnpj && (
                                                                 <span className="text-red-500 text-xs">
@@ -246,7 +258,7 @@ export default function Settings() {
                                                         <Input
                                                             id="document"
                                                             placeholder="CPF ou CNPJ"
-                                                            className={`mt-1 ${errors.cpf_cnpj ? "border-red-500" : ""}`}
+                                                            className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.cpf_cnpj ? "border-red-500" : ""}`}
                                                             maxLength={14}
                                                             {...register("cpf_cnpj", {
                                                                 required: "CPF ou CNPJ é obrigatório",
@@ -270,13 +282,13 @@ export default function Settings() {
                                                                 },
                                                             })}
                                                         />
-                                                        <p className="text-xs text-gray-500 mt-1">
+                                                        <p className="text-xs text-gray-500 dark:text-zinc-400/80 mt-1">
                                                             Não é possível alterar o CPF ou CNPJ
                                                         </p>
                                                     </div>
 
                                                     <div>
-                                                        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                                                        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                             Seu melhor e-mail{" "}
                                                             {errors.email && (
                                                                 <span className="text-red-500 text-xs">({errors.email.message as string})</span>
@@ -286,7 +298,7 @@ export default function Settings() {
                                                             id="email"
                                                             type="email"
                                                             placeholder="Email"
-                                                            className={`mt-1 ${errors.email ? "border-red-500" : ""}`}
+                                                            className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.email ? "border-red-500" : ""}`}
                                                             {...register("email", {
                                                                 required: "Email é obrigatório",
                                                                 pattern: {
@@ -298,7 +310,7 @@ export default function Settings() {
                                                     </div>
 
                                                     <div>
-                                                        <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                                                        <Label htmlFor="phone" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                             Número de telefone{" "}
                                                             {errors.phone && (
                                                                 <span className="text-red-500 text-xs">({errors.phone.message as string})</span>
@@ -307,7 +319,7 @@ export default function Settings() {
                                                         <Input
                                                             id="phone"
                                                             placeholder="11912345678"
-                                                            className={`mt-1 ${errors.phone ? "border-red-500" : ""}`}
+                                                            className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.phone ? "border-red-500" : ""}`}
                                                             type="text"
                                                             inputMode="numeric" // mostra teclado numérico no celular
                                                             maxLength={11}
@@ -341,8 +353,8 @@ export default function Settings() {
                                                     className="flex items-center justify-between "
                                                 >
                                                     <div>
-                                                        <h2 className="text-lg font-semibold text-gray-900">Informações de pagamento</h2>
-                                                        <p className="text-sm text-gray-500">Para confirmar sua compra preencha os campos</p>
+                                                        <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-200">Informações de pagamento</h2>
+                                                        <p className="text-sm text-gray-600 dark:text-zinc-400">Para confirmar sua compra preencha os campos</p>
                                                     </div>
                                                 </div>
 
@@ -350,7 +362,7 @@ export default function Settings() {
 
                                                     <div className="w-full flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4">
                                                         <div className="w-full">
-                                                            <Label htmlFor="cep" className="text-sm font-medium text-gray-700">
+                                                            <Label htmlFor="cep" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                                 CEP{" "}
                                                                 {errors.cep && (
                                                                     <span className="text-red-500 text-xs">({errors.cep.message as string})</span>
@@ -359,7 +371,7 @@ export default function Settings() {
                                                             <Input
                                                                 id="cep"
                                                                 placeholder="00000-000"
-                                                                className={`mt-1 ${errors.cep ? "border-red-500" : ""}`}
+                                                                className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.cep ? "border-red-500" : ""}`}
                                                                 maxLength={9}
                                                                 {...register("cep", {
                                                                     required: "CEP é obrigatório",
@@ -382,6 +394,7 @@ export default function Settings() {
                                                                                 throw new Error("CEP não encontrado");
                                                                             }
                                                                             const data = await resp.json();
+                                                                            setCepInfo({ city: data.city, state: data.state, street: data.street })
                                                                             return true;
                                                                         } catch (err: any) {
                                                                             setCepError(err.message || "Erro ao consultar CEP");
@@ -401,11 +414,11 @@ export default function Settings() {
                                                                 }}
                                                             />
                                                             {cepLoading && <p className="text-sm text-gray-500 mt-1">Verificando CEP...</p>}
-                                                            {/* {cepError && <p className="text-sm text-red-500 mt-1">{cepError === "Failed to fetch" ? "CEP inválido ou não encontrado" : cepError}</p>} */}
+                                                            {/* {cepError && <p className="text-sm text-red-500 mt-1 bg-gray-50 dark:bg-zinc-800/40">{cepError === "Failed to fetch" ? "CEP inválido ou não encontrado" : cepError}</p>} */}
                                                         </div>
 
                                                         <div className="w-full">
-                                                            <Label htmlFor="address_number" className="text-sm font-medium text-gray-700">
+                                                            <Label htmlFor="address_number" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                                 Número de endereço{" "}
                                                                 {errors.address_number && (
                                                                     <span className="text-red-500 text-xs">({errors.address_number.message as string})</span>
@@ -414,7 +427,7 @@ export default function Settings() {
                                                             <Input
                                                                 id="address_number"
                                                                 placeholder="Número do endereço"
-                                                                className={`mt-1 ${errors.address_number ? "border-red-500" : ""}`}
+                                                                className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.address_number ? "border-red-500" : ""}`}
                                                                 {...register("address_number", {
                                                                     required: "Número de endereço é obrigatório",
                                                                     pattern: {
@@ -426,8 +439,46 @@ export default function Settings() {
                                                         </div>
                                                     </div>
 
+                                                    <div className="w-full flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4">
+                                                        <div className="w-full">
+                                                            <Label className="text-sm font-medium text-gray-700 dark:text-zinc-400">
+                                                                Cidade
+                                                            </Label>
+                                                            <Input
+                                                                placeholder="São Bernado do Campo"
+                                                                className={`mt-1 bg-gray-50 dark:bg-zinc-800/40`}
+                                                                disabled={true}
+                                                                value={cepInfo.city ? cepInfo.city : ""}
+                                                            />
+                                                        </div>
+
+                                                        <div className="w-full">
+                                                            <Label className="text-sm font-medium text-gray-700 dark:text-zinc-400">
+                                                                Estado
+                                                            </Label>
+                                                            <Input
+                                                                placeholder="São Paulo"
+                                                                className={`mt-1 bg-gray-50 dark:bg-zinc-800/40`}
+                                                                disabled={true}
+                                                                value={cepInfo.state ? cepInfo.state : ""}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="w-full">
+                                                        <Label className="text-sm font-medium text-gray-700 dark:text-zinc-400">
+                                                            Rua
+                                                        </Label>
+                                                        <Input
+                                                            placeholder="Rua 22 de Março"
+                                                            className={`mt-1 bg-gray-50 dark:bg-zinc-800/40`}
+                                                            disabled={true}
+                                                            value={cepInfo.street ? cepInfo.street : ""}
+                                                        />
+                                                    </div>
+
                                                     <div>
-                                                        <Label htmlFor="card_name" className="text-sm font-medium text-gray-700">
+                                                        <Label htmlFor="card_name" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                             Nome do cartão{" "}
                                                             {errors.card_name && (
                                                                 <span className="text-red-500 text-xs">
@@ -438,7 +489,7 @@ export default function Settings() {
                                                         <Input
                                                             id="card_name"
                                                             placeholder="Nome impresso no cartão"
-                                                            className={`mt-1 ${errors.card_name ? "border-red-500" : ""}`}
+                                                            className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.card_name ? "border-red-500" : ""}`}
                                                             {...register("card_name", {
                                                                 required: "Nome do cartão é obrigatório",
                                                                 pattern: {
@@ -450,7 +501,7 @@ export default function Settings() {
                                                     </div>
 
                                                     <div>
-                                                        <Label htmlFor="card_number" className="text-sm font-medium text-gray-700">
+                                                        <Label htmlFor="card_number" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                             Número do cartão{" "}
                                                             {errors.card_number && (
                                                                 <span className="text-red-500 text-xs">({errors.card_number.message as string})</span>
@@ -459,7 +510,7 @@ export default function Settings() {
                                                         <Input
                                                             id="card_number"
                                                             placeholder="1234 5678 9012 3456"
-                                                            className={`mt-1 ${errors.card_number ? "border-red-500" : ""}`}
+                                                            className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.card_number ? "border-red-500" : ""}`}
                                                             maxLength={19} // inclui os espaços
                                                             {...register("card_number", {
                                                                 required: "Número do cartão é obrigatório",
@@ -482,7 +533,7 @@ export default function Settings() {
 
                                                     <div className="w-full flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4">
                                                         <div className="w-full">
-                                                            <Label htmlFor="card_cvv" className="text-sm font-medium text-gray-700">
+                                                            <Label htmlFor="card_cvv" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                                 CVV{" "}
                                                                 {errors.card_cvv && (
                                                                     <span className="text-red-500 text-xs">({errors.card_cvv.message as string})</span>
@@ -491,7 +542,7 @@ export default function Settings() {
                                                             <Input
                                                                 id="card_cvv"
                                                                 placeholder="CVV"
-                                                                className={`mt-1 ${errors.card_cvv ? "border-red-500" : ""}`}
+                                                                className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.card_cvv ? "border-red-500" : ""}`}
                                                                 maxLength={3}
                                                                 {...register("card_cvv", {
                                                                     required: "CVV é obrigatório",
@@ -506,7 +557,7 @@ export default function Settings() {
                                                         </div>
 
                                                         <div className="w-full">
-                                                            <Label htmlFor="card_val" className="text-sm font-medium text-gray-700">
+                                                            <Label htmlFor="card_val" className="text-sm font-medium text-gray-700 dark:text-zinc-400">
                                                                 Validade (MM/AA){" "}
                                                                 {errors.card_val && (
                                                                     <span className="text-red-500 text-xs">({errors.card_val.message as string})</span>
@@ -515,7 +566,7 @@ export default function Settings() {
                                                             <Input
                                                                 id="card_val"
                                                                 placeholder="MM/AA"
-                                                                className={`mt-1 ${errors.card_val ? "border-red-500" : ""}`}
+                                                                className={`mt-1 bg-gray-50 dark:bg-zinc-800/40 ${errors.card_val ? "border-red-500" : ""}`}
                                                                 maxLength={5}
                                                                 {...register("card_val", {
                                                                     required: "Campo obrigatório",
@@ -544,99 +595,49 @@ export default function Settings() {
                                             Voltar
                                         </Button>
 
-                                        <Button type="submit" className="px-6 font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
+                                        <Button type="submit" className="px-6 font-semibold bg-gray-50 dark:bg-zinc-800/40 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/20 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
                                             Proxima
                                         </Button>
                                     </div>
                                 </form>
-
-                                {/* Payment Method Section */}
-                                {/* <div className="bg-white rounded-lg border">
-                                    <div
-                                        className="flex items-center justify-between p-6 cursor-pointer"
-                                        onClick={() => setPaymentMethodExpanded(!paymentMethodExpanded)}
-                                    >
-                                        <div>
-                                            <h2 className="text-lg font-semibold text-gray-900">Forma de Pagamento</h2>
-                                            <p className="text-sm text-gray-500">Selecione a melhor forma de pagar</p>
-                                        </div>
-                                        {paymentMethodExpanded ? (
-                                            <ChevronUp className="w-5 h-5 text-gray-400" />
-                                        ) : (
-                                            <ChevronDown className="w-5 h-5 text-gray-400" />
-                                        )}
-                                    </div>
-
-                                    {paymentMethodExpanded && (
-                                        <div className="px-6 pb-6">
-                                            <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
-                                                <div className="flex items-center space-x-3 p-4 border rounded-lg">
-                                                    <RadioGroupItem value="pix" id="pix" />
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-6 bg-teal-500 rounded flex items-center justify-center">
-                                                                <span className="text-white text-xs font-bold">₽</span>
-                                                            </div>
-                                                            <Label htmlFor="pix" className="font-medium">
-                                                                Pix
-                                                            </Label>
-                                                        </div>
-                                                        <p className="text-sm text-gray-500 mt-1">O pagamento será aprovado em instantes.</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-center space-x-3 p-4 border rounded-lg">
-                                                    <RadioGroupItem value="cards" id="cards" />
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <CreditCard className="w-5 h-5 text-gray-600" />
-                                                            <Label htmlFor="cards" className="font-medium">
-                                                                Cartões
-                                                            </Label>
-                                                        </div>
-                                                        <p className="text-sm text-gray-500 mt-1">VISA, MasterCard, AMEX, Elo</p>
-                                                    </div>
-                                                </div>
-                                            </RadioGroup>
-                                        </div>
-                                    )}
-                                </div> */}
                             </div>
 
                             {/* Right Column - Order Summary */}
                             <div className="mt-6 lg:col-span-1 lg:mt-17">
                                 <Card className="sticky top-8">
-                                    <CardContent className="p-6">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Detalhes da sua compra</h3>
-                                        <p className="text-sm text-gray-600 mb-6">
-                                            Confirme os produtos, quantidade e valores de cada um dos itens que você selecionou
-                                        </p>
+                                    <CardContent>
+                                        <div>
+                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-zinc-200">Detalhes da sua compra</h3>
+                                            <p className="text-sm text-gray-600 dark:text-zinc-400 mb-6">
+                                                Confirme os produtos, quantidade e valores de cada um dos itens que você selecionou
+                                            </p>
+                                        </div>
 
                                         <div className="mb-6">
-                                            <h4 className="font-medium text-gray-900 mb-4">Lista de itens:</h4>
+                                            <h4 className="font-medium text-gray-900 dark:text-zinc-200 mb-4">Lista de itens:</h4>
 
-                                            <div className="bg-gray-50 rounded-lg p-4">
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <div>
-                                                        <h5 className="font-medium text-gray-900">{planID === "Plano 0" ? "Plano básico" : planID === "Plano 1" ? "Plano MEI" : planID === "Plano 2" ? "Plano LTDA" : "Não selecionado"}</h5>
-                                                        <p className="text-sm text-gray-600">Tipo</p>
-                                                        <p className="text-sm text-gray-600">Valor Total</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <div className="h-6"></div>
-                                                        <p className="text-sm text-gray-900">Mensalidade</p>
-                                                        <p className="text-sm text-gray-900 font-medium">{planID === "Plano 0" ? "Gratuito" : planID === "Plano 1" ? "RS$ 19,99" : planID === "Plano 2" ? "R$ 29,99" : "Não selecionado"}</p>
+                                            <div className="bg-gray-50 dark:bg-zinc-800/40 border border-zinc-500/20 rounded-lg p-4">
+                                                <div className="flex flex-col">
+                                                    <h5 className="font-medium text-gray-900 dark:text-zinc-200">{planID === "Plano 1" ? "Plano Individual" : planID === "Plano 2" ? "Plano Profissional" : planID === "Plano 3" ? "Plano Escala" : "Não selecionado"}</h5>
+                                                    <div className="w-full h-[1.5px] rounded-full bg-zinc-500/20 mt-2"></div>
+                                                    <div className="flex justify-between items-start mt-2">
+                                                        <div>
+                                                            <p className="text-sm text-gray-600 dark:text-zinc-400">Tipo</p>
+                                                            <p className="text-sm text-gray-600 dark:text-zinc-400">Valor Total</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-sm text-gray-900 dark:text-zinc-200">Mensalidade</p>
+                                                            <p className="text-sm text-gray-900 dark:text-zinc-200 font-medium">{planID === "Plano 1" ? "R$ 49,00" : planID === "Plano 2" ? "R$ 99,00" : planID === "Plano 3" ? "R$ 199,00" : "Não selecionado"}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="space-y-3 border-t pt-4">
-                                            <div className="flex justify-between">
-                                            </div>
+                                        <div className="space-y-3">
                                             <div className="flex justify-between text-lg font-semibold">
                                                 <span>Total</span>
-                                                <span>{planID === "Plano 0" ? "Gratuito" : planID === "Plano 1" ? "RS$ 19,99" : planID === "Plano 2" ? "R$ 29,99" : "Não selecionado"}</span>
+                                                <span>{planID === "Plano 1" ? "R$ 49,00" : planID === "Plano 2" ? "R$ 99,00" : planID === "Plano 3" ? "R$ 199,00" : "Não selecionado"}</span>
                                             </div>
                                         </div>
                                     </CardContent>
@@ -645,6 +646,13 @@ export default function Settings() {
                         </div>
                     </div>
                 </div>
+
+                {
+                    loading ?
+                        <div className="absolute flex justify-center items-center right-0 w-full h-dvh bg-zinc-950/60 z-20">
+                            <Loader2 className="animate-spin opacity-70" />
+                        </div> : ""
+                }
             </SidebarInset>
         </SidebarProvider>
     )

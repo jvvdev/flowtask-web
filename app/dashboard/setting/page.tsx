@@ -14,7 +14,7 @@ import {
 } from "@/components/sidebar";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
-import { ALargeSmall, Handshake, Undo2, UserCog } from "lucide-react";
+import { ALargeSmall, Handshake, ScrollText, Undo2, UserCog } from "lucide-react";
 import { useEffect, useState } from "react";
 import Subscriptions from "./components/Subscriptions";
 import { AccountSettings } from "./components/AccountSettings";
@@ -24,16 +24,18 @@ import { routes } from "@/api/routes";
 import axios from "axios";
 import { Console } from "console";
 import { NotifyDropdown } from "@/components/notifyDropdown";
+import { SubscriptionsHistory } from "./components/SubscriptonsHistory";
 
 interface UserData {
   name: string;
   email: string;
   avatar: string;
+  subscription_id: string;
 }
 
 export default function Settings() {
   const [currentTab, setCurrentTab] = useState(0)
-  const [data, setData] = useState<UserData>({ name: "", email: "", avatar: "" });
+  const [data, setData] = useState<UserData>({ name: "", email: "", avatar: "", subscription_id: "" });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export default function Settings() {
 
       await axios.get(routes.getUser + token).then((response) => {
         setData(response.data);
+        console.log(response.data)
         authService.setUserData(response.data);
         setLoading(false)
       }).catch((err) => {
@@ -87,7 +90,7 @@ export default function Settings() {
 
           <div className="flex justify-betweenh-full w-full gap-4">
 
-            <div className={`${currentTab === 0 ? "w-full" : "hidden md:block"} md:w-[40%] xl:w-[25%]`}>
+            <div className={`${currentTab === 0 ? "w-full" : "hidden md:block"} md:w-[40%] xl:w-[25%] 2xl:w-[20%]`}>
               <div className="space-y-1">
                 <h1 className="text-2xl font-semibold">Configurações</h1>
                 <p className="text-sm text-muted-foreground">
@@ -130,9 +133,13 @@ export default function Settings() {
                 </div>
               </div>
 
-              <button onClick={() => setCurrentTab(1)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-lg border border-b-0 ${currentTab === 1 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:hover:bg-zinc-700/40 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
+              <button onClick={() => setCurrentTab(1)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-t-lg border border-b-0 ${currentTab === 1 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:hover:bg-zinc-700/40 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
                 <Handshake className="p-1.5 bg-green-600/70 text-zinc-50 rounded-md" size={32} />
                 <p className="text-md font-semibold">Assinaturas</p>
+              </button>
+              <button onClick={() => setCurrentTab(4)} className={`w-full p-2 flex items-center gap-2 rounded-b-lg border border-b-0 ${currentTab === 4 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:hover:bg-zinc-700/40 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
+                <ScrollText className="p-1.5 bg-green-600/70 text-zinc-50 rounded-md" size={32} />
+                <p className="text-md font-semibold">Histórico</p>
               </button>
 
               <button onClick={() => setCurrentTab(2)} className={`w-full mt-4 p-2 flex items-center gap-2 rounded-t-lg border border-b-0 ${currentTab === 2 ? 'bg-blue-500/70 text-zinc-50' : 'bg-zinc-200/70 hover:bg-zinc-200 text-zinc-700 dark:bg-zinc-800/70 dark:hover:bg-zinc-700/40 dark:border-zinc-200/5 dark:text-zinc-50/80'} cursor-pointer duration-200`}>
@@ -145,10 +152,11 @@ export default function Settings() {
               </button>
             </div>
 
-            <div className={`${currentTab === 0 ? "hidden" : "block"} w-full md:w-[60%] lg:w-[75%] md:border-l md:pl-4`}>
+            <div className={`${currentTab === 0 ? "hidden" : "block"} w-full md:w-[60%] lg:w-[75%] 2xl:w-[80%] md:border-l md:pl-4`}>
               {currentTab === 1 && <Subscriptions />}
-              {currentTab === 2 && <AccountSettings />}
+              {currentTab === 2 && <AccountSettings name={data.name} email={data.email}/>}
               {currentTab === 3 && <Preferences />}
+              {currentTab === 4 && <SubscriptionsHistory subscription_id={data.subscription_id}/>}
             </div>
 
             <Undo2 className={`${currentTab === 0 ? "hidden" : "block md:hidden"} absolute left-4 top-22`} onClick={() => setCurrentTab(0)} />

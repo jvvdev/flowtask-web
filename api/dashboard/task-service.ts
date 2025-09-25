@@ -30,6 +30,8 @@ class TaskService {
                 }
             );
 
+            window.location.reload();
+
             return res.data; // devolve o que a API respondeu
         } catch (err) {
             console.error("Erro ao criar task:", err);

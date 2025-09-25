@@ -16,12 +16,14 @@ import {
     Check,
     ClipboardList,
     Ellipsis,
+    FolderKanban,
     Loader2,
     MessageCircleMore,
     Pencil,
     Plus,
     Trash2,
     TriangleAlert,
+    Users,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover"
@@ -276,7 +278,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                                 }}
                                 value={searchQuery}
                                 placeholder="Pesquisar pelo nome"
-                                className="peer min-w-40 ps-9 bg-background bg-gradient-to-br from-accent/60 to-accent"
+                                className="peer min-w-40 ps-9 border bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30"
                             />
                             <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
                                 <RiSearch2Line size={20} aria-hidden="true" />
@@ -291,7 +293,7 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                 <div className="flex gap-2 items-center">
                     {selectedTask != "0" && (
                         <div className="flex gap-2">
-                            <CommentView taskID={selectedTask} taskData={selectedTaskData}/>
+                            <CommentView taskID={selectedTask} taskData={selectedTaskData} />
 
                             <AlertDialog>
                                 <AlertDialogTrigger className="p-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-yellow-500/30 border border-zinc-500/30 dark:hover:border-yellow-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
@@ -541,8 +543,10 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                         </DndContext>
                     </div>
                 ) : (
-                    <div className="w-full flex items-center justify-center mt-10 font-semibold">
-                        Não foi encontrado nenhum kanban neste projeto.
+                    <div className="flex flex-col items-center justify-center mt-40 h-full text-center">
+                        <FolderKanban size={40} className="text-muted-foreground mb-2" />
+                        <h3 className="text-lg font-medium">Nenhum kanban encontrado</h3>
+                        <p className="text-muted-foreground">Crie um na parte superior direita para visualizar os kanbans aqui.</p>
                     </div>
                 )
             ) : filter == "list" ? (
@@ -811,7 +815,7 @@ function ListHeader({ taskID, name }: { taskID: number; name: string }) {
             style={style}
             {...attributes}
             {...listeners}
-            className={`relative h-9 ${name == "Descrição" ? "w-105" : name == "Status" ? "w-25" : name == "Prioridade" ? "w-25" : name == "Comentários" ? "w-28" : name == "Criado em" ? "w-35" : "w-40"} select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg`}
+            className={`relative h-9 ${name == "Descrição" ? "w-105" : name == "Status" ? "w-25" : name == "Prioridade" ? "w-25" : name == "Comentários" ? "w-28" : name == "Criado em" ? "w-35" : "w-40"} select-none border-y bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg`}
         >
             <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500">
                 {name == "Título" ? (

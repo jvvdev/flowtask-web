@@ -12,6 +12,7 @@ class MemberService {
         await axios.post(routes.inviteMember, {
             email: data.email,
             id_group: actualProject.id_group,
+            type: "invite"
         }, {
             headers: {
                 authToken: session_id

@@ -57,5 +57,6 @@ export const routes = {
 
     // Plan Routes
     createCustomer: apiRoute + "/create-customer",
-    buyPlan: apiRoute + "/buy-plan"
+    buyPlan: apiRoute + "/buy-plan",
+    getPlans: apiRoute + "/subscriptions/"
 }

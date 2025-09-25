@@ -10,6 +10,7 @@ import { authService } from "@/api/auth-service";
 import { teamService } from "@/api/dashboard/team-service";
 import { routes } from "@/api/routes";
 import { get } from "http";
+import { Loader2, Users } from "lucide-react";
 
 // Etiquettes data for calendar filtering
 export const etiquettes = [
@@ -60,20 +61,37 @@ const daysUntilNextSunday = getDaysUntilNextSunday(currentDate);
 export default function Component() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const { isColorVisible } = useCalendarContext();
+  const [notActiveGroup, setNotActiveGroup] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function getData() {
       const sessionId = await authService.getToken();
-      let activeGroup = await teamService.getTeamByUser();
+      const actualGroupRaw = await teamService.getTeamByUser();
+      let actualGroup: { id_group: string } | null = null;
+      if (actualGroupRaw) {
+        try {
+          actualGroup = JSON.parse(actualGroupRaw);
+          setLoading(false)
+        } catch {
+          actualGroup = null;
+          setLoading(false)
+        }
+      } else {
+        setNotActiveGroup(true);
+        setLoading(false)
+      }
+      if (!actualGroup) return;
 
-      activeGroup = JSON.parse(activeGroup as string)
+      setLoading(true)
 
-      axios.get(routes.getTasksByGroup + activeGroup.id_group, {
+      axios.get(routes.getTasksByGroup + actualGroup.id_group, {
         headers: {
           authToken: sessionId,
         },
       }).then((response) => {
         setEvents(response.data.data);
+        setLoading(false)
       }).catch((error) => {
         console.error("Error fetching tasks:", error);
       });
@@ -104,12 +122,20 @@ export default function Component() {
   };
 
   return (
-    <EventCalendar
-      events={visibleEvents}
-      onEventAdd={handleEventAdd}
-      onEventUpdate={handleEventUpdate}
-      onEventDelete={handleEventDelete}
-      initialView="Semana"
-    />
+    loading ? <div className="w-full h-full flex items-center justify-center opacity-50 gap-1">
+            <Loader2 className="animate-spin"/>
+            Carregando...
+        </div> : notActiveGroup ?
+      <div className="flex flex-col items-center justify-center h-full text-center">
+        <Users size={40} className="text-muted-foreground mb-2" />
+        <h3 className="text-lg font-medium">Nenhum grupo ativo encontrado</h3>
+        <p className="text-muted-foreground">Selecione um grupo para acessar essa página.</p>
+      </div> : <EventCalendar
+        events={visibleEvents}
+        onEventAdd={handleEventAdd}
+        onEventUpdate={handleEventUpdate}
+        onEventDelete={handleEventDelete}
+        initialView="Semana"
+      />
   );
 }

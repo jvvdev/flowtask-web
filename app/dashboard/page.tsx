@@ -1,8 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "FlowTask - Dashboard",
-};
+'use client'
 
 import {
   Breadcrumb,
@@ -25,8 +21,37 @@ import { ListLogs } from "./components/listLogs";
 import { ChartOverHeat } from "./components/chartOverHeat";
 import { ShortCutsWidget } from "./components/shortCuts";
 import { MemberOverHeat } from "./components/memberOverHeat";
+import { teamService } from "@/api/dashboard/team-service";
+import { authService } from "@/api/auth-service";
+import { useEffect, useState } from "react";
+import { Loader2, Users } from "lucide-react";
 
 export default function Page() {
+  const [notActiveGroup, setNotActiveGroup] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function getData() {
+      const sessionId = await authService.getToken();
+      const actualGroupRaw = await teamService.getTeamByUser();
+      let actualGroup: { id_group: string } | null = null;
+      if (actualGroupRaw) {
+        try {
+          actualGroup = JSON.parse(actualGroupRaw);
+          setLoading(false)
+        } catch {
+          actualGroup = null;
+          setLoading(false)
+        }
+      } else {
+        setNotActiveGroup(true);
+        setLoading(false)
+      }
+      if (!actualGroup) return;
+    }
+    getData();
+  }, []);
+
   return (
     <SidebarProvider className="p-2">
       <SiderBarDefault />
@@ -51,39 +76,47 @@ export default function Page() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex flex-col gap-4 lg:gap-6 py-4 lg:py-6">
-          {/* Page intro */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
-              <p className="text-sm text-muted-foreground">
-                Aqui está o panorama da sua empresa. Acompanhe indicadores, organize processos e mantenha tudo sob controle de forma simples e eficiente.
-              </p>
-            </div>
-          </div>
-          <div className="w-full flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-[55%] xl:w-[70%] h-full space-y-4">
-              <InfoCardToTasks />
-
-              <div className="flex flex-col gap-4 w-full">
-                <div className="flex flex-col xl:flex-row justify-between gap-4 h-[48%]">
-                  {/* shortCuts */}
-                  <ShortCutsWidget />
-                  {/* graph tasks */}
-                  <ChartOverHeat />
-                </div>
+        {loading ? <div className="w-full h-full flex items-center justify-center opacity-50 gap-1">
+          <Loader2 className="animate-spin" />
+          Carregando...
+        </div> : notActiveGroup ?
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <Users size={40} className="text-muted-foreground mb-2" />
+            <h3 className="text-lg font-medium">Nenhum grupo ativo encontrado</h3>
+            <p className="text-muted-foreground">Selecione um grupo para acessar essa página.</p>
+          </div> : <div className="flex flex-col gap-4 lg:gap-6 py-4 lg:py-6">
+            {/* Page intro */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
+                <p className="text-sm text-muted-foreground">
+                  Aqui está o panorama da sua empresa. Acompanhe indicadores, organize processos e mantenha tudo sob controle de forma simples e eficiente.
+                </p>
               </div>
-              {/* logs screen */}
-              <ListLogs />
             </div>
+            <div className="w-full flex flex-col sm:flex-row gap-4">
+              <div className="w-full sm:w-[55%] xl:w-[70%] h-full space-y-4">
+                <InfoCardToTasks />
+
+                <div className="flex flex-col gap-4 w-full">
+                  <div className="flex flex-col xl:flex-row justify-between gap-4 h-[48%]">
+                    {/* shortCuts */}
+                    <ShortCutsWidget />
+                    {/* graph tasks */}
+                    <ChartOverHeat />
+                  </div>
+                </div>
+                {/* logs screen */}
+                <ListLogs />
+              </div>
 
 
-            <div className="w-full sm:w-[44%] xl:w-[30%] space-y-4">
-              <MemberOverHeat />
-              <ListProductivity />
+              <div className="w-full sm:w-[44%] xl:w-[30%] space-y-4">
+                <MemberOverHeat />
+                <ListProductivity />
+              </div>
             </div>
-          </div>
-        </div>
+          </div>}
       </SidebarInset>
     </SidebarProvider>
   );

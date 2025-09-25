@@ -20,7 +20,7 @@ import { ProjectList } from "@/components/integrar/projectList";
 import ThemeToggle from "@/components/theme-toggle";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/alert-dialog";
 import { Input } from "@/components/input";
-import { Plus, ALargeSmall, MailSearch, ClipboardClock, ClipboardCheck, ChartPie, TriangleAlert, LoaderCircle, CalendarCheck2, UserCog, MessageCircle } from "lucide-react";
+import { Plus, ALargeSmall, MailSearch, ClipboardClock, ClipboardCheck, ChartPie, TriangleAlert, LoaderCircle, CalendarCheck2, UserCog, MessageCircle, Loader2, Users, FolderKanban, FolderOpenDot } from "lucide-react";
 import { useEffect, useState } from "react";
 import { routes } from "@/api/routes";
 import { authService } from "@/api/auth-service";
@@ -48,27 +48,42 @@ type ProjectForm = {
 export default function Page() {
   const [data, setData] = useState<Project[]>([]);
   const { register, handleSubmit } = useForm<ProjectForm>();
+  const [notActiveGroup, setNotActiveGroup] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function getData() {
       const sessionId = await authService.getToken();
-      const teamRaw = await teamService.getTeamByUser();
-      if (!teamRaw) return;
-      let actualTeam: { id_group: string };
-      try {
-        actualTeam = JSON.parse(teamRaw as string);
-      } catch {
-        return;
+      const actualGroupRaw = await teamService.getTeamByUser();
+      let actualGroup: { id_group: string } | null = null;
+      if (actualGroupRaw) {
+        try {
+          actualGroup = JSON.parse(actualGroupRaw);
+          setLoading(false)
+        } catch {
+          actualGroup = null;
+          setLoading(false)
+        }
+      } else {
+        setNotActiveGroup(true);
+        setLoading(false)
       }
-      if (!actualTeam?.id_group) return;
-      await axios.get(routes.getProjectsDetailsByUser + actualTeam.id_group, {
+      if (!actualGroup) return;
+
+      setLoading(true)
+
+      await axios.get(routes.getProjectsDetailsByUser + actualGroup.id_group, {
         headers: {
           AuthToken: sessionId
         }
       }).then(res => {
         setData(res.data.data)
+        setLoading(false)
       }).catch(err => {
-        console.error(err)
+        console.error(err.response.data.message)
+        if (err.response.data.message == "Projetos não encontrados") {
+          setLoading(false)
+        }
       });
     }
     getData();
@@ -106,73 +121,87 @@ export default function Page() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
-          {/* Page intro */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
-              <p className="text-sm text-muted-foreground">
-                Aqui está uma visão geral dos seus projetos. Gerencie-os ou adicione novos com facilidade!
-              </p>
+        {loading ? <div className="w-full h-full flex items-center justify-center opacity-50 gap-1">
+          <Loader2 className="animate-spin" />
+          Carregando...
+        </div> : notActiveGroup ?
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <Users size={40} className="text-muted-foreground mb-2" />
+            <h3 className="text-lg font-medium">Nenhum grupo ativo encontrado</h3>
+            <p className="text-muted-foreground">Selecione um grupo para acessar essa página.</p>
+          </div> : <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
+            {/* Page intro */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-2xl font-semibold">Olá, Keith!</h1>
+                <p className="text-sm text-muted-foreground">
+                  Aqui está uma visão geral dos seus projetos. Gerencie-os ou adicione novos com facilidade!
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger
+                  className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
+                >
+                  <Plus className="size-5" />
+                  <span className="hidden sm:block">Adicionar projeto</span>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Adicionar projeto</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Aqui você pode adicionar novos projetos para gerenciar.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+
+                  <form onSubmit={handleSubmit(handleCreateProject)}>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
+                        <Input
+                          placeholder="Digite aqui"
+                          className="mb-2"
+                          {...register("name")}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Resumo</p>
+                        <Input
+                          placeholder="Digite aqui"
+                          className="mb-2"
+                          {...register("resume")}
+                        />
+                      </div>
+                    </div>
+
+                    <AlertDialogFooter className="mt-6">
+                      <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                      >
+                        Cancelar
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        type="submit"
+                        className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                      >
+                        Confirmar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </form>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
-            <AlertDialog>
-              <AlertDialogTrigger
-                className="p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/15 dark:bg-zinc-200 hover:bg-zinc-500/20 dark:hover:bg-zinc-300/90 border border-zinc-500/20 text-zinc-600 dark:text-zinc-900/90 cursor-pointer"
-              >
-                <Plus className="size-5" />
-                <span className="hidden sm:block">Adicionar projeto</span>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Adicionar projeto</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Aqui você pode adicionar novos projetos para gerenciar.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
 
-                <form onSubmit={handleSubmit(handleCreateProject)}>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Nome</p>
-                      <Input
-                        placeholder="Digite aqui"
-                        className="mb-2"
-                        {...register("name")}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Resumo</p>
-                      <Input
-                        placeholder="Digite aqui"
-                        className="mb-2"
-                        {...register("resume")}
-                      />
-                    </div>
-                  </div>
+            {data.length === 0 ? <div className="flex flex-col items-center justify-center h-full text-center">
+              <FolderOpenDot size={40} className="text-muted-foreground mb-2" />
+              <h3 className="text-lg font-medium">Nenhum projeto encontrado</h3>
+              <p className="text-muted-foreground">Crie um na parte superior direita para visualizar os projetos aqui.</p>
+            </div> : <div className="space-y-4">
+              {/* info card */}
+              <InfoCardToProjects />
 
-                  <AlertDialogFooter className="mt-6">
-                    <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
-                    >
-                      Cancelar
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      type="submit"
-                      className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
-                    >
-                      Confirmar
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </form>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-
-          {/* info card */}
-          <InfoCardToProjects />
-
-          {/* project list */}
-          <ProjectList data={data} setData={setData} />
-        </div>
+              {/* project list */}
+              <ProjectList data={data} setData={setData} />
+            </div>}
+          </div>}
       </SidebarInset>
     </SidebarProvider>
   );

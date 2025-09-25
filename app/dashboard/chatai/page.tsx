@@ -23,8 +23,6 @@ import React, {  } from "react";
 import { IASection } from "@/components/integrar/chatIA";
 
 export default function ChatAI() {
-    
-
     return (
         <SidebarProvider className="p-2">
             <SiderBarDefault />

@@ -85,7 +85,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                     <Input
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Pesquisar pelo nome"
-                        className="peer min-w-40 ps-9 bg-background bg-gradient-to-br from-accent/60 to-accent"
+                        className="peer min-w-40 ps-9 bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30"
                     />
                     <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
                         <RiSearch2Line size={20} aria-hidden="true" />
@@ -98,9 +98,9 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                             <div className="flex gap-2">
                                 <AlertDialog>
                                     <AlertDialogTrigger
-                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-green-600/80 dark:bg-green-500/20 hover:bg-green-700/80 dark:hover:bg-green-500/30 border border-green-500/20 text-white dark:text-green-500 cursor-pointer"
+                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
                                     >
-                                        <ArchiveRestore className="size-5" />
+                                        <ArchiveRestore className="size-5 text-green-500" />
                                         <span className="hidden sm:block">Abrir projeto</span>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
@@ -119,9 +119,9 @@ export function ProjectList({ data, setData }: ProjectListProps) {
 
                                 <AlertDialog>
                                     <AlertDialogTrigger
-                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-red-700/80 dark:bg-red-500/20 hover:bg-red-700/90 dark:hover:bg-red-500/30 border border-red-500/20 text-white dark:text-red-500 cursor-pointer"
+                                        className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
                                     >
-                                        <Trash2 className="size-5" />
+                                        <Trash2 className="size-5 text-red-500" />
                                         <span className="hidden sm:block">Deletar</span>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
@@ -143,7 +143,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
 
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="cursor-pointer bg-zinc-400/40 hover:bg-zinc-400/30">
+                            <Button variant="outline" className="cursor-pointer font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-zinc-500/30 border border-zinc-500/40 dark:hover:border-zinc-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 duration-200">
                                 <RiFilter3Line
                                     className="size-5 -ms-1.5 text-muted-foreground/90"
                                     size={20}
@@ -168,21 +168,21 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                 <Table className="min-w-[1565px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative h-9 select-none border-y bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
                             </TableHead>
-                            <TableHead className="relative w-180 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative w-180 h-9 select-none border-y bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><MessageCircle size={18} /> Resumo</p>
                             </TableHead>
-                            <TableHead className="relative w-40 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative w-40 h-9 select-none border-y bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ChartPie size={18} /> Status</p>
                             </TableHead>
-                            <TableHead className="relative w-40 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            <TableHead className="relative w-40 h-9 select-none border-y bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><LoaderCircle size={18} /> Progresso</p>
                             </TableHead>
-                            <TableHead className="relative w-55 h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                            {/* <TableHead className="relative w-55 h-9 select-none border-y bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><UserCog size={18} /> Responsável</p>
-                            </TableHead>
+                            </TableHead> */}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -236,9 +236,9 @@ export function ProjectList({ data, setData }: ProjectListProps) {
                                                 <span className="text-zinc-600 dark:text-zinc-400 ms-1">%</span>
                                             </span>
                                         </TableCell>
-                                        <TableCell>
+                                        {/* <TableCell>
                                             <strong className="overflow-hidden whitespace-nowrap text-ellipsis">{item.project_owner}</strong>
-                                        </TableCell>
+                                        </TableCell> */}
                                     </TableRow>
                                 );
                             })
@@ -250,7 +250,7 @@ export function ProjectList({ data, setData }: ProjectListProps) {
             {
                 isLoading ? <div className="w-full flex justify-center items-center mt-5">
                     <p className="text-center text-zinc-500 font-semibold dark:text-zinc-400">Carregando...</p>
-                </div> : filteredData.length > 0 ?
+                </div> : totalPages === 1 ? "" : filteredData.length > 0 ?
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
                         <p
                             className="flex-1 whitespace-nowrap text-sm text-muted-foreground"

@@ -2,6 +2,7 @@ import axios from "axios"
 import { authService } from "../auth-service"
 import { routes } from "../routes"
 import { Phone } from "lucide-react"
+import { deleteCookie } from "cookies-next/client"
 
 class PlanService {
     async createCustomer(data: any) {
@@ -47,6 +48,8 @@ class PlanService {
                     authToken: sessionID
                 },
             })
+
+            deleteCookie("userData")
 
             return res.data
         } catch (err) {

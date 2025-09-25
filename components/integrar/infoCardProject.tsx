@@ -26,7 +26,7 @@ const List = [
 
 export function InfoCardToProjects() {
     return (
-        <div className="grid grid-cols-2 min-[1200px]:grid-cols-4 border border-border rounded-xl bg-gradient-to-br from-sidebar/60 to-sidebar">
+        <div className="grid grid-cols-2 min-[1200px]:grid-cols-4 border bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 rounded-xl bg-gradient-to-br from-sidebar/60 to-sidebar">
             {
                 List.map((item) => (
                     <div key={item.id} className="relative p-4 lg:p-5 group before:absolute before:inset-y-8 before:right-0 before:w-px before:bg-gradient-to-b before:from-input/30 before:via-input before:to-input/30 last:before:hidden">

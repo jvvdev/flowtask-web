@@ -47,7 +47,7 @@ class ProjectService {
                     authToken: sessionId
                 }
             }).then(res => {
-                
+                window.location.reload();
             }).catch(err => {
                 console.error(err)
             })
@@ -63,7 +63,7 @@ class ProjectService {
                 authToken: sessionId
             },
             data: {
-                id_task: id
+                project_id: id
             }
         }).then(res => {
             window.location.reload();

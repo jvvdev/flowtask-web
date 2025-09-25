@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
         }
 
         // if (req.url.includes('/dashboard')) {
-        //     const activeTeam = await getCookie('activeTeam', { req, res });
+        //     const activeTeam = await getCookie('allTeams', { req, res });
         //     if (!activeTeam) {
         //         return NextResponse.rewrite(new URL('/dashboard/notGroup', req.url))
         //     }
