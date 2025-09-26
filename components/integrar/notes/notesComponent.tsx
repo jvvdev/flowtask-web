@@ -81,20 +81,46 @@ export function NotesComponent() {
         getData()
     }, []);
 
+type EditorJsHeaderData = { text?: string; level?: number };
+    type EditorJsParagraphData = { text?: string };
+    type EditorJsQuoteData = { text?: string; caption?: string };
+    type EditorJsListItem = { content?: string; items?: Array<{ content?: string }> } | string;
+    type EditorJsListData = { style?: 'ordered' | 'unordered'; items?: EditorJsListItem[] };
+    type EditorJsChecklistItem = { text?: string; checked?: boolean };
+    type EditorJsChecklistData = { items?: EditorJsChecklistItem[] };
+    type EditorJsCodeData = { code?: string };
+    type EditorJsTableData = { content?: string[][] };
+    type EditorJsImageData = { file?: { url?: string }; caption?: string };
+    type EditorJsBlock =
+        | { type: 'paragraph'; data: EditorJsParagraphData }
+        | { type: 'header'; data: EditorJsHeaderData }
+        | { type: 'quote'; data: EditorJsQuoteData }
+        | { type: 'list'; data: EditorJsListData }
+        | { type: 'checklist'; data: EditorJsChecklistData }
+        | { type: 'code'; data: EditorJsCodeData }
+        | { type: 'table'; data: EditorJsTableData }
+        | { type: 'delimiter'; data: Record<string, unknown> }
+        | { type: 'image'; data: EditorJsImageData }
+        | { type: string; data: Record<string, unknown> };
+
     function renderEditorJsContent(noteText: string): string {
         if (!noteText) return "Nenhuma nota salva, clique no ícone de lápis para editar.";
 
         try {
-            const parsedData = JSON.parse(noteText);
+const parsedData = JSON.parse(noteText) as { blocks?: EditorJsBlock[] };
             if (!parsedData.blocks) return "";
 
-            const renderBlock = (block: any): string => {
+const renderBlock = (block: EditorJsBlock): string => {
                 const styleLinks = (text: string) =>
                     text.replace(/<a\s+href="(.*?)">(.*?)<\/a>/g, `<a href="$1" class="text-blue-600 underline">$2</a>`);
 
                 switch (block.type) {
                     case "paragraph":
-                        return `<p class="mb-2">${styleLinks(block.data.text || "")}</p>`;
+                        {
+                            const pData = (block as Extract<EditorJsBlock, { type: 'paragraph' }>).data;
+                            const pText = typeof pData.text === "string" ? pData.text : "";
+                            return `<p class="mb-2">${styleLinks(pText)}</p>`;
+                        }
                     case "header":
                         const headerClasses: Record<number, string> = {
                             1: "text-3xl font-bold mb-4",
@@ -104,37 +130,58 @@ export function NotesComponent() {
                             5: "text-base mb-2",
                             6: "text-sm mb-2",
                         };
-                        const level = block.data.level || 1;
-                        return `<h${level} class="${headerClasses[level]}">${styleLinks(block.data.text || "")}</h${level}>`;
+                        {
+                            const hData = (block as Extract<EditorJsBlock, { type: 'header' }>).data;
+                            const level = typeof hData.level === "number" ? hData.level : 1;
+                            const hText = typeof hData.text === "string" ? hData.text : "";
+                            return `<h${level} class="${headerClasses[level]}">${styleLinks(hText)}</h${level}>`;
+                        }
                     case "quote":
-                        return `<blockquote class="mb-2">${styleLinks(block.data.text || "")}${block.data.caption ? `<footer>${styleLinks(block.data.caption)}</footer>` : ""}</blockquote>`;
+                        {
+                            const qData = (block as Extract<EditorJsBlock, { type: 'quote' }>).data;
+                            const qText = typeof qData.text === "string" ? qData.text : "";
+                            const qCaption = typeof qData.caption === "string" ? qData.caption : "";
+                            return `<blockquote class="mb-2">${styleLinks(qText)}${qCaption ? `<footer>${styleLinks(qCaption)}</footer>` : ""}</blockquote>`;
+                        }
                     case "list":
                         const listTag = block.data.style === "ordered" ? "ol" : "ul";
-                        const listItems = (block.data.items || []).map((item: any) => {
-                            const subItems = item.items && item.items.length
-                                ? `<ul>${item.items.map((sub: any) => `<li class="mb-1">${styleLinks(sub.content || "")}</li>`).join("")}</ul>`
+const listItems = ((block.data as EditorJsListData).items || []).map((item) => {
+const subItems = (typeof item !== 'string' && item.items && item.items.length)
+                                ? `<ul>${(item.items as Array<{ content?: string }>).map((sub) => '<li class="mb-1">' + styleLinks(sub?.content || '') + '</li>').join('')}</ul>`
                                 : "";
-                            return `<li class="mb-1">${styleLinks(item.content || "")}${subItems}</li>`;
+if (typeof item === 'string') {
+                            return `<li class="mb-1">${styleLinks(item)}</li>`;
+                        }
+                        return `<li class="mb-1">${styleLinks(item.content || '')}${subItems}</li>`;
                         }).join("");
                         return `<${listTag} class="mb-2">${listItems}</${listTag}>`;
                     case "checklist":
-                        const checkItems = (block.data.items || []).map((item: any) =>
+const checkItems = ((block.data as EditorJsChecklistData).items || []).map((item: EditorJsChecklistItem) =>
                             `<li class="mb-1">${item.checked ? "✔️ " : "⬜ "} ${styleLinks(item.text || "")}</li>`
                         ).join("");
                         return `<ul class="mb-2">${checkItems}</ul>`;
                     case "code":
                         return `<pre class="mb-2"><code>${block.data.code || ""}</code></pre>`;
                     case "table":
-                        const tableRows = (block.data.content || []).map((row: any[]) =>
+const tableRows = (((block.data as EditorJsTableData).content) || []).map((row: string[]) =>
                             `<tr>${row.map(cell => `<td class="p-1 border">${styleLinks(cell || "")}</td>`).join("")}</tr>`
                         ).join("");
                         return `<table class="mb-2 border-collapse">${tableRows}</table>`;
                     case "delimiter":
                         return `<hr class="my-2" />`;
                     case "image":
-                        return `<img src="${block.data.file?.url || ""}" alt="${block.data.caption || ""}" class="mb-2" />`;
+                        {
+                            const imgData = (block as Extract<EditorJsBlock, { type: 'image' }>).data;
+                            const url = typeof imgData.file?.url === "string" ? imgData.file.url : "";
+                            const caption = typeof imgData.caption === "string" ? imgData.caption : "";
+                            return `<img src="${url}" alt="${caption}" class="mb-2" />`;
+                        }
                     default:
-                        return `<p class="mb-2">${styleLinks(block.data.text || "")}</p>`;
+                        {
+                            const d = block.data as { text?: unknown };
+                            const dText = typeof d.text === "string" ? d.text : "";
+                            return `<p class="mb-2">${styleLinks(dText)}</p>`;
+                        }
                 }
             };
 

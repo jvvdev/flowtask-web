@@ -60,5 +60,8 @@ export const routes = {
     // Plan Routes
     createCustomer: apiRoute + "/create-customer",
     buyPlan: apiRoute + "/buy-plan",
-    getPlans: apiRoute + "/subscriptions/"
+    getPlans: apiRoute + "/subscriptions/",
+
+    // ChatIa
+    chat_ia_response: apiRoute + "/chat-ia"
 }

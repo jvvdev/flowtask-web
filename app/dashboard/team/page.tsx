@@ -26,8 +26,10 @@ import { memberService } from "@/api/dashboard/member-service";
 import { useEffect, useState } from "react";
 import { teamService } from "@/api/dashboard/team-service";
 
+interface InviteForm { email: string }
+
 export default function Page() {
-  const { register, handleSubmit } = useForm();
+const { register, handleSubmit } = useForm<InviteForm>();
   const [notActiveGroup, setNotActiveGroup] = useState(false)
   const [loading, setLoading] = useState(true)
 
@@ -54,7 +56,7 @@ export default function Page() {
     getData();
   }, []);
 
-  function onSubmit(data: any) {
+function onSubmit(data: InviteForm) {
     memberService.InviteMember(data);
     console.log(data)
   }

@@ -6,10 +6,15 @@ import { RiAddLine } from "@remixicon/react";
 import { ALargeSmall, IdCard, Mail, MessageCircleMore, UserRoundPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-export function AskToJoinGroup() {
-    const {register, handleSubmit} = useForm();
+interface JoinForm {
+    id_group: string;
+    email: string;
+}
 
-    const onSubmit = (data: any) => {
+export function AskToJoinGroup() {
+const {register, handleSubmit} = useForm<JoinForm>();
+
+const onSubmit = (data: JoinForm) => {
         teamService.requestJoin(data);
     }
 

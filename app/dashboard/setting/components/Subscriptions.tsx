@@ -31,7 +31,7 @@ export default function Subscriptions() {
             <p className="flex font-semibold gap-1"><Check />Controle de membros</p>
             <p className="flex font-semibold gap-1"><Check />Controle de tarefas</p>
             <p className="flex font-semibold gap-1"><X />Controle de projetos</p>
-            <p className="flex font-semibold gap-1"><X />Controle de kanban's por projeto</p>
+<p className="flex font-semibold gap-1"><X />Controle de kanban&#39;s por projeto</p>
             <p className="flex font-semibold gap-1"><X />Inteligência artificial própria</p>
             <p className="flex font-semibold gap-1"><X />Acesso total ao painel</p>
           </div>
@@ -51,7 +51,7 @@ export default function Subscriptions() {
             <p className="flex font-semibold gap-1"><Check />Controle de membros</p>
             <p className="flex font-semibold gap-1"><Check />Controle de tarefas</p>
             <p className="flex font-semibold gap-1"><Check />Controle de projetos</p>
-            <p className="flex font-semibold gap-1"><Check />Controle de kanban's por projeto</p>
+<p className="flex font-semibold gap-1"><Check />Controle de kanban&#39;s por projeto</p>
             <p className="flex font-semibold gap-1"><X />Inteligência artificial própria</p>
             <p className="flex font-semibold gap-1"><X />Acesso total ao painel</p>
           </div>
@@ -79,7 +79,7 @@ export default function Subscriptions() {
             <p className="flex font-semibold gap-1"><Check />Controle de membros</p>
             <p className="flex font-semibold gap-1"><Check />Controle de tarefas</p>
             <p className="flex font-semibold gap-1"><Check />Controle de projetos</p>
-            <p className="flex font-semibold gap-1"><Check />Controle de kanban's por projeto</p>
+<p className="flex font-semibold gap-1"><Check />Controle de kanban&#39;s por projeto</p>
             <p className="flex font-semibold gap-1"><Check />Inteligência artificial própria</p>
             <p className="flex font-semibold gap-1"><Check />Acesso total ao painel</p>
           </div>

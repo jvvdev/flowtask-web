@@ -20,13 +20,14 @@ const turndownService = new TurndownService({
  * @param blocks - O array de blocos (JSON) retornado pelo Editor.js.
  * @returns A string final em formato Markdown.
  */
-export function convertEditorJsToMarkdown(blocks: any[]): string {
+export function convertEditorJsToMarkdown(blocks: unknown[]): string {
     if (!blocks || blocks.length === 0) {
         return "";
     }
 
-    // A. JSON para HTML
-    const htmlString = editorJsToHtml.parse(blocks).join('\n');
+// A. JSON para HTML
+const htmlOutput = editorJsToHtml.parse({ blocks } as any);
+const htmlString = Array.isArray(htmlOutput) ? htmlOutput.join('\n') : String(htmlOutput);
 
     // B. HTML para Markdown
     const markdownString = turndownService.turndown(htmlString);

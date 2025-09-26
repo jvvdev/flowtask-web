@@ -72,17 +72,15 @@ export function DraggableEvent({
     }
   };
 
-  // Don't render if this event is being dragged
-  if (isDragging || activeId === `${event.id}-${view}`) {
-    if (isDragging || activeId === `${event.id_task}-${view}`) {
-      return (
-        <div
-          ref={setNodeRef}
-          className="opacity-0"
-          style={{ height: height || "auto" }}
-        />
-      );
-    }
+// Don't render if this event is being dragged
+  if (isDragging || activeId === `${event.id_task}-${view}`) {
+    return (
+      <div
+        ref={setNodeRef}
+        className="opacity-0"
+        style={{ height: height || "auto" }}
+      />
+    );
   }
 
   const style = transform

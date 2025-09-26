@@ -42,13 +42,22 @@ const Projects = [
   { user_id: "", name: "Ana Paula Souza", role: "owner", email: "ana.souza@empresa.com", PendingTasks: 4, TotalTasks: 20 },
 ];
 
+type Member = {
+  user_id: string;
+  name: string;
+  role: string;
+  email: string;
+  PendingTasks: number;
+  TotalTasks: number;
+};
+
 const ITEMS_PER_PAGE = 9;
 
 export function ContactsTables() {
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<typeof Projects>([]);
+const [data, setData] = useState<Member[]>([]);
   const [selectedMember, setSelectedMember] = useState("");
-  const [selectedMemberData, setSelectedMemberData] = useState<any>(null);
+const [selectedMemberData, setSelectedMemberData] = useState<Member | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -57,9 +66,9 @@ export function ContactsTables() {
   useEffect(() => {
     async function getData() {
       const sessionId = await authService.getToken();
-      let actualTeam = await teamService.getTeamByUser();
-      if (!actualTeam) return;
-      actualTeam = JSON.parse(actualTeam as string);
+      const actualTeamRaw = await teamService.getTeamByUser();
+      if (!actualTeamRaw) return;
+      const actualTeam: { id_group: string } = JSON.parse(actualTeamRaw as string);
 
       await axios.get(routes.getMembersByTeam + actualTeam.id_group, {
         headers: {
@@ -208,8 +217,10 @@ export function ContactsTables() {
                     <AlertDialogFooter className="mt-6">
                       <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => {
-                          memberService.DeleteMember(selectedMemberData);
+onClick={() => {
+                          if (selectedMemberData) {
+                            memberService.DeleteMember(selectedMemberData.email);
+                          }
                         }}
                         type="submit"
                         className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
@@ -288,7 +299,7 @@ export function ContactsTables() {
                         className={`border rounded-sm ${selectedMember === item.user_id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
                         onClick={() => {
                           if (selectedMember === item.user_id) setSelectedMember(""), setSelectedMemberData(null);
-                          else setSelectedMember(item.user_id), setSelectedMemberData(item.email);
+else setSelectedMember(item.user_id), setSelectedMemberData(item);
                         }}
                       >
                         <Check className={`${selectedMember === item.user_id ? "block" : "hidden"}`} size={12} />

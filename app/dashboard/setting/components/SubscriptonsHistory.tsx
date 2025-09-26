@@ -47,7 +47,7 @@ export function SubscriptionsHistory({ subscription_id }: { subscription_id: str
         getData()
     }, [])
 
-    function redirectToPayment(data: any) {
+function redirectToPayment(data: dataType) {
         console.log(data)
         window.open(data.subscription_payment_url, "_blank")
     }

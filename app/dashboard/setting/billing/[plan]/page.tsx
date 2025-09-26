@@ -28,6 +28,19 @@ interface UserData {
     avatar: string
 }
 
+interface FormData {
+    name: string;
+    cpf_cnpj: string;
+    email: string;
+    phone: string;
+    cep: string;
+    address_number: string;
+    card_name: string;
+    card_number: string;
+    card_cvv: string;
+    card_val: string;
+}
+
 export default function Settings() {
     const [currentTab, setCurrentTab] = useState(0)
     const [customer_id, setCustomer_id] = useState("")
@@ -43,7 +56,7 @@ export default function Settings() {
     const params = useParams();
     const router = useRouter()
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm()
+const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>()
 
     useEffect(() => {
         if (params.plan === "0") {
@@ -78,7 +91,7 @@ export default function Settings() {
         getData()
     }, [])
 
-    async function onSubmit(data: any) {
+async function onSubmit(data: FormData) {
         if (currentTab === 0) {
             setLoading(true)
             const res = await planService.createCustomer(data)
@@ -145,7 +158,7 @@ export default function Settings() {
 
         let tamanho = cnpj.length - 2;
         let numeros = cnpj.substring(0, tamanho);
-        let digitos = cnpj.substring(tamanho);
+const digitos = cnpj.substring(tamanho);
         let soma = 0;
         let pos = tamanho - 7;
 
@@ -396,8 +409,9 @@ export default function Settings() {
                                                                             const data = await resp.json();
                                                                             setCepInfo({ city: data.city, state: data.state, street: data.street })
                                                                             return true;
-                                                                        } catch (err: any) {
-                                                                            setCepError(err.message || "Erro ao consultar CEP");
+} catch (err: unknown) {
+                                                                            const message = err instanceof Error ? err.message : "Erro ao consultar CEP";
+                                                                            setCepError(message);
                                                                             return "CEP inválido ou não encontrado";
                                                                         } finally {
                                                                             setCepLoading(false);

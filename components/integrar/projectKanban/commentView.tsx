@@ -18,6 +18,7 @@ interface CommentViewProps {
     comment: string;
     commentBy: string;
     createdAt: string;
+    avatar: string
 }
 
 interface userDataProps {
@@ -27,32 +28,54 @@ interface userDataProps {
     avatar: string;
 }
 
-export function CommentView({ taskID, taskData }: { taskID: string; taskData: any }) {
+interface TaskData {
+    title: string;
+    description: string;
+    createdBy: string;
+    status: "Concluída" | "Pendente" | "Em progresso";
+    priority: "0" | "1" | "2";
+    createdAt: string;
+    avatar: string
+}
+
+interface CommentForm {
+    content: string;
+}
+
+export function CommentView({
+    taskID,
+    taskData,
+}: {
+    taskID: string;
+    taskData: TaskData | null;
+}) {
     const [data, setData] = useState<CommentViewProps[]>([]);
     const [userData, setUserData] = useState<userDataProps | null>(null);
-    const { register, handleSubmit, reset } = useForm();
+    const { register, handleSubmit, reset } = useForm<CommentForm>();
 
     useEffect(() => {
         async function getData() {
-            const sessionId = await authService.getToken()
-            let userData = await authService.getUserData()
-            userData = JSON.parse(userData as string)
-            setUserData(userData)
+            const sessionId = await authService.getToken();
+            const userDataString = await authService.getUserData();
+            if (userDataString) {
+                const parsedUser: userDataProps = JSON.parse(userDataString);
+                setUserData(parsedUser);
+            }
 
-            await axios.get(routes.getCommentsByTask + taskID + "/comments", {
-                headers: {
-                    authToken: sessionId
-                }
-            }).then(res => {
-                setData(res.data.data)
-            }).catch(err => {
-                console.error(err)
-                console.log(taskData ? taskData : "não tem")
-            });
+            try {
+                const response = await axios.get<{ data: CommentViewProps[] }>(
+                    routes.getCommentsByTask + taskID + "/comments",
+                    { headers: { authToken: sessionId } }
+                );
+                setData(response.data.data);
+            } catch (err) {
+                console.error(err);
+                console.log(taskData ? taskData : "não tem");
+            }
         }
 
-        getData()
-    }, [])
+        getData();
+    }, [taskID, taskData]); // adicionando as dependências que o React alerta
 
     function formatRelativeTime(date: Date) {
         const now = new Date();
@@ -64,26 +87,25 @@ export function CommentView({ taskID, taskData }: { taskID: string; taskData: an
 
         if (diffSec < 10) return "agora";
         if (diffSec < 60) return `${diffSec} segundos atrás`;
-        if (diffMin < 60) return `${diffMin} ${diffMin == 1 ? "minuto" : "minutos"} atrás`;
-        if (diffHour < 24) return `${diffHour} ${diffHour == 1 ? "hora" : "horas"} atrás`;
+        if (diffMin < 60) return `${diffMin} ${diffMin === 1 ? "minuto" : "minutos"} atrás`;
+        if (diffHour < 24) return `${diffHour} ${diffHour === 1 ? "hora" : "horas"} atrás`;
         if (diffDay === 1) return "ontem";
         return `${date.toLocaleDateString()} ${date.toLocaleTimeString().slice(0, 5)}`;
     }
 
-    async function onSubmit(formData: any) {
+    async function onSubmit(formData: CommentForm) {
         if (formData.content === "") {
-            return toast.error("O comentário não pode estar vazio")
+            return toast.error("O comentário não pode estar vazio");
         }
-
         if (!userData) {
             toast("Você precisa estar logado para comentar", {
                 description: "Atualize a página e tente novamente.",
             });
-            return
+            return;
         }
 
         try {
-            const result = await commentsService.createComment(formData, taskID)
+            await commentsService.createComment(formData, taskID);
 
             toast(`O comentário foi adicionado com sucesso`, {
                 description: format(new Date(), "d 'de' MMM, yyyy"),
@@ -91,21 +113,22 @@ export function CommentView({ taskID, taskData }: { taskID: string; taskData: an
 
             const commentId = crypto.randomUUID();
 
-            setData([...data, {
-                id_comment: commentId,
-                comment: formData.content,
-                commentBy: userData.email,
-                avatar: userData.avatar,
-                createdAt: new Date().toISOString(),
-            }]);
+            setData([
+                ...data,
+                {
+                    id_comment: commentId,
+                    comment: formData.content,
+                    commentBy: userData.email,
+                    avatar: userData.avatar,
+                    createdAt: new Date().toISOString(),
+                },
+            ]);
 
-            reset()
+            reset();
         } catch (err) {
-
             toast("Erro ao adicionar o comentário", {
                 description: "Tente novamente mais tarde.",
             });
-
         }
     }
 
@@ -174,7 +197,7 @@ export function CommentView({ taskID, taskData }: { taskID: string; taskData: an
                         </div>
                         <div className="flex items-center border-b pb-3">
                             <p className="w-40 font-normal">Data de criação</p>
-                            <span className="font-semibold">{formatDate(new Date(taskData?.createdAt), "dd/MM/yyyy 'às' HH:mm")}</span>
+                            <span className="font-semibold">{taskData?.createdAt ? formatDate(new Date(taskData.createdAt), "dd/MM/yyyy 'às' HH:mm") : ""}</span>
                         </div>
                     </div>
 

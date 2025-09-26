@@ -6,8 +6,8 @@ import { toast } from "sonner";
 class MemberService {
     async InviteMember(data: any) {
         const session_id = getCookie("sessionId");
-        let actualProject = getCookie("activeTeam");
-        actualProject = JSON.parse(actualProject as string);
+const actualProjectRaw = getCookie("activeTeam");
+        const actualProject: { id_group: string } | null = actualProjectRaw ? JSON.parse(actualProjectRaw as string) : null;
         if (!actualProject) return;
 
         await axios.post(routes.inviteMember, {
@@ -34,8 +34,8 @@ class MemberService {
 
     async DeleteMember(email: string) {
         const session_id = getCookie("sessionId");
-        let actualProject = getCookie("activeTeam");
-        actualProject = JSON.parse(actualProject as string);
+const actualProjectRaw = getCookie("activeTeam");
+        const actualProject: { id_group: string } | null = actualProjectRaw ? JSON.parse(actualProjectRaw as string) : null;
         if (!actualProject) return;
 
         axios.delete(routes.removeMember, {

@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Check, UserRoundPlus, X } from "lucide-react";
+import { Bell, Check, CircleAlert, UserRoundPlus, X } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
 import { Button } from "./button";
 import { useEffect, useState } from "react";
@@ -9,32 +9,35 @@ import axios from "axios";
 import { routes } from "@/api/routes";
 import { teamService } from "@/api/dashboard/team-service";
 
+interface Notify {
+    id: string;
+    type: 'invite' | 'remove_member' | 'success' | 'accept_invite' | 'reject_invite';
+    title: string;
+    content: string;
+}
+
 export function NotifyDropdown() {
-    const [notifys, setNotifys] = useState<any[]>([])
+    const [notifys, setNotifys] = useState<Notify[]>([]);
 
     useEffect(() => {
         async function getData() {
             const token = await authService.getToken();
-
-            await axios.get(routes.getUser + token).then((response) => {
-                console.log(response.data.notifys)
+            try {
+                const response = await axios.get<{ notifys: Notify[] }>(routes.getUser + token);
                 setNotifys(response.data.notifys);
-            }).catch((err) => {
+            } catch (err) {
                 console.log(err);
-            })
+            }
         }
+        getData();
+    }, []);
 
-        getData()
-    }, [])
-
-    function declineInvite(data: any) {
-        console.log(data)
-        teamService.rejectJoin(data)
+    function declineInvite(data: Notify) {
+        teamService.rejectJoin(data);
     }
 
-    function acceptInvite(data: any) {
-        console.log(data)
-        teamService.acceptJoin(data)
+    function acceptInvite(data: Notify) {
+        teamService.acceptJoin(data);
     }
 
     return (
@@ -59,12 +62,24 @@ export function NotifyDropdown() {
                     {
                         notifys.length === 0 ?
                             <p className="p-2 text-sm text-muted-foreground">Nenhuma notificação encontrada</p>
-                            : notifys.map((item: any) => (
+                            : notifys.map((item: Notify) => (
                                 <DropdownMenuItem key={item.id} className="flex items-center justify-between hover:bg-zinc-50/0 max-w-110">
                                     <div className="flex items-center gap-2">
-                                        <div className="rounded-md p-2.5 bg-purple-500 flex items-center justify-center">
-                                            <UserRoundPlus size={20} className="ml-0.5" />
-                                        </div>
+                                        {
+                                            item.type === "invite" ?
+                                                <div className="rounded-md p-2 bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+                                                    <UserRoundPlus size={24} />
+                                                </div> : item.type === "remove_member" ?
+                                                    <div className="rounded-md p-2 bg-red-600/20 border border-red-600/30 flex items-center justify-center">
+                                                        <X size={24} className="" />
+                                                    </div> : item.type === "success" ? <div className="rounded-md p-2 bg-green-600/20 border border-green-600/30 flex items-center justify-center">
+                                                        <Check size={24} className="" />
+                                                    </div> : item.type === "accept_invite" ? <div className="rounded-md p-2 bg-green-600/20 border border-green-600/30 flex items-center justify-center">
+                                                        <Check size={24} className="" />
+                                                    </div> : item.type === "reject_invite" ? <div className="rounded-md p-2 bg-red-600/20 border border-red-600/30 flex items-center justify-center">
+                                                        <X size={24} className="" />
+                                                    </div> : ""
+                                        }
                                         {/* <img src="https://lh3.googleusercontent.com/a/ACg8ocKTm2agX6z8LVasXnQcAmSCEbjD1Vt45aKhoEDuuFwM6l9WExLqMw=s96-c" alt="" className="h-10 w-10 rounded-full object-cover" /> */}
                                         <div>
                                             <h1 className="text-[15px] font-medium text-foreground">{item.title}</h1>

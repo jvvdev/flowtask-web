@@ -87,7 +87,7 @@ class TeamService {
         }).then((res) => {
             const message = res.data.message;
 
-            toast(message)
+            toast.success("Pedido aceito com sucesso!")
         }).catch((error) => {
             console.log(error)
         })
@@ -106,7 +106,7 @@ class TeamService {
         }).then((res) => {
             const message = res.data.message;
 
-            toast(message)
+            toast.success("Pedido rejeitado com sucesso!")
         }).catch((error) => {
             console.log(error)
         })

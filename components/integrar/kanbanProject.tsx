@@ -293,7 +293,26 @@ export function KanbanProject({ kanbanList, setKanbanList }: KanbanProjectProps)
                 <div className="flex gap-2 items-center">
                     {selectedTask != "0" && (
                         <div className="flex gap-2">
-                            <CommentView taskID={selectedTask} taskData={selectedTaskData} />
+                            <CommentView
+                                taskID={selectedTask}
+                                taskData={
+                                    selectedTaskData
+                                        ? {
+                                              title: selectedTaskData.title,
+                                              description: selectedTaskData.description,
+                                              createdBy: selectedTaskData.createdBy,
+                                              status: selectedTaskData.status as "Concluída" | "Pendente" | "Em progresso",
+                                              priority: (selectedTaskData.priority === 2
+                                                  ? "2"
+                                                  : selectedTaskData.priority === 1
+                                                  ? "1"
+                                                  : "0") as "0" | "1" | "2",
+                                              createdAt: selectedTaskData.createdAt,
+                                              avatar: "",
+                                          }
+                                        : null
+                                }
+                            />
 
                             <AlertDialog>
                                 <AlertDialogTrigger className="p-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-yellow-500/30 border border-zinc-500/30 dark:hover:border-yellow-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">

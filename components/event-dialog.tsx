@@ -249,15 +249,15 @@ export function EventDialog({
     }
   };
 
-  const handleGroupSelect = (value: any) => {
+  const handleGroupSelect = (value: string) => {
     setSelectedOption(value)
   }
 
-  const handlePrioritySelect = (value: any) => {
+  const handlePrioritySelect = (value: string) => {
     setSelectedPriority(value)
   }
 
-  const handleStatusSelect = (value: any) => {
+  const handleStatusSelect = (value: string) => {
     setSelectedStatus(value)
   }
 

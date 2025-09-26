@@ -36,7 +36,7 @@ export default function NotGroupPage() {
   const [actualSelect, setActualSelect] = useState('')
   const [activeTeam, setActiveTeam] = useState<string | undefined>();
   const [team, setTeam] = useState<Team[]>([]);
-  const [data, setData] = useState()
+  const [data, setData] = useState<{ google_id?: string; plan?: string } | undefined>()
 
   const [loading, setLoading] = useState(true);
 
@@ -113,7 +113,7 @@ export default function NotGroupPage() {
   };
 
   const onSubmit = (formData: CreateTeamForm) => {
-    teamService.createTeam(formData, data.google_id);
+    teamService.createTeam(formData, data?.google_id ?? "");
   };
 
   const redirectToPlans = () => {
@@ -338,8 +338,10 @@ export default function NotGroupPage() {
                 </Button>
 
                 {
-                  actualSelect === 'join' ?
-                    <JoinGroupDialog /> : actualSelect === 'create' ? data.plan != "Sem plano" ?
+                  actualSelect === 'join' ? (
+                    <JoinGroupDialog />
+                  ) : actualSelect === 'create' ? (
+                    data?.plan !== "Sem plano" ? (
                       <AlertDialog>
                         <AlertDialogTrigger
                           className="px-8 py-2 bg-primary flex items-center justify-center gap-2 text-white dark:text-black rounded-md text-sm hover:bg-primary/90 cursor-pointer"
@@ -386,7 +388,8 @@ export default function NotGroupPage() {
                             </AlertDialogFooter>
                           </form>
                         </AlertDialogContent>
-                      </AlertDialog> :
+                      </AlertDialog>
+                    ) : (
                       <AlertDialog>
                         <AlertDialogTrigger
                           className="px-8 py-2 bg-primary flex items-center justify-center gap-2 text-white dark:text-black rounded-md text-sm hover:bg-primary/90 cursor-pointer"
@@ -411,8 +414,11 @@ export default function NotGroupPage() {
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
-                      </AlertDialog> :
-                      <Button variant="default" className="px-8 bg-zinc-900/10 hover:bg-zinc-900/10 dark:bg-zinc-800/40 dark:hover:bg-zinc-800/4*0 text-black/70 dark:text-white/80 cursor-not-allowed">Continuar</Button>
+                      </AlertDialog>
+                    )
+                  ) : (
+                    <Button variant="default" className="px-8 bg-zinc-900/10 hover:bg-zinc-900/10 dark:bg-zinc-800/40 dark:hover:bg-zinc-800/4*0 text-black/70 dark:text-white/80 cursor-not-allowed">Continuar</Button>
+                  )
                 }
               </div>
 

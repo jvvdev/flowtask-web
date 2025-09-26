@@ -1,20 +1,38 @@
 'use client'
 
 import { authService } from "@/api/auth-service";
+import { chatIaService } from "@/api/dashboard/chatia-service";
 import { teamService } from "@/api/dashboard/team-service";
 import { is } from "date-fns/locale";
-import { Loader2, MoveRight, Timer, Users, X } from "lucide-react";
+import { BotMessageSquare, Loader2, MoveRight, Timer, Users, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
+
+
+interface Message {
+    role: string;
+    content: string;
+}
+
+interface FormValues {
+    message: string;
+}
 
 export function IASection() {
     const [message, setMessage] = useState("");
+    const [messages, setMessages] = useState<Message[]>([])
     const [mode, setMode] = useState(1);
     const [onFocus, setOnFocus] = useState(false);
     const [isChatting, setIsChatting] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [notActiveGroup, setNotActiveGroup] = useState(false)
     const [loading, setLoading] = useState(true)
+
+    const { register, handleSubmit } = useForm<FormValues>();
 
     useEffect(() => {
         async function getData() {
@@ -49,11 +67,34 @@ export function IASection() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const onSubmit = async (data: FormValues) => {
         setIsChatting(true);
-        // Aqui você pode adicionar a lógica para enviar a mensagem para a IA
+
+        console.log(data.message);
+
+        // adiciona a mensagem do usuário
+        setMessages(prev => [
+            ...prev,
+            {
+                role: "user",
+                content: message,
+            }
+        ]);
+
+        const res = await chatIaService.getResponse(message);
+
+        console.log(res);
+
+        if (res.message === "Prompt gerado com sucesso") {
+            // adiciona a resposta do assistente sem apagar a do usuário
+            setMessages(prev => [
+                ...prev,
+                {
+                    role: "assistant",
+                    content: res.data,
+                }
+            ]);
+        }
     };
 
     useEffect(() => {
@@ -61,7 +102,7 @@ export function IASection() {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+handleSubmit(onSubmit)();
             }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -75,13 +116,15 @@ export function IASection() {
             <Loader2 className="animate-spin" />
             Carregando...
         </div> : notActiveGroup ?
-            <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="flex flex-col items-center justify-center h-screen text-center">
                 <Users size={40} className="text-muted-foreground mb-2" />
                 <h3 className="text-lg font-medium">Nenhum grupo ativo encontrado</h3>
                 <p className="text-muted-foreground">Selecione um grupo para acessar essa página.</p>
-            </div> : <div className={`w-full h-full flex flex-col ${isChatting ? "justify-end items-center pb-12" : "items-center py-50"}`}>
-                {
-                    !isChatting ? <div className="flex items-center sm:gap-2">
+            </div> : <div className={`flex flex-col h-[90vh] w-full items-center ${!isChatting ? "justify-center" : ""}`}>
+
+                {/* Header / topo fixo */}
+                {!isChatting && (
+                    <div className="flex items-center sm:gap-2">
                         <Image
                             src="/iaManager.png"
                             alt="Chat AI"
@@ -92,84 +135,60 @@ export function IASection() {
                         <h1 className="text-lg sm:text-2xl font-bold">
                             Como posso te ajudar hoje?
                         </h1>
-                    </div> :
-                        <div className="flex flex-col justify-end w-[95%] sm:w-120 2xl:w-[40%] h-full relative">
-                            <div className="absolute right-0 flex p-2 w-fit rounded-md border dark:bg-zinc-800/30 dark:border-zinc-200/5 dark:text-zinc-50/90">
-                                <p>{message}</p>
-                            </div>
-                        </div>
-                }
+                    </div>
+                )}
 
-                <div className={`w-full flex flex-col justify-center items-center`}>
-                    <div className={`${isChatting ? "w-[95%] sm:w-120 2xl:w-[40%]" : "w-[95%] sm:w-120 2xl:w-[40%]"} flex mt-6 p-2 bg-zinc-50 dark:bg-zinc-800/30 border ${onFocus ? "rounded-t-xl" : "rounded-xl"} duration-100`}>
+                {/* Container das mensagens */}
+                {isChatting && (
+                    <div className="my-4 flex flex-col w-[95%] sm:w-120 2xl:w-[40%] flex-1 overflow-y-auto gap-2 p-4 pr-2
+                                [&::-webkit-scrollbar]:w-1.5
+                                [&::-webkit-scrollbar-track]:rounded-md
+                                [&::-webkit-scrollbar-thumb]:rounded-md
+                                [&::-webkit-scrollbar-track]:bg-zinc-200/50
+                                dark:[&::-webkit-scrollbar-track]:bg-zinc-800/30
+                                [&::-webkit-scrollbar-thumb]:bg-zinc-400
+                                dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                        {messages.map((item, index) => (
+                            <div
+                                key={index}
+                                className={`flex ${item.role === "user" ? "self-end" : ""} p-2 max-w-[90%] rounded-md border dark:bg-zinc-800/30 dark:border-zinc-200/5 dark:text-zinc-50/90`}
+                            >
+<ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                                    {item.content.replace(/\n/g, "<br />")}
+                                </ReactMarkdown>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Footer / form fixo no final do container */}
+                <div className="w-[95%] sm:w-120 2xl:w-[40%] p-2 bg-zinc-50 dark:bg-zinc-800/30 border rounded-xl mb-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2">
                         <textarea
-                            ref={textareaRef}
-                            className="p-2 outline-none w-full resize-none overflow-auto"
+                            className="p-2 outline-none w-full resize-none overflow-auto max-h-32"
                             placeholder="Digite sua mensagem..."
                             onFocus={() => setOnFocus(true)}
-                            onBlur={() => setOnFocus(false)}
                             value={message}
                             onInput={handleInput}
                             rows={1}
+                            {...register("message", { required: true })}
                         />
                         <div className="flex items-center justify-center gap-2">
                             <button className="group relative p-1 px-2 rounded-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-800 duration-200">
                                 @
                                 <div className="absolute hidden -left-16 top-12 group-hover:block w-40 border bg-zinc-50 dark:bg-zinc-800/30 p-1 rounded-md cursor-pointer">
-                                    <span className="text-sm font-semibold">Mencionar alguem</span>
+                                    <span className="text-sm font-semibold">Mencionar alguém</span>
                                 </div>
                             </button>
-                            <button className="p-1.5 rounded-md bg-zinc-200 text-zinc-600 dark:bg-zinc-800/70 dark:text-zinc-400 hover:bg-green-600 hover:text-zinc-50 duration-200 cursor-pointer">
+                            <button
+                                type="submit"
+                                className="p-1.5 rounded-md bg-zinc-200 text-zinc-600 dark:bg-zinc-800/70 dark:text-zinc-400 hover:bg-green-600 hover:text-zinc-50 duration-200 cursor-pointer"
+                            >
                                 <MoveRight size={20} />
                             </button>
                         </div>
-                    </div>
-                    {
-                        onFocus ?
-                            <div className={`${isChatting ? "w-[95%] sm:w-120 2xl:w-[40%]" : "w-[95%] sm:w-120 2xl:w-[40%]"} p-2 bg-zinc-50 dark:bg-zinc-800/30 border border-t-0 rounded-b-xl`}>
-                                <p className="text-zinc-400 text-sm">Aguardando você digitar uma mensagem...</p>
-                            </div> : ""
-                    }
+                    </form>
                 </div>
             </div>
     );
 }
-
-// const List = [
-//     {
-//         id: 1,
-//         title: "Criar lista para vemency",
-//     },
-//     {
-//         id: 2,
-//         title: "Adicionar larissa com sócia",
-//     },
-//     {
-//         id: 3,
-//         title: "Adicionar Carlos como financeiro",
-//     },
-// ];
-
-// export function IAPastActivities() {
-//     return (
-//         <div className="w-[40%] space-y-4">
-//             <div className="flex gap-1 items-center justify-center text-zinc-400">
-//                 <Timer />
-//                 <span className="text-sm font-semibold">Atividades recentes</span>
-//             </div>
-
-//             <div className="grid grid-cols-1">
-//                 {
-//                     List.map((item) => (
-//                         <div key={item.id} className={`relative h-18 flex flex-col justify-between border overflow-hidden bg-zinc-800/30 space-y-1 rounded-xl ${item.id !== 1 ? "mt-4" : ""}`}>
-//                             <div className="w-full bg-zinc-400 h-[40%] px-1.5 flex items-center">
-//                                 <div className="bg-red-700/60 hover:bg-red-700/80 rounded-full font-semibold text-zinc-200/80 p-0.5 cursor-pointer duration-200"><X size={15} /></div>
-//                             </div>
-//                             <h1 className="px-2 text-lg font-semibold mb-2">{item.title}</h1>
-//                         </div>
-//                     ))
-//                 }
-//             </div>
-//         </div>
-//     );
-// }

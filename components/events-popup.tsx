@@ -108,14 +108,14 @@ export function EventsPopup({
           <div className="text-muted-foreground py-2 text-sm">No events</div>
         ) : (
           events.map((event) => {
-            const eventStart = new Date(event.start);
-            const eventEnd = new Date(event.end);
+const eventStart = new Date(event.initDate);
+            const eventEnd = new Date(event.endDate);
             const isFirstDay = isSameDay(date, eventStart);
             const isLastDay = isSameDay(date, eventEnd);
 
             return (
               <div
-                key={event.id}
+key={event.id_task}
                 className="cursor-pointer"
                 onClick={() => handleEventClick(event)}
               >

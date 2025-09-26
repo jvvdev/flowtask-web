@@ -1,6 +1,7 @@
 import axios from "axios";
 import { routes } from "../routes";
 import { getCookie } from "cookies-next/client";
+import { toast } from "sonner";
 
 class RelatoryService {
     async createRelatory(data: any) {
@@ -15,6 +16,7 @@ class RelatoryService {
                 authToken: sessionId
             }
         }).then(res => {
+            toast.success("Documento criado com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)
@@ -36,7 +38,7 @@ class RelatoryService {
                 authToken: sessionId
             }
         }).then(res => {
-            
+            toast.success("Documento atualizado com sucesso!")
         }).catch(err => {
             console.error(err)
         });
@@ -57,6 +59,7 @@ class RelatoryService {
                 authToken: sessionId
             }
         }).then(res => {
+            toast.success("Documento atualizado com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)
@@ -70,6 +73,7 @@ class RelatoryService {
                 authToken: sessionId
             }
         }).then(res => {
+            toast.success("Documento deletado com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)
