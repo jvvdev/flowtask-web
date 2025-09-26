@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getCookie } from "cookies-next/client";
 import { routes } from "../routes";
+import { toast } from "sonner";
 
 class MemberService {
     async InviteMember(data: any) {
@@ -18,6 +19,8 @@ class MemberService {
                 authToken: session_id
             }
         }).then(res => {
+            toast.success("Convite enviado com sucesso!")
+            window.location.reload();
             console.log(res)
         }).catch(err => {
             console.error(err)
@@ -44,7 +47,7 @@ class MemberService {
                 id_group: actualProject.id_group
             }
         }).then(res => {
-            console.log(res)
+            toast.success("Membro expulso com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)

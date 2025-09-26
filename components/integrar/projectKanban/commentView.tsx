@@ -71,6 +71,10 @@ export function CommentView({ taskID, taskData }: { taskID: string; taskData: an
     }
 
     async function onSubmit(formData: any) {
+        if (formData.content === "") {
+            return toast.error("O comentário não pode estar vazio")
+        }
+
         if (!userData) {
             toast("Você precisa estar logado para comentar", {
                 description: "Atualize a página e tente novamente.",
@@ -90,7 +94,8 @@ export function CommentView({ taskID, taskData }: { taskID: string; taskData: an
             setData([...data, {
                 id_comment: commentId,
                 comment: formData.content,
-                commentBy: userData.name,
+                commentBy: userData.email,
+                avatar: userData.avatar,
                 createdAt: new Date().toISOString(),
             }]);
 
@@ -186,7 +191,7 @@ export function CommentView({ taskID, taskData }: { taskID: string; taskData: an
                         <div className="space-y-2 mt-2">
                             {
                                 data.map((item) => (
-                                    <ContextMenu>
+                                    <ContextMenu key={item.id_comment}>
                                         <ContextMenuTrigger className="w-full" key={item.id_comment}>
                                             <div
                                                 className="p-3 mt-2 rounded-md bg-zinc-200/20 dark:bg-muted-foreground/10"
@@ -194,7 +199,7 @@ export function CommentView({ taskID, taskData }: { taskID: string; taskData: an
                                                 <p>{item.comment}</p>
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-1.5 mt-2">
-                                                        <img src={`https://i.pravatar.cc/150?img=${item.id}`} alt="" className="h-7 w-7 rounded-full" />
+                                                        <img src={item.avatar} alt="" className="h-7 w-7 rounded-full" />
                                                         <span className="font-semibold">{item.commentBy}</span>
                                                     </div>
                                                     <p className="mt-1 text-muted-foreground text-sm">

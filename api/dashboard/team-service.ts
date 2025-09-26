@@ -23,18 +23,15 @@ class TeamService {
         window.location.reload();
     }
 
-    async createTeam(data: any) {
+    async createTeam(data: any, google_id: string) {
         const token = await authService.getToken();
         let userData = await authService.getUserData();
+        console.log(data)
 
         userData = JSON.parse(userData || '{}');
 
-        if (!userData || !userData.google_id) {
-            return false;
-        }
-
-        const api = await axios.post(routes.createTeam, {
-            group_owner: userData.google_id,
+        await axios.post(routes.createTeam, {
+            group_owner: google_id,
             name: data.name,
             description: data.description
         }, {
@@ -42,9 +39,10 @@ class TeamService {
                 "authToken": token
             }
         }).then((response) => {
+            console.log(response)
             deleteCookie("allTeams");
+            toast.success("Grupo criado com sucesso!")
             window.location.reload();
-            return true
         }).catch((error) => {
             console.error(error);
         });
@@ -56,7 +54,7 @@ class TeamService {
 
     async requestJoin(data: any) {
         const token = await authService.getToken();
-        
+
         const api = await axios.post(routes.inviteMember, {
             email: data.email,
             id_group: data.id_group,
@@ -73,6 +71,44 @@ class TeamService {
             const message = error.data.message;
             toast('Não foi possivel enviar seu pedido de convite');
             console.error(error);
+        })
+    }
+
+    async acceptJoin(data: any) {
+        const token = await authService.getToken();
+
+        await axios.post(routes.acceptMember, {
+            email: data.email,
+            id_group: data.group_id,
+        }, {
+            headers: {
+                "authToken": token
+            }
+        }).then((res) => {
+            const message = res.data.message;
+
+            toast(message)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    async rejectJoin(data: any) {
+        const token = await authService.getToken();
+
+        await axios.post(routes.rejectMember, {
+            email: data.email,
+            id_group: data.group_id,
+        }, {
+            headers: {
+                "authToken": token
+            }
+        }).then((res) => {
+            const message = res.data.message;
+
+            toast(message)
+        }).catch((error) => {
+            console.log(error)
         })
     }
 
@@ -126,7 +162,6 @@ class TeamService {
 
     async setTeamByUser(team: any) {
         setCookie('activeTeam', team);
-        window.location.reload();
     }
 
     async deleteActiveTeam() {

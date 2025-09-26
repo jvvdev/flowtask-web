@@ -649,7 +649,7 @@ export default function Settings() {
 
                 {
                     loading ?
-                        <div className="absolute flex justify-center items-center right-0 w-full h-dvh bg-zinc-950/60 z-20">
+                        <div className="absolute flex justify-center items-center right-0 w-full h-dvh bg-accent/60 dark:bg-zinc-950/60 z-20">
                             <Loader2 className="animate-spin opacity-70" />
                         </div> : ""
                 }

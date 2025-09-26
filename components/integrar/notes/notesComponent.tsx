@@ -145,8 +145,6 @@ export function NotesComponent() {
         }
     }
 
-
-
     const markdownComponents: Components = {
         h1: ({ children }) => <h1 className="text-4xl font-bold  my-4">{children}</h1>,
         h2: ({ children }) => <h2 className="text-3xl font-semibold my-3">{children}</h2>,

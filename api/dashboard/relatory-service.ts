@@ -8,7 +8,7 @@ class RelatoryService {
         await axios.post(routes.createRelatory, {
             relatory_owner: sessionId,
             title: data.name,
-            content: data.content,
+            content: "",
             group_id: JSON.parse(getCookie("activeTeam") as string).id_group
         }, {
             headers: {

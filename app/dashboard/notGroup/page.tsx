@@ -112,8 +112,8 @@ export default function NotGroupPage() {
     router.push("/dashboard");
   };
 
-  const onSubmit = (data: CreateTeamForm) => {
-    teamService.createTeam(data);
+  const onSubmit = (formData: CreateTeamForm) => {
+    teamService.createTeam(formData, data.google_id);
   };
 
   const redirectToPlans = () => {

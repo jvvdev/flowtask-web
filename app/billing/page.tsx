@@ -10,10 +10,10 @@ export default function Subscriptions() {
 
   function redirectToPlan(planID: number) {
     if (planID === 0) {
-      router.push(`/dashboard/setting/billing/${planID}`);
+      router.push(`billing/${planID}`);
     } else if (planID >= 1) {
       console.log(planID)
-      router.push(`/dashboard/setting/billing/${planID}`);
+      router.push(`billing/${planID}`);
     }
   }
 
@@ -29,7 +29,7 @@ export default function Subscriptions() {
         {/* Cards Grid */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Join Group Card */}
-          <button
+          <div
             className={`group relative overflow-hidden rounded-lg border p-6 group border-zinc-400/40 dark:border-white/20 bg-zinc-200/20 dark:bg-zinc-950/10 transition-colors`}>
             <div className="flex flex-col space-y-4">
               <div className="p-3 bg-zinc-400/20 dark:bg-white/5 rounded-lg w-fit">
@@ -59,14 +59,14 @@ export default function Subscriptions() {
                   200 pontos na IA
                 </li>
               </ul>
-              <Button className="mt-20 w-full py-5 font-semibold bg-zinc-900/80 border-zinc-400/40 dark:border-zinc-500 dark:bg-zinc-50 hover:bg-zinc-800 dark:hover:bg-zinc-300 border text-white dark:text-black cursor-pointer duration-200">
+              <Button onClick={() => redirectToPlan(0)} className="mt-20 w-full py-5 font-semibold bg-zinc-900/80 border-zinc-400/40 dark:border-zinc-500 dark:bg-zinc-50 hover:bg-zinc-800 dark:hover:bg-zinc-300 border text-white dark:text-black cursor-pointer duration-200">
                 Selecionar plano
               </Button>
             </div>
-          </button>
+          </div>
 
           {/* Create Group Card */}
-          <button
+          <div
             className={`group relative overflow-hidden rounded-lg border p-6 group border-yellow-900/20 dark:border-yellow-900/40 bg-zinc-200/20 dark:bg-zinc-950/10 transition-colors`}>
             <div className="flex flex-col space-y-4">
               <div className="p-3 bg-yellow-950/10 dark:bg-yellow-950/25 rounded-lg w-fit">
@@ -96,13 +96,13 @@ export default function Subscriptions() {
                   1000 pontos na IA
                 </li>
               </ul>
-              <Button className="mt-20 w-full py-5 font-semibold bg-zinc-900/80 border-zinc-400/40 dark:border-zinc-500 dark:bg-zinc-50 hover:bg-zinc-800 dark:hover:bg-zinc-300/80 border text-white dark:text-black cursor-pointer duration-200">
+              <Button onClick={() => redirectToPlan(1)} className="mt-20 w-full py-5 font-semibold bg-zinc-900/80 border-zinc-400/40 dark:border-zinc-500 dark:bg-zinc-50 hover:bg-zinc-800 dark:hover:bg-zinc-300/80 border text-white dark:text-black cursor-pointer duration-200">
                 Selecionar plano
               </Button>
             </div>
-          </button>
+          </div>
 
-          <button
+          <div
             className={`group relative overflow-hidden rounded-lg border p-6 group border-fuchsia-400/20 bg-zinc-200/20 dark:bg-zinc-950/10 transition-colors`}>
             <div className="flex flex-col space-y-4">
               <div className="p-3 bg-fuchsia-400/15 dark:bg-fuchsia-400/5 rounded-lg w-fit">
@@ -139,11 +139,11 @@ export default function Subscriptions() {
                   IA ilimitada
                 </li>
               </ul>
-              <Button className="mt-20 w-full py-5 font-semibold bg-zinc-200/60 border-zinc-600/30 dark:border-zinc-200/10 dark:bg-zinc-950/60 hover:bg-zinc-500/20 dark:hover:bg-zinc-950 border text-zinc-800 dark:text-white hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
+              <Button onClick={() => redirectToPlan(2)} className="mt-20 w-full py-5 font-semibold bg-zinc-200/60 border-zinc-600/30 dark:border-zinc-200/10 dark:bg-zinc-950/60 hover:bg-zinc-500/20 dark:hover:bg-zinc-950 border text-zinc-800 dark:text-white hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">
                 Selecionar plano
               </Button>
             </div>
-          </button>
+          </div>
         </div>
 
         <div className="absolute bottom-16 right-16">

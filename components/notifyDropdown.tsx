@@ -5,30 +5,36 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Button } from "./button";
 import { useEffect, useState } from "react";
 import { authService } from "@/api/auth-service";
+import axios from "axios";
+import { routes } from "@/api/routes";
+import { teamService } from "@/api/dashboard/team-service";
 
 export function NotifyDropdown() {
     const [notifys, setNotifys] = useState<any[]>([])
 
     useEffect(() => {
         async function getData() {
-            await authService.getToken();
+            const token = await authService.getToken();
 
-            let userData = await authService.getUserData();
-            if (!userData) return
-
-            userData = JSON.parse(userData);
-            setNotifys(userData?.notifys ?? [])
+            await axios.get(routes.getUser + token).then((response) => {
+                console.log(response.data.notifys)
+                setNotifys(response.data.notifys);
+            }).catch((err) => {
+                console.log(err);
+            })
         }
 
         getData()
     }, [])
 
-    function declineInvite(id: number) {
-        console.log(id)
+    function declineInvite(data: any) {
+        console.log(data)
+        teamService.rejectJoin(data)
     }
 
-    function acceptInvite(id: number) {
-        console.log(id)
+    function acceptInvite(data: any) {
+        console.log(data)
+        teamService.acceptJoin(data)
     }
 
     return (
@@ -55,18 +61,20 @@ export function NotifyDropdown() {
                             <p className="p-2 text-sm text-muted-foreground">Nenhuma notificação encontrada</p>
                             : notifys.map((item: any) => (
                                 <DropdownMenuItem key={item.id} className="flex items-center justify-between hover:bg-zinc-50/0 max-w-110">
-                                    <div className="rounded-md w-12 h-9 bg-purple-500 flex items-center justify-center">
-                                        <UserRoundPlus size={20} className="ml-0.5" />
-                                    </div>
-                                    {/* <img src="https://lh3.googleusercontent.com/a/ACg8ocKTm2agX6z8LVasXnQcAmSCEbjD1Vt45aKhoEDuuFwM6l9WExLqMw=s96-c" alt="" className="h-10 w-10 rounded-full object-cover" /> */}
-                                    <div>
-                                        <h1 className="text-[15px] font-medium text-foreground">{item.title}</h1>
-                                        <p className="text-[14px] font-normal text-muted-foreground">{item.content}</p>
+                                    <div className="flex items-center gap-2">
+                                        <div className="rounded-md p-2.5 bg-purple-500 flex items-center justify-center">
+                                            <UserRoundPlus size={20} className="ml-0.5" />
+                                        </div>
+                                        {/* <img src="https://lh3.googleusercontent.com/a/ACg8ocKTm2agX6z8LVasXnQcAmSCEbjD1Vt45aKhoEDuuFwM6l9WExLqMw=s96-c" alt="" className="h-10 w-10 rounded-full object-cover" /> */}
+                                        <div>
+                                            <h1 className="text-[15px] font-medium text-foreground">{item.title}</h1>
+                                            <p className="text-[14px] font-normal text-muted-foreground">{item.content}</p>
+                                        </div>
                                     </div>
                                     {
                                         item.type === "invite" ? <div className="flex gap-2 ml-4">
-                                            <Button variant="default" size="sm" className="rounded-md w-9 h-9 cursor-pointer" onClick={() => acceptInvite(item.id)}><Check /></Button>
-                                            <Button variant="outline" size="sm" className="rounded-md w-9 h-9 cursor-pointer" onClick={() => declineInvite(item.id)}><X /></Button>
+                                            <Button variant="default" size="sm" className="rounded-md w-9 h-9 cursor-pointer" onClick={() => acceptInvite(item)}><Check /></Button>
+                                            <Button variant="outline" size="sm" className="rounded-md w-9 h-9 cursor-pointer" onClick={() => declineInvite(item)}><X /></Button>
                                         </div> : null
                                     }
                                 </DropdownMenuItem>

@@ -42,14 +42,6 @@ export function CreateForm({ bigButton }: { bigButton?: boolean }) {
                                 {...register("name")}
                             />
                         </div>
-                        <div className="space-y-2">
-                            <p className="flex text-sm items-center gap-2 dark:text-zinc-200/80">Conteúdo</p>
-                            <Input
-                                placeholder="Digite aqui"
-                                className="mb-2"
-                                {...register("content")}
-                            />
-                        </div>
                     </div>
 
                     <AlertDialogFooter className="mt-6">

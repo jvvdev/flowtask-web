@@ -21,6 +21,8 @@ export const routes = {
     getTeamByUser: apiRoute + "/get-groups-by-user",
     getMembersByTeam: apiRoute + "/get-users-by-group/",
     inviteMember: apiRoute + "/groups/invite",
+    acceptMember: apiRoute + "/groups/accept-invite",
+    rejectMember: apiRoute + "/groups/reject-invite",
     removeMember: apiRoute + "/groups/remove-member",
 
     // Project Routes

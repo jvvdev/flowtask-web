@@ -114,7 +114,7 @@ export function ContactsTables() {
           {
             selectedMember !== "" && (
               <div className="flex gap-2">
-                <AlertDialog>
+                {/* <AlertDialog>
                   <AlertDialogTrigger
                     className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-yellow-300/30 border border-zinc-500/30 dark:hover:border-yellow-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
                   >
@@ -155,7 +155,7 @@ export function ContactsTables() {
                             {...register("email")}
                           />
                         </div>
-                        {/* <div className="space-y-2">
+                        <div className="space-y-2">
                           <p className="text-sm flex items-center gap-2 dark:text-zinc-200/80">Tarefas pendentes</p>
                           <Input
                             placeholder="Ex: 15"
@@ -172,7 +172,7 @@ export function ContactsTables() {
                             defaultValue={data.find(item => item.user_id === selectedMember)?.TotalTasks || ""}
                             {...register("totalTasks")}
                           />
-                        </div> */}
+                        </div>
                       </div>
 
                       <AlertDialogFooter className="mt-6">
@@ -186,16 +186,39 @@ export function ContactsTables() {
                       </AlertDialogFooter>
                     </form>
                   </AlertDialogContent>
-                </AlertDialog>
+                </AlertDialog> */}
 
-                <Button className="group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer"
-                  onClick={() => {
-                    memberService.DeleteMember(selectedMemberData);
-                  }}
-                >
-                  <Trash2 className="size-5 text-red-500" />
-                  <span className="hidden sm:block">Excluir</span>
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    className="p-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer"
+                  >
+                    <Trash2 className="size-5 text-red-500" />
+                    <span className="hidden sm:block">Expulsar</span>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Expulsar membro</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Você tem certeza que deseja expulsar o membro selecionado?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+
+
+                    <AlertDialogFooter className="mt-6">
+                      <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => {
+                          memberService.DeleteMember(selectedMemberData);
+                        }}
+                        type="submit"
+                        className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                      >
+                        Confirmar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )
           }

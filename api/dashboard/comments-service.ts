@@ -2,6 +2,7 @@ import axios from "axios";
 import { getCookie } from "cookies-next/client";
 import { routes } from "../routes";
 import { authService } from "../auth-service";
+import { toast } from "sonner";
 
 class CommentsService {
     async createComment(data: any, id_task: string) {
@@ -18,7 +19,7 @@ class CommentsService {
                 {
                     id_kanban: id_task,
                     comment: data.content,
-                    commentBy: userData.email
+                    commentBy: session_id
                 },
                 {
                     headers: {
@@ -52,9 +53,11 @@ class CommentsService {
                 }
             );
 
+            toast.success("Comentário deletado com sucesso!")
+
             return res.data;
         } catch (err) {
-            console.error("Erro ao criar task:", err);
+            console.error("Erro ao deletar task:", err);
             throw err;
         }
     }

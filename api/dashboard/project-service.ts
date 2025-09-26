@@ -12,6 +12,7 @@ import {
     useGetCookie,
 } from 'cookies-next/client';
 import { routes } from '../routes';
+import { toast } from 'sonner';
 
 class ProjectService {
     async createProject(data: any) {
@@ -47,6 +48,7 @@ class ProjectService {
                     authToken: sessionId
                 }
             }).then(res => {
+                toast.success("Projeto criado com sucesso!")
                 window.location.reload();
             }).catch(err => {
                 console.error(err)
@@ -66,6 +68,7 @@ class ProjectService {
                 project_id: id
             }
         }).then(res => {
+            toast.success("Projeto deletado com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)

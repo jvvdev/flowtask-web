@@ -37,7 +37,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ data, onChange }) => {
                             placeholder: "Digite o título...",
                         },
                         shortcut: "CMD+SHIFT+H", // opcional, atalho para adicionar header
-                    }
+                    },
                 },
                 data: data || { blocks: [] },
                 async onChange(api) {
@@ -60,7 +60,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ data, onChange }) => {
     return (
         <div
             id={holderId}
-            className="min-h-[400px] p-2 w-full rounded-md"
+            className="min-h-[400px] pr-2 py-2 w-full rounded-md"
         />
     );
 };

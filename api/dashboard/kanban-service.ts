@@ -2,6 +2,7 @@ import axios from "axios";
 import { getCookie } from "cookies-next/client";
 import { routes } from "../routes";
 import { stat } from "fs";
+import { toast } from "sonner";
 
 class KanbanService {
     async createTask(data: any, projectId: string) {
@@ -27,6 +28,7 @@ class KanbanService {
                 authToken: sessionId
             }
         }).then(res => {
+            toast.success("Tarefa criada com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)
@@ -48,6 +50,7 @@ class KanbanService {
                 authToken: sessionId
             }
         }).then(res => {
+            toast.warning("Tarefa movida com sucesso!")
             return "ok"
         }).catch(err => {
             console.error(err)
@@ -69,6 +72,7 @@ class KanbanService {
                 authToken: sessionId
             }
         }).then(res => {
+            toast.success("Tarefa modificada com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)
@@ -82,6 +86,7 @@ class KanbanService {
                 authToken: sessionId
             }
         }).then(res => {
+            toast.success("Tarefa deletada com sucesso!")
             window.location.reload();
         }).catch(err => {
             console.error(err)
