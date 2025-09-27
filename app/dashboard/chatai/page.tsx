@@ -1,8 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: "FlowTask - Chat IA",
-};
+'use client'
 
 import {
     Breadcrumb,
@@ -19,10 +15,23 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { SiderBarDefault } from "@/components/sidebarDefault";
 import ThemeToggle from "@/components/theme-toggle";
-import React, {  } from "react";
+import React, { useEffect } from "react";
 import { IASection } from "@/components/integrar/chatIA";
+import { authService } from "@/api/auth-service";
 
 export default function ChatAI() {
+    useEffect(() => {
+        async function getData() {
+            const userData = await authService.getUserData()
+
+            if (!userData) return;
+
+            console.log(JSON.parse(userData))
+        }
+
+        getData()
+    }, [])
+
     return (
         <SidebarProvider className="p-2">
             <SiderBarDefault />
@@ -51,7 +60,10 @@ export default function ChatAI() {
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
-                    <div className="flex gap-3 ml-auto">
+                    <div className="flex gap-3 ml-auto items-center">
+                        <div className="flex items-center p-1 px-2 border rounded-md bg-fuchsia-500/30 border-fuchsia-600/30">
+                            <p className="text-zinc-600 dark:text-zinc-400">Pontos de IA: <strong className="text-zinc-950 dark:text-zinc-200">1</strong></p>
+                        </div>
                         <ThemeToggle />
                         <UserDropdown />
                     </div>

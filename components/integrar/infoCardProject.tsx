@@ -1,5 +1,6 @@
 import { RiArrowRightUpLine } from "@remixicon/react";
 import { Container, File, FileCheck, FileJson } from "lucide-react";
+import { useEffect } from "react";
 
 const List = [
     {
@@ -24,7 +25,26 @@ const List = [
     },
 ]
 
-export function InfoCardToProjects() {
+export type Project = {
+    project_id: string;
+    project_title: string;
+    project_resume: string;
+    project_owner: string;
+    completion_percentage: null | number;
+    completed_kanbans: number;
+    total_kanbans: number;
+};
+
+export type ProjectListProps = {
+    data: Project[];
+    // setData: React.Dispatch<React.SetStateAction<Project[]>>;
+};
+
+export function InfoCardToProjects({ data }: ProjectListProps) {
+    useEffect(() => {
+        console.log(data)
+    }, [data])
+
     return (
         <div className="grid grid-cols-2 min-[1200px]:grid-cols-4 border bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 rounded-xl bg-gradient-to-br from-sidebar/60 to-sidebar">
             {
@@ -40,13 +60,13 @@ export function InfoCardToProjects() {
                             <div className="max-[480px]:hidden size-10 shrink-0 rounded-full bg-emerald-600/25 border border-emerald-600/50 flex items-center justify-center text-emerald-500">
                                 {
                                     item.Name == "Projetos" ?
-                                    <Container /> :
-                                    item.Name == "Finalizados" ? 
-                                    <FileCheck /> : 
-                                    item.Name == "Em andamento" ?
-                                    <FileJson /> :
-                                    item.Name == "Não iniciados" ?
-                                    <File /> : ""
+                                        <Container /> :
+                                        item.Name == "Finalizados" ?
+                                            <FileCheck /> :
+                                            item.Name == "Em andamento" ?
+                                                <FileJson /> :
+                                                item.Name == "Não iniciados" ?
+                                                    <File /> : ""
                                 }
                             </div>
                             {/* Content */}
@@ -56,7 +76,7 @@ export function InfoCardToProjects() {
                                 >
                                     {item.Name}
                                 </h1>
-                                <div className="text-2xl font-semibold mb-2">{item.Number}</div>
+                                <div className="text-2xl font-semibold mb-2">{item.Name === "Projetos" ? data.length : item.Name === "Finalizados" ? data.filter((p) => p.completion_percentage === 100).length : item.Name === "Em andamento" ? data.filter((p) => p.completion_percentage != null && p.completion_percentage >= 1 && p.completion_percentage <= 99).length : item.Name === "Não iniciados" ? data.filter((p) => p.completion_percentage === 0).length : ""}</div>
                             </div>
                         </div>
                     </div>

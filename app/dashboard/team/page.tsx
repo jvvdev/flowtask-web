@@ -148,7 +148,7 @@ function onSubmit(data: InviteForm) {
               </AlertDialog>
             </div>
             {/* Numbers */}
-            <StatsGrid
+            {/* <StatsGrid
               stats={[
                 {
                   title: "Membros",
@@ -191,7 +191,7 @@ function onSubmit(data: InviteForm) {
                   ),
                 },
               ]}
-            />
+            /> */}
             {/* Table */}
             <div className="min-h-[100vh] flex-1 md:min-h-min">
               <ContactsTables />

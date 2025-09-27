@@ -1,5 +1,11 @@
 "use client"
+import { authService } from "@/api/auth-service"
+import { teamService } from "@/api/dashboard/team-service"
+import { routes } from "@/api/routes"
+import { CalendarEvent } from "@/components"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import axios from "axios"
+import { useEffect, useState } from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 export const description = "An area chart with gradient fill"
@@ -24,7 +30,87 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+interface Task {
+  initDate: string;
+  status: string;
+  // você pode adicionar outros campos se precisar
+}
+
 export function ChartOverHeat() {
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [notActiveGroup, setNotActiveGroup] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [groupedTasks, setGroupedTasks] = useState<Record<string, { total: number; concluidas: number }>>({});
+
+  useEffect(() => {
+    async function getData() {
+      const sessionId = await authService.getToken();
+      const actualGroupRaw = await teamService.getTeamByUser();
+      let actualGroup: { id_group: string } | null = null;
+
+      if (actualGroupRaw) {
+        try {
+          actualGroup = JSON.parse(actualGroupRaw);
+          setLoading(false);
+        } catch {
+          actualGroup = null;
+          setLoading(false);
+        }
+      } else {
+        setNotActiveGroup(true);
+        setLoading(false);
+      }
+
+      if (!actualGroup) return;
+
+      setLoading(true);
+
+      try {
+        const response = await axios.get(routes.getTasksByGroup + actualGroup.id_group, {
+          headers: { authToken: sessionId },
+        });
+
+        const tasks = response.data.data;
+
+        // === AGREGAR POR DIA ===
+        const groupedByDate: Record<string, { total: number; concluidas: number }> = {};
+
+        tasks.forEach((task: Task) => {
+          const date = new Date(task.initDate);
+          const day = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+          if (!groupedByDate[day]) {
+            groupedByDate[day] = { total: 0, concluidas: 0 };
+          }
+
+          groupedByDate[day].total += 1;
+
+          // Só considera como concluída se for exatamente "Concluído"
+          if (task.status === "Concluído") {
+            groupedByDate[day].concluidas += 1;
+          }
+        });
+
+        console.log(groupedByDate); // Aqui você vê os dados prontos para o gráfico
+        setEvents(tasks); // Mantém o setEvents original se precisar da lista completa
+        setGroupedTasks(groupedByDate); // Se você criar um estado separado para o gráfico
+        setLoading(false);
+
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        setLoading(false);
+      }
+    }
+
+    getData();
+  }, []);
+
+  const chartDataForGraph = Object.entries(groupedTasks).map(([day, values]) => ({
+    month: day,               // XAxis vai usar "month"
+    totalTasks: values.total,
+    completedTasks: values.concluidas,
+  }));
+
   return (
     <div className="relative p-4 pb-0 w-full xl:w-[50%] h-62 space-y-2 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
       <div>
@@ -32,14 +118,14 @@ export function ChartOverHeat() {
         <p className="text-muted-foreground overflow-hidden whitespace-nowrap text-ellipsis truncate">Visualize aqui as tarefas concluídas.</p>
       </div>
       <ChartContainer config={chartConfig} className="absolute aspect-auto h-44 w-full pr-8">
-        <AreaChart accessibilityLayer data={chartData}>
+        <AreaChart accessibilityLayer data={chartDataForGraph}>
           <CartesianGrid vertical={true} />
           <XAxis
             dataKey="month"
             tickLine={true}
             axisLine={false}
             tickMargin={0}
-            tickFormatter={(value) => value.slice(0, 2)}
+            tickFormatter={(value) => value.slice(0, 5)}
           />
           <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
           <defs>

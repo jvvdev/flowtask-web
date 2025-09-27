@@ -22,21 +22,21 @@ export default function LoginPage() {
 
             <div className="h-full lg:w-[50%] xl:w-[30%] flex flex-col justify-center items-center gap-5">
                 <div>
-                    <h1 className="text-3xl font-semibold">Bem-vindo novamente 👋</h1>
-                    <p className="text-zinc-400 mt-2">Coloque suas informações para poder acessar sua conta.</p>
+                    <h1 className="text-3xl font-semibold">Bem-vindo 👋</h1>
+                    <p className="text-zinc-400 mt-2">Entre com o google para poder acessar sua conta e acessar o sistema.</p>
                 </div>
 
-                <div className="w-full">
+                {/* <div className="w-full">
                     <LoginForm />
-                </div>
+                </div> */}
 
-                <div className="gap-2 flex flex-col justify-center items-center w-full">
+                {/* <div className="gap-2 flex flex-col justify-center items-center w-full">
                     <p className="w-full text-center text-sm dark:text-zinc-200/50 text-zinc-800/90">Ou entre com</p>
-                    <button onClick={() => {authService.loginWithGoogle()}} className="flex justify-center items-center gap-3 py-3 w-full mt-2 dark:bg-zinc-700/40 dark:hover:bg-zinc-700/20 bg-zinc-200 hover:bg-zinc-300 border dark:border-zinc-950/30 border-zinc-500/5 font-semibold rounded-lg duration-200 cursor-pointer"><Image src="https://i.imgur.com/2Zsoe9M.png" alt="" width={20} height={20} className="w-5 h-5" />Google</button>
+                    <button onClick={() => {authService.loginWithGoogle()}} className="flex justify-center items-center gap-3 py-3 w-full mt-2 dark:bg-zinc-700/40 dark:hover:bg-zinc-700/20 bg-zinc-200 hover:bg-zinc-300 border dark:border-zinc-950/30 border-zinc-500/5 font-semibold rounded-lg duration-200 cursor-pointer"><img src="https://i.imgur.com/2Zsoe9M.png" alt="" width={20} height={20} className="w-5 h-5" />Google</button>
                     <p className="dark:text-zinc-400 text-zinc-800/90 mt-2 text-sm">Não tem uma conta? <a href="/auth/register" className="dark:text-zinc-200 text-black font-semibold underline">Crie uma conta agora!</a></p>
-                </div>
+                </div> */}
 
-            
+                <button onClick={() => { authService.loginWithGoogle() }} className="flex justify-center items-center gap-3 py-3 w-full mt-2 dark:bg-zinc-700/40 dark:hover:bg-zinc-700/20 bg-zinc-200 hover:bg-zinc-300 border dark:border-zinc-950/30 border-zinc-500/5 font-semibold rounded-lg duration-200 cursor-pointer"><img src="https://i.imgur.com/2Zsoe9M.png" alt="" width={20} height={20} className="w-5 h-5" />Google</button>
             </div>
 
             <div className="absolute bottom-0 right-0 p-10">

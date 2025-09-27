@@ -18,13 +18,14 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 import { RiExpandUpDownLine, RiAddLine } from "@remixicon/react";
 import { Input } from "../input";
-import { ALargeSmall, LoaderCircle, MessageCircleMore, RotateCw, Trash, Users } from "lucide-react";
+import { ALargeSmall, Clipboard, LoaderCircle, MessageCircleMore, RotateCw, Trash, Users } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { teamService } from "@/api/dashboard/team-service";
 import axios from "axios";
 import { routes } from "@/api/routes";
 import { authService } from "@/api/auth-service";
 import { ModifyTeam } from "./modifyTeam";
+import { toast } from "sonner";
 
 type Team = {
   id_group: string;
@@ -33,8 +34,8 @@ type Team = {
 };
 
 interface CreateTeamForm {
-  name: string;
-  description: string;
+  id_group: string;
+  email: string;
 };
 
 export function TeamSwitcher() {
@@ -90,13 +91,18 @@ export function TeamSwitcher() {
   }, [])
 
   const onSubmit = (data: CreateTeamForm) => {
-    teamService.createTeam(data);
+    teamService.requestJoin(data);
   };
 
   const handleTeamChange = (team: Team) => {
     setActiveTeam(team);
     teamService.setTeamByUser(team);
   };
+
+  const copyID = (id: string) => {
+    navigator.clipboard.writeText(id);
+    toast.success("ID do grupo copiado com sucesso!");
+  }
 
   return (
     <SidebarMenu>
@@ -139,7 +145,7 @@ export function TeamSwitcher() {
             <DropdownMenuLabel className="flex justify-between uppercase text-muted-foreground/60 text-xs">
               <p>EQUIPES</p>
               <div className="group hover:bg-zinc-800 p-0.5 rounded-sm duration-200 cursor-pointer">
-                <RotateCw size={16} className="group-hover:rotate-45 transition-transform duration-200" onClick={() => teamService.deleteAllTeams()}/>
+                <RotateCw size={16} className="group-hover:rotate-45 transition-transform duration-200" onClick={() => teamService.deleteAllTeams()} />
               </div>
             </DropdownMenuLabel>
             {loading ? <div className="w-full flex items-center justify-center h-10 text-sm font-semibold gap-2 text-muted-foreground"><LoaderCircle size={16} className="animate-spin" /> Carregando...</div> : team.length > 0 ? team.map((team, index) => (
@@ -154,6 +160,12 @@ export function TeamSwitcher() {
                 {team.name}
 
                 <div className="flex">
+                  <button
+                    onClick={() => copyID(team.id_group)}
+                    className="w-full p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-green-600/15 cursor-pointer"
+                  >
+                    <Clipboard size={16} className="opacity-60" />
+                  </button>
                   <ModifyTeam id={team.id_group} />
                   <AlertDialog>
                     <AlertDialogTrigger
@@ -192,33 +204,33 @@ export function TeamSwitcher() {
                 className="w-full p-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-muted-foreground/5 cursor-pointer"
               >
                 <RiAddLine className="opacity-60" size={16} aria-hidden="true" />
-                <div className="font-medium">Adicionar equipe</div>
+                <div className="font-medium">Pedir para entrar</div>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Adicionar equipe</AlertDialogTitle>
+                  <AlertDialogTitle>Solicitação de entrada</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Aqui você pode adicionar novas equipes para gerenciar.
+                    Aqui você pode enviar novos convites para entrar em uma equipe nova.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><ALargeSmall size={20} />Nome da equipe</p>
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80">Seu email</p>
                       <Input
                         placeholder="Digite aqui"
                         className="mb-2"
-                        {...register("name", { required: true })}
+                        {...register("email", { required: true })}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <p className="flex items-center gap-2 dark:text-zinc-200/80"><MessageCircleMore size={20} />Descrição da equipe</p>
+                      <p className="flex items-center gap-2 dark:text-zinc-200/80">ID do grupo</p>
                       <Input
                         placeholder="Digite aqui"
                         className="mb-2"
-                        {...register("description", { required: true })}
+                        {...register("id_group", { required: true })}
                       />
                     </div>
                   </div>

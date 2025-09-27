@@ -17,7 +17,7 @@ import {
 } from "@/components/popover";
 import { Input } from "../input";
 import { RiFilter3Line, RiSearch2Line } from "@remixicon/react";
-import { ALargeSmall, ArchiveRestore, Briefcase, CalendarCheck2, ChartPie, Check, ClipboardCheck, ClipboardClock, LoaderCircle, MailSearch, Pencil, Trash2, TriangleAlert, UserCog } from "lucide-react";
+import { ALargeSmall, ArchiveRestore, Briefcase, CalendarCheck2, ChartPie, Check, ClipboardCheck, ClipboardClock, FolderOpenDot, LoaderCircle, MailSearch, Pencil, Trash2, TriangleAlert, UserCog, UserX } from "lucide-react";
 import { CircularProgress } from "../circularProgress";
 import { useRouter } from "next/navigation";
 import {
@@ -37,6 +37,7 @@ import axios from "axios";
 import { routes } from "@/api/routes";
 import { teamService } from "@/api/dashboard/team-service";
 import { authService } from "@/api/auth-service";
+import { StatsGrid } from "../stats-grid";
 
 const Projects = [
   { user_id: "", name: "Ana Paula Souza", role: "owner", email: "ana.souza@empresa.com", PendingTasks: 4, TotalTasks: 20 },
@@ -55,9 +56,9 @@ const ITEMS_PER_PAGE = 9;
 
 export function ContactsTables() {
   const [isLoading, setIsLoading] = useState(true);
-const [data, setData] = useState<Member[]>([]);
+  const [data, setData] = useState<Member[]>([]);
   const [selectedMember, setSelectedMember] = useState("");
-const [selectedMemberData, setSelectedMemberData] = useState<Member | null>(null);
+  const [selectedMemberData, setSelectedMemberData] = useState<Member | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -106,24 +107,70 @@ const [selectedMemberData, setSelectedMemberData] = useState<Member | null>(null
   const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-4 gap-2">
-        <div className="relative">
-          <Input
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Pesquisar pelo nome"
-            className="peer min-w-40 ps-9 bg-zinc-500/20 dark:bg-zinc-500/10 border border-zinc-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200"
-          />
-          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
-            <RiSearch2Line size={20} aria-hidden="true" />
-          </div>
-        </div>
+    paginatedData.length > 0 ?
+      <div className="w-full">
+        <StatsGrid
+          stats={[
+            {
+              title: "Membros",
+              value: data.length.toString(),
+              change: {
+                value: "+42%",
+                trend: "up",
+              },
+              icon: (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={18}
+                  height={19}
+                  fill="currentColor"
+                >
+                  <path d="M2 9.5c0 .313.461.858 1.53 1.393C4.914 11.585 6.877 12 9 12c2.123 0 4.086-.415 5.47-1.107C15.538 10.358 16 9.813 16 9.5V7.329C14.35 8.349 11.827 9 9 9s-5.35-.652-7-1.671V9.5Zm14 2.829C14.35 13.349 11.827 14 9 14s-5.35-.652-7-1.671V14.5c0 .313.461.858 1.53 1.393C4.914 16.585 6.877 17 9 17c2.123 0 4.086-.415 5.47-1.107 1.069-.535 1.53-1.08 1.53-1.393v-2.171ZM0 14.5v-10C0 2.015 4.03 0 9 0s9 2.015 9 4.5v10c0 2.485-4.03 4.5-9 4.5s-9-2.015-9-4.5ZM9 7c2.123 0 4.086-.415 5.47-1.107C15.538 5.358 16 4.813 16 4.5c0-.313-.461-.858-1.53-1.393C13.085 2.415 11.123 2 9 2c-2.123 0-4.086.415-5.47 1.107C2.461 3.642 2 4.187 2 4.5c0 .313.461.858 1.53 1.393C4.914 6.585 6.877 7 9 7Z" />
+                </svg>
+              ),
+            },
+            {
+              title: "Tarefas pendentes",
+              value: "427,296",
+              change: {
+                value: "+12%",
+                trend: "up",
+              },
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M16 14v2.2l1.6 1" /><path d="M16 4h2a2 2 0 0 1 2 2v.832" /><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h2" /><circle cx="16" cy="16" r="6" /><rect x="8" y="2" width="8" height="4" rx="1" /></svg>
+              ),
+            },
+            {
+              title: "Tarefas totais",
+              value: "$82,439",
+              change: {
+                value: "+37%",
+                trend: "up",
+              },
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" /></svg>
+              ),
+            },
+          ]}
+        />
 
-        <div className="flex gap-2">
-          {
-            selectedMember !== "" && (
-              <div className="flex gap-2">
-                {/* <AlertDialog>
+        <div className="flex justify-between items-center mt-4 mb-4 gap-2">
+          <div className="relative">
+            <Input
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Pesquisar pelo nome"
+              className="peer min-w-40 ps-9 bg-zinc-500/20 dark:bg-zinc-500/10 border border-zinc-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200"
+            />
+            <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-2 text-muted-foreground/60 peer-disabled:opacity-50">
+              <RiSearch2Line size={20} aria-hidden="true" />
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            {
+              selectedMember !== "" && (
+                <div className="flex gap-2">
+                  {/* <AlertDialog>
                   <AlertDialogTrigger
                     className="px-2 flex items-center justify-center gap-2 rounded-md text-sm font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-yellow-300/30 border border-zinc-500/30 dark:hover:border-yellow-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
                   >
@@ -197,44 +244,44 @@ const [selectedMemberData, setSelectedMemberData] = useState<Member | null>(null
                   </AlertDialogContent>
                 </AlertDialog> */}
 
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    className="p-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer"
-                  >
-                    <Trash2 className="size-5 text-red-500" />
-                    <span className="hidden sm:block">Expulsar</span>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Expulsar membro</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Você tem certeza que deseja expulsar o membro selecionado?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      className="p-2 flex items-center justify-center gap-2 rounded-md text-sm group font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer"
+                    >
+                      <Trash2 className="size-5 text-red-500" />
+                      <span className="hidden sm:block">Expulsar</span>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Expulsar membro</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Você tem certeza que deseja expulsar o membro selecionado?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
 
 
 
-                    <AlertDialogFooter className="mt-6">
-                      <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-onClick={() => {
-                          if (selectedMemberData) {
-                            memberService.DeleteMember(selectedMemberData.email);
-                          }
-                        }}
-                        type="submit"
-                        className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
-                      >
-                        Confirmar
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            )
-          }
+                      <AlertDialogFooter className="mt-6">
+                        <AlertDialogCancel className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-red-500/30 border border-zinc-500/30 dark:hover:border-red-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200">Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            if (selectedMemberData) {
+                              memberService.DeleteMember(selectedMemberData.email);
+                            }
+                          }}
+                          type="submit"
+                          className="font-semibold bg-zinc-500/20 dark:bg-zinc-500/10 hover:bg-zinc-500/30 dark:hover:bg-green-500/30 border border-zinc-500/30 dark:hover:border-green-500/30 text-zinc-800/80 dark:text-white/70 hover:text-black/80 dark:hover:text-zinc-200 cursor-pointer duration-200"
+                        >
+                          Confirmar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )
+            }
 
-          {/* <Popover>
+            {/* <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline">
                 <RiFilter3Line
@@ -256,23 +303,23 @@ onClick={() => {
               </div>
             </PopoverContent>
           </Popover> */}
+          </div>
         </div>
-      </div>
 
-      <div className="overflow-x-auto">
-        <Table className="min-w-[1565px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
-              </TableHead>
-              <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><Briefcase size={18} /> Cargo</p>
-              </TableHead>
-              <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
-                <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><MailSearch size={18} /> Email</p>
-              </TableHead>
-              {/* <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+        <div className="overflow-x-auto">
+          <Table className="min-w-[1565px] table-fixed border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                  <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ALargeSmall size={18} /> Nome</p>
+                </TableHead>
+                <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                  <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><Briefcase size={18} /> Cargo</p>
+                </TableHead>
+                <TableHead className="relative h-9 select-none bg-zinc-500/20 dark:bg-zinc-500/10 border-zinc-500/30 border-y first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
+                  <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><MailSearch size={18} /> Email</p>
+                </TableHead>
+                {/* <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><ClipboardClock size={18} /> Tarefas pendentes</p>
               </TableHead>
               <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
@@ -281,38 +328,38 @@ onClick={() => {
               <TableHead className="relative h-9 select-none bg-sidebar border-y border-border first:border-l first:rounded-l-lg last:border-r last:rounded-r-lg">
                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-500"><LoaderCircle size={18} /> Porcentual de tarefas</p>
               </TableHead> */}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? null : paginatedData.length > 0 ? (
-              paginatedData.map(item => {
-                // completed task calc
-                const completed = item.TotalTasks - item.PendingTasks;
-                const taskProgress = item.TotalTasks > 0 ? Math.round((completed / item.TotalTasks) * 100) : 0;
-                return (
-                  <TableRow
-                    key={item.user_id}
-                    className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
-                  >
-                    <TableCell className="flex gap-2">
-                      <button
-                        className={`border rounded-sm ${selectedMember === item.user_id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
-                        onClick={() => {
-                          if (selectedMember === item.user_id) setSelectedMember(""), setSelectedMemberData(null);
-else setSelectedMember(item.user_id), setSelectedMemberData(item);
-                        }}
-                      >
-                        <Check className={`${selectedMember === item.user_id ? "block" : "hidden"}`} size={12} />
-                      </button>
-                      <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.name}</p>
-                    </TableCell>
-                    <TableCell>
-                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.role === "owner" ? "Dono" : "Membro"}</p>
-                    </TableCell>
-                    <TableCell>
-                      <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.email}</p>
-                    </TableCell>
-                    {/* <TableCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? null : paginatedData.length > 0 ? (
+                paginatedData.map(item => {
+                  // completed task calc
+                  const completed = item.TotalTasks - item.PendingTasks;
+                  const taskProgress = item.TotalTasks > 0 ? Math.round((completed / item.TotalTasks) * 100) : 0;
+                  return (
+                    <TableRow
+                      key={item.user_id}
+                      className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
+                    >
+                      <TableCell className="flex gap-2">
+                        <button
+                          className={`border rounded-sm ${selectedMember === item.user_id ? "bg-green-400 dark:bg-green-600 p-[3px]" : "w-5.5"}`}
+                          onClick={() => {
+                            if (selectedMember === item.user_id) setSelectedMember(""), setSelectedMemberData(null);
+                            else setSelectedMember(item.user_id), setSelectedMemberData(item);
+                          }}
+                        >
+                          <Check className={`${selectedMember === item.user_id ? "block" : "hidden"}`} size={12} />
+                        </button>
+                        <p className="w-full overflow-hidden whitespace-nowrap text-ellipsis font-semibold">{item.name}</p>
+                      </TableCell>
+                      <TableCell>
+                        <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.role === "owner" ? "Dono" : "Membro"}</p>
+                      </TableCell>
+                      <TableCell>
+                        <p className="overflow-hidden whitespace-nowrap text-ellipsis">{item.email}</p>
+                      </TableCell>
+                      {/* <TableCell>
                       <p className="font-semibold">{item.PendingTasks}</p>
                     </TableCell>
                     <TableCell>
@@ -322,51 +369,53 @@ else setSelectedMember(item.user_id), setSelectedMemberData(item);
                       <CircularProgress progress={taskProgress} />
                       <span className="text-sm flex">{taskProgress}<span className="text-zinc-600 dark:text-zinc-400 ms-0.5">%</span></span>
                     </TableCell> */}
-                  </TableRow>
-                );
-              })
-            ) : null}
-          </TableBody>
-        </Table>
-      </div>
+                    </TableRow>
+                  );
+                })
+              ) : null}
+            </TableBody>
+          </Table>
+        </div>
 
-      {
-        isLoading ? <div className="w-full flex justify-center items-center mt-5">
-          <p className="text-center text-zinc-500 font-semibold dark:text-zinc-400">Carregando...</p>
-        </div> : totalPages === 1 ? "" : filteredData.length > 0 ?
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
-            <p
-              className="flex-1 whitespace-nowrap text-sm text-muted-foreground"
-              aria-live="polite"
-            >
-              Página{" "}
-              <span className="text-foreground">{currentPage}</span> de{" "}
-              <span className="text-foreground">{totalPages}</span>
-            </p>
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                disabled={currentPage === 1}
-                aria-label="Página anterior"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+        {
+          isLoading ? <div className="w-full flex justify-center items-center mt-5">
+            <p className="text-center text-zinc-500 font-semibold dark:text-zinc-400">Carregando...</p>
+          </div> : totalPages === 1 ? "" : filteredData.length > 0 ?
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+              <p
+                className="flex-1 whitespace-nowrap text-sm text-muted-foreground"
+                aria-live="polite"
               >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                disabled={currentPage === totalPages}
-                aria-label="Próxima página"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
-              >
-                Próxima
-              </Button>
-            </div>
-          </div> : <div className="w-full flex justify-center items-center mt-5">
-            <p className="text-center font-semibold">Nenhum projeto encontrado</p>
-          </div>
-      }
-    </div>
+                Página{" "}
+                <span className="text-foreground">{currentPage}</span> de{" "}
+                <span className="text-foreground">{totalPages}</span>
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  disabled={currentPage === 1}
+                  aria-label="Página anterior"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+                >
+                  Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={currentPage === totalPages}
+                  aria-label="Próxima página"
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+                >
+                  Próxima
+                </Button>
+              </div>
+            </div> : ""
+        }
+      </div> : <div className="flex flex-col items-center justify-center h-full text-center">
+        <UserX size={40} className="text-muted-foreground mb-2" />
+        <h3 className="text-lg font-medium">Nenhum membro encontrado</h3>
+        <p className="text-muted-foreground">Adicione um na parte superior direita para visualizar as informações aqui.</p>
+      </div>
   );
 }

@@ -63,5 +63,8 @@ export const routes = {
     getPlans: apiRoute + "/subscriptions/",
 
     // ChatIa
-    chat_ia_response: apiRoute + "/chat-ia"
+    chat_ia_response: apiRoute + "/chat-ia",
+
+    // Dashboard
+    getMetrics: apiRoute + "/metrics/group/"
 }

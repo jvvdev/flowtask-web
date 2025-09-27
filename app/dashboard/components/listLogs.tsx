@@ -3,38 +3,56 @@
 import { Button } from "@/components/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/table";
 import { ALargeSmall, ClipboardCheck, Clock, LoaderCircle, ShieldAlert } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { metricsProp } from "../page";
 
 const actionData = [
-    { id:1, action: "Criar novo projeto", date: new Date() },
-    { id:2, action: "Atualizar tarefa", date: new Date() },
-    { id:3, action: "Excluir membro", date: new Date() },
-    { id:4, action: "Adicionar cliente", date: new Date() },
-    { id:5, action: "Editar projeto", date: new Date() },
-    { id:6, action: "Remover tarefa", date: new Date() },
-    { id:7, action: "Concluir tarefa", date: new Date() },
-    { id:8, action: "Alterar prioridade", date: new Date() },
-    { id:9, action: "Enviar mensagem", date: new Date() },
-    { id:10, action: "Atualizar perfil", date: new Date() },
-    { id:11, action: "Visualizar relatório", date: new Date() },
-    { id:12, action: "Exportar dados", date: new Date() },
-    { id:13, action: "Adicionar comentário", date: new Date() },
-    { id:14, action: "Remover cliente", date: new Date() },
-    { id:15, action: "Reabrir tarefa", date: new Date() },
+    { id: 1, action: "Criar novo projeto", date: new Date() },
+    { id: 2, action: "Atualizar tarefa", date: new Date() },
+    { id: 3, action: "Excluir membro", date: new Date() },
+    { id: 4, action: "Adicionar cliente", date: new Date() },
+    { id: 5, action: "Editar projeto", date: new Date() },
+    { id: 6, action: "Remover tarefa", date: new Date() },
+    { id: 7, action: "Concluir tarefa", date: new Date() },
+    { id: 8, action: "Alterar prioridade", date: new Date() },
+    { id: 9, action: "Enviar mensagem", date: new Date() },
+    { id: 10, action: "Atualizar perfil", date: new Date() },
+    { id: 11, action: "Visualizar relatório", date: new Date() },
+    { id: 12, action: "Exportar dados", date: new Date() },
+    { id: 13, action: "Adicionar comentário", date: new Date() },
+    { id: 14, action: "Remover cliente", date: new Date() },
+    { id: 15, action: "Reabrir tarefa", date: new Date() },
 ]
 
-export function ListLogs() {
+export type returnMetricProps = {
+    data: metricsProp;
+    // setData: React.Dispatch<React.SetStateAction<Project[]>>;
+};
+
+export function ListLogs({ data }: returnMetricProps) {
     const [isLoading, setIsLoading] = useState(false);
-
-    // paginação
-    const pageSize = 3;
+    const [paginatedData, setPaginatedData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(actionData.length / pageSize);
+    const [totalPages, setTotalPages] = useState(0);
+    const pageSize = 3;
 
-    const paginatedData = actionData.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
-    );
+    useEffect(() => {
+        console.log(data)
+
+        function setData() {
+            setTotalPages(Math.ceil(data.all_activitys.length / pageSize));
+
+            setPaginatedData(data.all_activitys.slice(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize
+            ))
+        }
+
+        if (data.length === 0) {
+        } else {
+            setData()
+        }
+    }, [data])
 
     return (
         <div className="p-4 w-full space-y-2 h-82 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg">
@@ -68,14 +86,14 @@ export function ListLogs() {
                                 {
                                     paginatedData.map((item) => (
                                         <TableRow
-                                            key={item.id}
+                                            key={item.activity_id}
                                             className="border-0 [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg h-px hover:bg-accent/50"
                                         >
                                             <TableCell className="font-semibold">
-                                                {item.action}
+                                                {item.content}
                                             </TableCell>
                                             <TableCell>
-                                                {item.date.toLocaleString()} 
+                                                {/* {item.createdAt.toLocaleString()} */}
                                             </TableCell>
                                         </TableRow>
                                     ))

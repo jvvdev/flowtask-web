@@ -25,10 +25,43 @@ import { teamService } from "@/api/dashboard/team-service";
 import { authService } from "@/api/auth-service";
 import { useEffect, useState } from "react";
 import { Loader2, Users } from "lucide-react";
+import axios from "axios";
+import { routes } from "@/api/routes";
+
+export interface MemberTasks {
+  memberId: string;
+  totalTasks: number;
+  completedTasks: number;
+}
+
+export interface OverloadMember {
+  member: string;
+  taskCount: number;
+}
+
+export interface Activity {
+  activity_id: number;
+  content: string;
+}
+
+export interface MetricsData {
+  all_projects: number;
+  all_pendent_tasks: number;
+  all_members: number;
+  members_and_tasks: MemberTasks[];
+  all_overload_members: OverloadMember[];
+  all_activitys: Activity[];
+}
+
+export interface MetricsProp {
+  message: string;
+  data: MetricsData;
+}
 
 export default function Page() {
   const [notActiveGroup, setNotActiveGroup] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [data, setData] = useState([])
 
   useEffect(() => {
     async function getData() {
@@ -45,12 +78,41 @@ export default function Page() {
         }
       } else {
         setNotActiveGroup(true);
-        setLoading(false)
       }
       if (!actualGroup) return;
     }
+
     getData();
   }, []);
+
+  useEffect(() => {
+    async function getData() {
+      const sessionId = await authService.getToken();
+      const actualGroupRaw = await teamService.getTeamByUser();
+      let actualGroup: { id_group: string } | null = null;
+      if (actualGroupRaw) {
+        try {
+          actualGroup = JSON.parse(actualGroupRaw);
+        } catch {
+          actualGroup = null;
+        }
+      }
+      if (!actualGroup) return;
+
+      await axios.get(routes.getMetrics + actualGroup.id_group, {
+        headers: {
+          AuthToken: sessionId
+        }
+      }).then(res => {
+        setData(res.data.data)
+        setLoading(false)
+      }).catch(err => {
+        console.error(err.response.data.message)
+      })
+    }
+
+    getData()
+  }, [])
 
   return (
     <SidebarProvider className="p-2">
@@ -96,7 +158,7 @@ export default function Page() {
             </div>
             <div className="w-full flex flex-col sm:flex-row gap-4">
               <div className="w-full sm:w-[55%] xl:w-[70%] h-full space-y-4">
-                <InfoCardToTasks />
+                <InfoCardToTasks data={data} />
 
                 <div className="flex flex-col gap-4 w-full">
                   <div className="flex flex-col xl:flex-row justify-between gap-4 h-[48%]">
@@ -107,13 +169,13 @@ export default function Page() {
                   </div>
                 </div>
                 {/* logs screen */}
-                <ListLogs />
+                <ListLogs data={data} />
               </div>
 
 
               <div className="w-full sm:w-[44%] xl:w-[30%] space-y-4">
-                <MemberOverHeat />
-                <ListProductivity />
+                <MemberOverHeat data={data} />
+                <ListProductivity data={data} />
               </div>
             </div>
           </div>}

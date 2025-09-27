@@ -54,8 +54,8 @@ class TeamService {
 
     async requestJoin(data: any) {
         const token = await authService.getToken();
-
-        const api = await axios.post(routes.inviteMember, {
+        
+        await axios.post(routes.inviteMember, {
             email: data.email,
             id_group: data.id_group,
             type: "request"
@@ -64,12 +64,9 @@ class TeamService {
                 "authToken": token
             }
         }).then((res) => {
-            const message = res.data.message;
-
-            toast(message)
+            toast.success("Pedido enviado com sucesso!")
         }).catch((error) => {
-            const message = error.data.message;
-            toast('Não foi possivel enviar seu pedido de convite');
+            toast.error('Não foi possivel enviar seu pedido de convite');
             console.error(error);
         })
     }

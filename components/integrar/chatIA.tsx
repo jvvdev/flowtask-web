@@ -11,6 +11,8 @@ import { useForm } from "react-hook-form";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
+import { TypingAnimation } from "../ui/typing-animation";
+import TypewriterMarkdown from "./TypewriterMarkdown";
 
 
 interface Message {
@@ -102,7 +104,7 @@ export function IASection() {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-handleSubmit(onSubmit)();
+                handleSubmit(onSubmit)();
             }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -153,9 +155,7 @@ handleSubmit(onSubmit)();
                                 key={index}
                                 className={`flex ${item.role === "user" ? "self-end" : ""} p-2 max-w-[90%] rounded-md border dark:bg-zinc-800/30 dark:border-zinc-200/5 dark:text-zinc-50/90`}
                             >
-<ReactMarkdown rehypePlugins={[rehypeRaw]}>
-                                    {item.content.replace(/\n/g, "<br />")}
-                                </ReactMarkdown>
+                                <TypewriterMarkdown text={item.content} speed={35} cursor={true} />
                             </div>
                         ))}
                     </div>

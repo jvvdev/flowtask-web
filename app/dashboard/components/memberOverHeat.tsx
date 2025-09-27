@@ -1,5 +1,9 @@
+'use client'
+
 import { TableHead } from "@/components/table"
 import { ShieldAlert, Clock, User, Asterisk } from "lucide-react"
+import { useEffect, useState } from "react";
+import { MetricsProp, OverloadMember } from "../page";
 
 const memberOverHeat = [
     { id: 1, name: "Adriel Dev", OverLoad: 2, totalTasks: 10 },
@@ -20,7 +24,27 @@ const memberOverHeat = [
     { id: 16, name: "Thiago Rocha", OverLoad: 4, totalTasks: 12 },
 ]
 
-export function MemberOverHeat() {
+export type returnMetricProps = {
+  data: MetricsProp[];
+};
+
+export function MemberOverHeat({ data }: returnMetricProps) {
+    const [member, setMembers] = useState<OverloadMember[]>([])
+
+    useEffect(() => {
+        console.log(data)
+
+        function setData() {
+            setMembers(data.all_overload_members)
+        }
+
+        if (data.length === 0) {
+
+        } else {
+            setData()
+        }
+    }, [data])
+
     return (
         <div className="p-4 space-y-2 w-full h-62 border border-border bg-gradient-to-br from-sidebar/60 to-sidebar rounded-lg flex flex-col">
             <div>
@@ -41,10 +65,10 @@ export function MemberOverHeat() {
                     <p className="w-[60%] text-zinc-600 dark:text-zinc-500 text-sm flex items-center gap-1"><Asterisk size={16} />Sobrecarga</p>
                 </div>
                 {
-                    memberOverHeat.map(member => (
-                        <div key={member.id} className="min-w-[140px] w-full flex justify-between py-2 px-2 border-b hover:bg-muted">
-                            <span className="w-full font-bold text-sm">{member.name}</span>
-                            <p className="w-[60%] font-semibold text-sm">{member.OverLoad} <span className="font-normal">Tarefas</span></p>
+                    member.map((member, index) => (
+                        <div key={index} className="min-w-[140px] w-full flex justify-between py-2 px-2 border-b hover:bg-muted">
+                            <span className="w-full font-bold text-sm">{member.member}</span>
+                            <p className="w-[60%] font-semibold text-sm">{member.taskCount} <span className="font-normal">Tarefas</span></p>
                         </div>
                     ))
                 }

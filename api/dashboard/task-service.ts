@@ -44,7 +44,7 @@ class TaskService {
             const session_id = getCookie("sessionId");
             const actualProject = getCookie("activeTeam");
             console.log(data)
-            
+
 
             const res = await axios.post(routes.updateTask + data.id_task,
                 {

@@ -196,7 +196,7 @@ export default function Page() {
               <p className="text-muted-foreground">Crie um na parte superior direita para visualizar os projetos aqui.</p>
             </div> : <div className="space-y-4">
               {/* info card */}
-              <InfoCardToProjects />
+              <InfoCardToProjects data={data}/>
 
               {/* project list */}
               <ProjectList data={data} setData={setData} />
